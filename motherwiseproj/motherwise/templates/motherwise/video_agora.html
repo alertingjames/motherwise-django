@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Call Demo</title>
+    <link rel="stylesheet" href="./styles/style.css">
+
+    <style>
+
+        *{
+            font-family: sans-serif;
+        }
+        h1,h4{
+            text-align: center;
+        }
+        #remote-container video{
+            height: auto;
+            position: relative !important;
+        }
+        #me{
+            position: relative;
+            width: 50%;
+            margin: 0 auto;
+            display: block;
+        }
+        #me video{
+            position: relative !important;
+        }
+        #remote-container{
+            display: flex;
+        }
+
+    </style>
+
+</head>
+<body>
+<h1>
+    Video Call Demo<br><small style="font-size: 14pt">Powered by Agora.io</small>
+</h1>
+
+<h4>My Feed :</h4>
+<div id="me"></div>
+
+<h4>Remote Feeds :</h4>
+<div id="remote-container">
+
+</div>
+
+<script src="/static/js/video/AgoraRTCSDK-2.4.0.js"></script>
+<script src="/static/js/video/script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

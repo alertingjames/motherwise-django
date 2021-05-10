@@ -1,0 +1,1055 @@
+{% extends 'mothers/base_profile.html' %}
+{% block title %}My Profile{% endblock %}
+{% block body %}
+
+<br>
+
+<script>
+
+var geocoder;
+var map;
+var marker;
+var infowindow;
+var addr;
+var latLng;
+var ii = 0;
+
+function initialize(){
+    geocoder = new google.maps.Geocoder();
+    infowindow = new google.maps.InfoWindow;
+    latLng = new google.maps.LatLng({{member.lat}}, {{member.lng}});
+    var mapOptions = {
+        zoom: 8,
+        center: latLng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (p) {
+            latLng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
+            var mapOptions = {
+                center: latLng,
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                    position: google.maps.ControlPosition.LEFT_BOTTOM
+                }
+            };
+            map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+            marker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: "<div style = 'height:60px;width:200px'><b>Your location:</b><br />Latitude: " + p.coords.latitude + "<br />Longitude: " + p.coords.longitude
+            });
+            google.maps.event.addListener(marker, "click", function (e) {
+                var infoWindow = new google.maps.InfoWindow();
+                infoWindow.setContent(marker.title);
+                infoWindow.open(map, marker);
+            });
+
+            if (geocoder){
+                {% if member.address %}
+                    codeAddress2();
+                {% else %}
+                    codeAddress();
+                {% endif %}
+            }
+        });
+    } else {
+        alert('Geo Location feature is not supported in this browser.');
+    }
+
+}
+
+
+function geocodePosition(pos) {
+
+  if (marker) {
+        if (infowindow) infowindow.close();
+  }
+  infowindow = new google.maps.InfoWindow();
+  geocoder.geocode({
+    latLng: pos
+  }, function(responses) {
+    if (responses && responses.length > 0) {
+      marker.formatted_address = responses[0].formatted_address;
+    } else {
+      marker.formatted_address = 'Cannot determine address at this location.';
+    }
+
+    document.getElementById('addr').value = marker.formatted_address;
+    document.getElementById('lat').value = marker.getPosition().lat();
+    document.getElementById('lng').value = marker.getPosition().lng();
+    document.getElementById('address').value = marker.formatted_address;
+
+    lat = marker.getPosition().lat();
+    lng = marker.getPosition().lng();
+
+    infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    infowindow.open(map, marker);
+
+    codeLatLng(lat, lng);
+
+  });
+}
+
+function codeAddress() {
+  var address;
+  var addr;
+   infowindow = new google.maps.InfoWindow();
+
+  geocoder.geocode({
+    'latLng': latLng
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+
+      document.getElementById('address').value = results[0].formatted_address;
+
+      address = document.getElementById('address').value;
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        position: results[0].geometry.location
+      });
+       marker.addListener('click', toggleBounce);
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          addr = marker.formatted_address;
+          infowindow.setContent("My location:" + marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          addr = address;
+          infowindow.setContent("My location:" + address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        document.getElementById('address').value = addr;
+        document.getElementById('addr').value = addr;
+        document.getElementById('lat').value = marker.getPosition().lat();
+        document.getElementById('lng').value = marker.getPosition().lng();
+
+        lat = marker.getPosition().lat();
+        lng = marker.getPosition().lng();
+
+        infowindow.open(map, marker);
+
+        codeLatLng(lat, lng);
+
+      });
+      google.maps.event.trigger(marker, 'click');
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+
+function codeAddress2() {
+  var address = document.getElementById('address').value;
+  var addr;
+   infowindow = new google.maps.InfoWindow();
+
+  geocoder.geocode({
+    'address': address
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        position: results[0].geometry.location
+      });
+       marker.addListener('click', toggleBounce);
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          addr = marker.formatted_address;
+          infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          addr = address;
+          infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        document.getElementById('address').value = addr;
+        document.getElementById('addr').value = addr;
+        document.getElementById('lat').value = marker.getPosition().lat();
+        document.getElementById('lng').value = marker.getPosition().lng();
+
+        lat = marker.getPosition().lat();
+        lng = marker.getPosition().lng();
+
+        geocodePosition(marker.getPosition());
+
+        infowindow.open(map, marker);
+
+        codeLatLng(lat, lng);
+
+      });
+      google.maps.event.trigger(marker, 'click');
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+
+function toggleBounce() {
+    if (marker.getAnimation() !== null) {
+        marker.setAnimation(null);
+    } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+}
+
+function callback(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+        }
+    }
+    else{
+        alert("Service failed...");
+    }
+}
+
+function createMarker(place) {
+
+    var infowindow = new google.maps.InfoWindow();
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent(place.name);
+        infowindow.open(map, this);
+    });
+}
+
+google.maps.event.addDomListener(window, "load", initialize);
+
+function codeLatLng(lat, lng) {
+    var latlng = new google.maps.LatLng(lat, lng);
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        console.log(results)
+        if (results[1]) {
+            //formatted address
+            // alert(results[0].formatted_address)
+            //find country name
+            for (var i=0; i<results[0].address_components.length; i++) {
+                for (var b=0;b<results[0].address_components[i].types.length;b++) {
+
+                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                    if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
+                        //this is the object you are looking for
+                        city= results[0].address_components[i];
+                        break;
+                    }
+                }
+            }
+            //city data
+            // alert(city.short_name + " " + city.long_name);
+            document.getElementById('city').value = city.long_name;
+
+        }else {
+          alert("No results found");
+        }
+      } else {
+        alert("Geocoder failed due to: " + status);
+      }
+    });
+}
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBwhfTWDzet-mu2KwXqkfP9bnQjMaFzq4&libraries=places&callback=initialize" async defer></script>
+
+<style>
+
+html, body{
+  background: linear-gradient(45deg,rgba(0,0,0,0.0),rgba(0,0,0,0.0),rgba(0,51,102,0.2),rgba(0,51,102,0.2),rgba(0,0,0,0.0),rgba(0,0,0,0.0)), url("/static/images/mother4.jpeg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+form h1 {
+  font-size: 22px;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:middle;
+  font-family: verdana;
+}
+
+#edit {
+  border-radius: 5px;
+  max-width:1000;
+  height:auto;
+  margin-top: 0%;
+  margin-bottom: 2% auto;
+  margin-left:auto;
+  margin-right:auto;
+  padding-top:5%;
+  overflow: hidden;
+  background-size:cover;
+}
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 600;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:20px 0px 0px 0px
+}
+
+input {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.icon-case {
+  width: 8%;
+  float: left;
+  border-radius: 50px 0px 0px 50px;
+  border:0;
+  background:white;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:gray;
+}
+
+.contentform {
+  padding: 30px 8px 0px 8px;
+  float:middle;
+  margin:auto;
+}
+
+.bouton-update{
+  background-color: #0077b3;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.formcontent {
+  width:100%;
+  float:middle;
+  margin:auto;
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+.validation {
+  display:none;
+  margin: 0 0 10px;
+  font-weight:400;
+  font-size:13px;
+  color: #DE5959;
+}
+
+.centered-and-cropped { object-fit:cover; }
+
+.pan {
+  max-width:450px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:auto;
+  margin-right:0;
+  opacity:0.9;
+  overflow: hidden;
+}
+
+.pan2 {
+  max-width:450px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:0;
+  margin-right:auto;
+  opacity:0.9;
+  overflow: hidden;
+}
+
+#cohortBox {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-right:auto;
+  width: 100%;
+  display:inline-block;
+  overflow:hidden;
+  opacity:0.95;
+  float: middle;
+}
+
+select {
+  width: 100%;
+  height: 42px;
+  border:0px;
+  outline:none;
+  padding: 0px 15px;
+  color:black;
+  text-align-last:center;
+}
+
+/* Look like a clicked/depressed button */
+label.cameraButton:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input[accept*="image"] {
+  display: none;
+}
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+
+label span {/* <-- style the artificial checkbox */
+  height: 25px;
+  width: 25px;
+  border:2px solid white;
+  margin-right:5px;
+  display: inline-block;
+  position: relative;
+  font-size:22px;
+}
+
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top: -5px;
+  left: 2px;
+  color:yellow;
+
+}
+
+#backgroundOverlay{
+  background-color:rgba(0,0,0,0.3);
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:none;
+}
+
+#map_canvas {
+  width: 100%;
+  height: 100%;
+}
+
+#map_frame{
+  width: 100%;
+  height: 100%;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+}
+
+.button{
+  font-size:14px;
+  font-weight:500;
+  color:white;
+  border-radius:3px;
+  padding:5px;
+  float:left;
+  background-color:green;
+  border:0;
+  width:100px;
+  margin:2px;
+}
+
+
+</style>
+
+<script type="text/javascript">
+window.onload = function() {
+	window.moveTo(0, 0);
+	window.resizeTo(screen.availWidth, screen.availHeight);
+}
+</script>
+
+<script>
+{% if note == 'add_cohort' %} alert('Please add a group to your profile.') {% endif %}
+</script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; z-index:2000; top:120px; display: none;" id="gif">
+
+<form id="edit" action="/mothers/register" method="post" enctype="multipart/form-data">
+	  {% csrf_token %}
+    <center>
+        <img src="/static/images/logotitle.png" style="width:250px; height:auto; border-radius:0; border:0; margin-top:50px; margin-bottom:20px;"><br>
+        <!--<img src="/static/images/logo.png" style="width:90px;">-->
+    </center>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="pan">
+                    <div class="contentform">
+    		            <div class="formcontent">
+
+    		                <div class="form-group" style="margin-bottom:20px;">
+                				<center>
+                				    <div style="display:inline-block; position:relative; width:100%;">
+                				        <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                    				        <img src="{% if member.photo_url %}{{member.photo_url}}{% elif member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}"
+                    				            style="width:200px; height:200px; margin-top:10px; margin-bottom:10px; border-radius:50%; object-fit:cover;" id="picture">
+                    				    </a>
+
+                                        <input type="hidden" id="x" name="x" />
+                                        <input type="hidden" id="y" name="y" />
+                                        <input type="hidden" id="w" name="w" />
+                                        <input type="hidden" id="h" name="h" />
+
+                    				    <label style="position:absolute; bottom:10px; margin-left:-40px;">
+                                            <img src="/static/images/cameraico.png" style="width:50px; height:50px;">
+                                            <input type="file" name="photo" value="http://lorempixel.com/100/100/people/9" id="file" accept="image/*" style="display:none"/>
+                                        </label>
+                				    </div>
+                				 </center>
+                				 <!--<script>-->
+                				 <!--   var file = null;-->
+                     <!--               function readFile() {-->
+                     <!--                   if (this.files) {-->
+                     <!--                       file = this.files[0];-->
+                     <!--                       var picReader = new FileReader();-->
+                     <!--                       picReader.addEventListener("load",function(event){-->
+                     <!--                           document.getElementById("picture").src = event.target.result;-->
+                     <!--                       });-->
+
+                                            <!--//Read the image-->
+                     <!--                       picReader.readAsDataURL(file);-->
+                     <!--                   }-->
+                     <!--               }-->
+                     <!--               document.getElementById("file").addEventListener("change", readFile);-->
+                     <!--           </script>-->
+                            </div>
+
+                            <input hidden name="option" value="profile">
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <label style="color:white; font-size:40px; position:absolute; top:0; right:10%;">
+                    <input type='checkbox' name="private" id="private" value="" hidden onchange="if(this.checked){this.value='private';} else {this.value='';}">
+                    <span style="float:left;"></span>
+                    <div style="color:white; font-size:16px; padding-top:3px; float:left;">Private</div>
+                </label>
+
+                <script>
+                    {% if member.status != '' %}document.getElementById("private").checked=true;{% endif %}
+                </script>
+
+            </div>
+            <div class="col-sm-6">
+                <div class="pan2" style="padding-bottom:30px;">
+                <div class="contentform">
+		            <div class="formcontent">
+		                <div class="form-group">
+                    			<!--<p>Name <span>*</span></p>-->
+                    			<!--<span class="icon-case"><i class="fa fa-user"></i></span>-->
+                                <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="{{member.name}}" placeholder="Name">
+                                <div class="validation"></div>
+                    		</div>
+		                <div class="form-group" style="margin-top:20px;">
+                			<!--<p>E-mail <span>*</span></p>-->
+                			<!--<span class="icon-case"><i class="fa fa-envelope-o"></i></span>-->
+                            <input type="email" name="email" id="email" data-rule="required" data-msg="" required value="{{member.email}}" placeholder="E-mail" readonly>
+                            <div class="validation"></div>
+                		</div>
+            			<div class="form-group" style="margin-top:20px;">
+                			<!--<p>Phone Number <span>*</span></p>-->
+                			<!--<span class="icon-case"><i class="fa fa-phone"></i></span>-->
+                			<input type="tel" name="phone_number" id="phone" data-rule="required" data-msg="" required value="{{member.phone_number}}" placeholder="Phone Number (+1 xxx xxx xxx)">
+                            <div class="validation"></div>
+                		</div>
+                        <div class="form-group" id="cohortBox" style="margin-top:5px;">
+                            <select name="cohort" required id="cohort2" style="width:100%; color:black;">
+                                {% if member.cohort %}<option value="{{member.cohort}}">{{member.cohort}}</option>{% endif %}
+                                <option value="">Please choose a group</option>
+                                <option value="E81">E81</option>
+                                <option value="E83">E83</option>
+                                <option value="E84">E84</option>
+                                <option value="E86">E86</option>
+                                <option value="E87">E87</option>
+                                <option value="S82">S82</option>
+                                <option value="S85">S85</option>
+                                <option value="S88">S88</option>
+                                <option value="E(v)89">E(v)89</option>
+                                <option value="E(v)90">E(v)90</option>
+                                <option value="S(v)91">S(v)91</option>
+                                <option value="E(v)92">E(v)92</option>
+                                <option value="E(v)93">E(v)93</option>
+                                <option value="E(v)94">E(v)94</option>
+                                <option value="S(v)95">S(v)95</option>
+                                <option value="E(v)96">E(v)96</option>
+                                <option value="E(v)97">E(v)97</option>
+                                <option value="S(v)98">S(v)98</option>
+                                <option value="E(v)99">E(v)99</option>
+                                <option value="E(v)100">E(v)100</option>
+                                <option value="S(v)101">S(v)101</option>
+                                <option value="E(v)102">E(v)102</option>
+                                <option value="E(v)103">E(v)103</option>
+                                <option value="S(v)104">S(v)104</option>
+                                <option value="E(v)105">E(v)105</option>
+                                <option value="E(v)106">E(v)106</option>
+                                <option value="S(v)107">S(v)107</option>
+                                <option value="E(v)108">E(v)108</option>
+                                <option value="E(v)109">E(v)109</option>
+                                <option value="S(v)110">S(v)110</option>
+                                <option value="MotherWise Alumni">MotherWise Alumni</option>
+                                <option value="MotherWise Team">MotherWise Team</option>
+                            </select>
+            			</div>
+            			<div class="form-group" style="margin-top:5px; position:relative;">
+
+            			    <a href="javascript:void(0)" onclick="javascript:document.getElementById('map_frame').style.display='block'; ii = ii + 1;
+                                    if(ii > 1){document.getElementById('address').value=document.getElementById('old_address').value; codeAddress2();}">
+                                <input type="text" name="address" id="address0" data-rule="required" style="padding-right:40px; text-decoration:ellipsis;" value="{{member.address}}" placeholder="Address (City name, state, postal code etc.)" readonly>
+                            </a>
+
+                			<input hidden name="lat" id="lat0" value="{{member.lat}}">
+                			<input hidden name="lng" id="lng0" value="{{member.lng}}">
+                			<input hidden name="city" id="city0" value="{{member.city}}">
+                			<input hidden name="option" value="update">
+                			<input hidden id="old_address" value="{{member.address}}">
+
+                            <a href="javascript:void(0)" onclick="javascript:document.getElementById('map_frame').style.display='block'; ii = ii + 1;
+                                    if(ii > 1){document.getElementById('address').value=document.getElementById('old_address').value; codeAddress2();}">
+                                <div style="position:absolute; right:15px; top:10px;"><span style="font-size:20px; color:gray;" class="fa fa-map-marker"></span></div>
+                            </a>
+                		</div>
+                        <div class="form-group" style="margin-top:8%;">
+            				<button type="submit" class="bouton-update" onclick="return progressBar()">UPDATE</button>
+            			</div>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="cropBox" style="font-size:16px; font-weight:300; color: black;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
+    <img id="msg_logo" style="width:50px; height:50px; float:left;" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="cohortmessageboxtitle">CROP PICTURE</div><br>
+            <div style="width:100%; text-align:center;">
+                <div id="views"></div>
+                <br>
+                <center>
+                    <button id="cropbutton" type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"><span class="fa fa-crop" style="color:white; font-size:20px; margin-right:10px;"></span>Crop</button>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="map_frame" style="display:none;">
+
+    <div style="top:12%; left:5px; position:fixed; z-index:12; width:auto;">
+      <button class="button" onclick="document.getElementById('map_frame').style.display='none';">Back</button><br>
+      <button class="button" onclick="show_control(this)" style="display:block;">Search</button>
+
+      <div id="inputbox" style="width:320px; margin:2px; float:left; display:none;">
+          <div style="width:100%; display:flex;">
+              <input id="address" type="text" value="{{member.address}}" style="flex-grow:1; float:left; border:1.5px solid gray; height:32px;
+                    opacity:1.0; font-size:14px; color:black; border-radius:3px;" placeholder="Enter address..." required="address">
+              <input type="button" value="Find" onclick="codeAddress2()" style="float:left; margin-left:5px; width:auto; height:32px; background-color:green; font-size:14px; color:white; border-radius:3px;">
+          </div>
+      </div><br>
+
+      <div style="display:none;">
+        <input id="addr" hidden value="" name="address">
+        <input id="city" hidden value="" name="city">
+        <input id="lat" hidden value="" name="lat">
+        <input id="lng" hidden value="" name="lng">
+      </div>
+
+      <script>
+         var input = document.getElementById("address");
+         input.addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                codeAddress2();
+            }
+         });
+      </script>
+
+      <button class="button" onclick="showInfo()">Confirm</button>
+
+    </div>
+
+    <div id="map_canvas"></div>
+
+</div>
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:10px;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+    function progressBar(){
+        var name = document.getElementById("name").value;
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var cohort = document.getElementById("cohort").value;
+        var address = document.getElementById("address").value;
+        var phone = document.getElementById("phone").value;
+
+        if(name.length == 0){
+            alert('Please enter your name.');
+            return false;
+        }
+
+        if(email.length == 0){
+            alert('Please enter your email.');
+            return false;
+        }
+
+        if(address.length == 0){
+            alert('Please enter your address.');
+            return false;
+        }
+
+        if(cohort.length == 0){
+            alert('Please choose your cohort.');
+            return false;
+        }
+
+        if(phone.length == 0){
+            alert('Please enter your phone number.');
+            return false;
+        }
+
+        document.getElementById("gif").style.display = "block";
+        return true;
+
+    }
+
+    var showF = false;
+
+    function togglePasswordShow(){
+    	var passwordBox = document.getElementById("password");
+    	var showButton = document.getElementById("showButton");
+        if (!showF) {
+            passwordBox.type = "text";
+            showF = true;
+            showButton.innerHTML = "<span style=\"font-size:20px; color:gray;\" class=\"fa fa-eye-slash\"></span>";
+        } else {
+            passwordBox.type = "password";
+            showF = false;
+            showButton.innerHTML = "<span style=\"font-size:20px; color:gray;\" class=\"fa fa-eye\"></span>";
+        }
+    }
+
+    function toFirstPage(){
+        window.location.href='/mothers/firstpage';
+    }
+
+    function showOnMap(){
+        var address = document.getElementById("address").value;
+        if(address.length == 0){
+            alert('Please enter an address.');
+            return;
+        }
+        window.open('https://www.google.com/maps/search/?api=1&query=' + address)
+    }
+
+
+</script>
+
+
+
+<script>
+
+var crop_max_width = 250;
+var crop_max_height = 250;
+var jcrop_api;
+var canvas;
+var context;
+var image;
+
+var prefsize;
+
+$("#file").change(function() {
+  loadImage(this);
+});
+
+function loadImage(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    canvas = null;
+    reader.onload = function(e) {
+      image = new Image();
+      image.onload = validateImage;
+      image.src = e.target.result;
+    }
+    reader.readAsDataURL(input.files[0]);
+    document.getElementById("cropbutton").style.display = "block";
+    document.getElementById("cropBox").style.display = "block";
+    document.getElementById('backgroundOverlay').style.display='block';
+  }
+}
+
+function dataURLtoBlob(dataURL) {
+  var BASE64_MARKER = ';base64,';
+  if (dataURL.indexOf(BASE64_MARKER) == -1) {
+    var parts = dataURL.split(',');
+    var contentType = parts[0].split(':')[1];
+    var raw = decodeURIComponent(parts[1]);
+
+    return new Blob([raw], {
+      type: contentType
+    });
+  }
+  var parts = dataURL.split(BASE64_MARKER);
+  var contentType = parts[0].split(':')[1];
+  var raw = window.atob(parts[1]);
+  var rawLength = raw.length;
+  var uInt8Array = new Uint8Array(rawLength);
+  for (var i = 0; i < rawLength; ++i) {
+    uInt8Array[i] = raw.charCodeAt(i);
+  }
+  return new Blob([uInt8Array], {
+    type: contentType
+  });
+}
+
+function validateImage() {
+  if (canvas != null) {
+    image = new Image();
+    image.onload = restartJcrop;
+    image.src = canvas.toDataURL('image/png');
+    document.getElementById("picture").src = canvas.toDataURL('image/png');
+    document.getElementById("cropBox").style.display = "none";
+    document.getElementById("cropbutton").style.display = "none";
+    document.getElementById('backgroundOverlay').style.display='none';
+  } else restartJcrop();
+}
+
+function restartJcrop() {
+  if (jcrop_api != null) {
+    jcrop_api.destroy();
+  }
+  $("#views").empty();
+  $("#views").append("<canvas id=\"canvas\">");
+  canvas = $("#canvas")[0];
+  context = canvas.getContext("2d");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  context.drawImage(image, 0, 0);
+  $("#canvas").Jcrop({
+    onSelect: selectcanvas,
+    onRelease: clearcanvas,
+    boxWidth: crop_max_width,
+    boxHeight: crop_max_height
+  }, function() {
+    jcrop_api = this;
+  });
+//  clearcanvas();
+}
+
+function clearcanvas() {
+  prefsize = {
+    x: 0,
+    y: 0,
+    w: canvas.width,
+    h: canvas.height,
+  };
+}
+
+function selectcanvas(coords) {
+  prefsize = {
+    x: Math.round(coords.x),
+    y: Math.round(coords.y),
+    w: Math.round(coords.w),
+    h: Math.round(coords.h)
+  };
+
+  $('#x').val(Math.round(coords.x));
+  $('#y').val(Math.round(coords.y));
+  $('#w').val(Math.round(coords.w));
+  $('#h').val(Math.round(coords.h));
+
+}
+
+function applyCrop() {
+  canvas.width = prefsize.w;
+  canvas.height = prefsize.h;
+  context.drawImage(image, prefsize.x, prefsize.y, prefsize.w, prefsize.h, 0, 0, canvas.width, canvas.height);
+  validateImage();
+}
+
+$("#cropbutton").click(function(e) {
+  applyCrop();
+});
+
+
+function dismissLayouts(){
+    document.getElementById('cropBox').style.display='none';
+    document.getElementById('backgroundOverlay').style.display='none';
+}
+
+</script>
+
+<script>
+
+function show_control(obj){
+    document.getElementById('inputbox').style.display = 'block';
+    document.getElementById('address').value = "";
+    obj.style.display = "none";
+}
+
+function showInfo(){
+    var address = document.getElementById('addr').value;
+    var form = document.getElementById('form');
+    if(confirm('Would you select ' + address + '?')){
+        document.getElementById('address0').value = document.getElementById('address').value;
+        document.getElementById('city0').value = document.getElementById('city').value;
+        document.getElementById('lat0').value = document.getElementById('lat').value;
+        document.getElementById('lng0').value = document.getElementById('lng').value;
+        document.getElementById('map_frame').style.display = "none";
+    }
+}
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

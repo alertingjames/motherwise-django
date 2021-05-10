@@ -1,0 +1,347 @@
+{% extends 'motherwise/base.html' %}
+{% block title %}Motherwise Manager Site{% endblock %}
+{% block body %}
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.1)), url("/static/images/mother3.jpeg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+#form {
+  border-radius: 5px;
+  max-width:400px;
+  width:auto;
+  height:auto;
+  margin-top: 4%;
+  margin-bottom: 2% auto;
+  margin-left:auto;
+  margin-right:auto;
+  overflow: hidden;
+  /*background:linear-gradient(0deg,rgba(20,150,250,0.2),rgba(0,100,250,0.2));*/
+  /*background:linear-gradient(0deg,rgba(200,250,250,0.3),rgba(200,200,250,0.3));*/
+  background-size:cover;
+}
+
+#form:hover {
+
+}
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 600;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+.icon-case {
+  width: 10%;
+  float: left;
+  border-radius: 50px 0px 0px 50px;
+  background:green;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:yellow;
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.contentform {
+  padding: 30px;
+  float:middle;
+  margin:auto;
+}
+
+
+.formcontent {
+  width:100%;
+  float:middle;
+  margin:auto;
+  <!--border-right: 1px dotted #CCC;-->
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+.bouton-update{
+  background-color: #0077b3;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  opacity:0.95;
+  padding: 12px 18px;
+  border-radius: 50px 50px 50px 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+</style>
+
+<script>
+	history.pushState(null, null, location.href);
+    history.back();
+    history.forward();
+    window.onpopstate = function () { history.go(1); };
+</script>
+
+<script src="http://connect.facebook.net/en_US/all.js"></script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '152191016054296',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v6.0'
+    });
+
+    FB.AppEvents.logPageView();
+
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
+{% if notify == 'password changed' %}
+<script>alert('Your password has been reset successfully. Please log in.')</script>
+{% endif %}
+
+<meta name="google-signin-client_id" content="805720875706-j2nq3o9golq3nv3hvfsavlcfvuajpo2j.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js?onload=onLoadGoogleCallback" async defer></script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle; border-radius: 1px;
+	transform:translate(-50%, -50%); width:80px; z-index:100; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="width:90px; left:1%; top:30px; z-index:999; position:absolute;">
+
+<form id="form" action="/manager/login" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+    <div class="contentform">
+		<div class="formcontent">
+            <center>
+                <img src="/static/images/logotitle.png" style="width:60%; height:auto; border-radius:0; border:0; margin-top:20px; margin-bottom:10px;">
+                <p style="margin-bottom:30px; font-size:20px; font-weight:600; font-family:verdana;">Manager</p>
+            </center>
+			<div class="form-group">
+				<!--<p>E-mail <span>*</span></p>-->
+				<!--<span class="icon-case"><i class="fa fa-envelope-o"></i></span>-->
+                <input type="email" name="email" id="email" data-rule="required" data-msg="" required value="" placeholder="E-mail">
+                <div class="validation"></div>
+			</div>
+			<div class="form-group" style="margin-top:20px;">
+				<!--<p>Password <span>*</span></p>-->
+				<!--<span class="icon-case"><i class="fa fa-lock"></i></span>-->
+				<input type="password" name="password" id="password" data-rule="required" data-msg="" required value="" autocomplete="new-password" placeholder="Password">
+                <div class="validation"></div>
+			</div>
+			<input hidden name="playerID" id="playerID">
+			<a href="/manager/torequestpwd" style="width:100%; text-align:center;">
+                <div style="margin-bottom:5%; margin-top:5%; margin-left:auto; font-size:16px; color:#fff;
+                            padding:10px 20px 10px 10px;">Forgot Password</div>
+            </a>
+			<div class="form-group">
+				<button type="submit" class="bouton-update">LOG IN</button>
+            </div>
+			<div class="form-group">
+                <a href="/manager/signuppage" style="width:auto; float:right;">
+                    <div style="margin-top:10px; margin-left:auto; font-size:18px; color:#fff;
+                            padding:10px 20px 10px 10px; display:inline-block;">
+                        <div style="font-size:14px; color:#fff; margin-right:15px; float:left; padding-top:3px; opacity:0.7;">Haven't you an account?</div>SIGN UP
+                    </div>
+                </a>
+			</div>
+
+	    </div>
+	</div>
+</form>
+
+
+<div class="form-group" style="text-align:center; display:none;">
+	<div style="width:100%; text-align:center; font-size:14px; color:#fff; margin-bottom:20px; opacity:0.7;">Or if you want, please login with</div>
+    <div style="width:auto; margin:0; display:inline-block;">
+        <button id="fb-button" style="float:left; margin-bottom:10px; background:transparent; border:0; width:auto;" onclick="fb_login()">
+            <img class="fb" src="/static/images/fb.png" style="height:38px; width: auto;">
+        </button>
+        <button style="float:left; margin-left:50px; background:transparent; border:0; width:auto;" id="googleSignIn">
+            <img src="/static/images/gl.png" style="height:38px; width: auto;">
+        </button>
+        <!--<div class="g-signin2" data-onsuccess="onSignIn"></div>-->
+    </div>
+</div>
+
+
+<script>
+
+    function fb_login(){
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                FB.logout(function(response) {
+                    // Person is now logged out
+                });
+            }
+            else {
+                FB.login(function(response) {
+                    getFBData();
+                }, {scope: 'public_profile, email'});
+            }
+        });
+    }
+
+    function getFBData () {
+        FB.api('/me', {fields: 'first_name, last_name, email, picture.type(large)'}, function(response) {
+            post('/loginAdmin', {fb_first_name:response.first_name, fb_last_name:response.last_name, fb_email:response.email, fb_photo:response.picture['data']['url']});
+        });
+    }
+
+    function onLoadGoogleCallback(){
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '805720875706-j2nq3o9golq3nv3hvfsavlcfvuajpo2j.apps.googleusercontent.com',
+          cookiepolicy: 'single_host_origin',
+          scope: 'profile'
+        });
+
+      auth2.attachClickHandler(element, {},
+        function(googleUser) {
+            console.log('Signed in: ' + googleUser.getBasicProfile().getName());
+            // post('/loginAdmin', {name:googleUser.getBasicProfile().getName(), email:googleUser.getBasicProfile().getEmail(), photo:googleUser.getBasicProfile().getImageUrl()});
+            signOut();
+          }, function(error) {
+            console.log('Sign-in error', error);
+          }
+        );
+      });
+
+      element = document.getElementById('googleSignIn');
+    }
+
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+    }
+
+</script>
+
+<script>
+
+function getCookie(name) {
+    console.log('getCookie');
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                    }
+            }
+    }
+    console.log('cookie:' + cookieValue);
+    return cookieValue;
+}
+
+function post(path, params, method) {
+   method = method || "post"; // Set method to post by default if not specified.
+
+   // The rest of this code assumes you are not using a library.
+   // It can be made less wordy if you use one.
+   var form = document.createElement("form");
+   form.setAttribute("method", method);
+   form.setAttribute("action", path);
+
+   for(var key in params) {
+      if(params.hasOwnProperty(key)) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", params[key]);
+
+          form.appendChild(hiddenField);
+      }
+   }
+
+   var hiddenField1 = document.createElement("input");
+   hiddenField1.setAttribute("type", "hidden");
+   hiddenField1.setAttribute("name", 'csrfmiddlewaretoken');
+   hiddenField1.setAttribute("value", getCookie('csrftoken'));
+   form.appendChild(hiddenField1);
+
+   document.body.appendChild(form);
+   form.submit();
+}
+
+</script>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $( function() {
+        $( "#form" ).draggable();
+      } );
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

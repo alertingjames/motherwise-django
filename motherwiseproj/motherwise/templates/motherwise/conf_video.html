@@ -1,0 +1,2486 @@
+{% extends 'motherwise/base_conference.html' %}
+{% block title %}Conference with members{% endblock %}
+{% block body %}
+
+<br>
+<br>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src='https://meet.jit.si/external_api.js'></script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  <script>
+      WebFont.load({
+      google: {
+      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+    });
+</script>
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 400px;
+    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 6px;
+    text-align: center;
+}
+
+img {
+  height: 80px;
+  width: 80px;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+.table-users {
+  border: 1px solid #327a81;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  max-width:500px;
+  width:auto;
+  height:auto;
+  margin: 2% auto;
+  background-color: white;
+  overflow-x:auto;
+}
+
+.table>tbody>tr>td{
+    vertical-align: middle;
+    horizontal-align: middle;
+}
+
+table td, table th {
+  color: #2b686e;
+  padding: 10px;
+  border: 1px solid white;
+  text-align: center;
+  vertical-align: middle;
+}
+table td {
+  text-align: center;
+  vertical-align: middle;
+}
+table td:last-child {
+  font-size: 0.95em;
+  line-height: 0.8;
+  text-align: center;
+}
+table th {
+  background-color: #04a2be;
+  font-weight: 520;
+  color:white;
+  text-align: center;
+  vertical-align: middle;
+}
+table tr:nth-child(2n) {
+  background-color: white;
+  border: 1px solid #327a81;
+}
+
+table tr:nth-child(2n+1) {
+  background-color: #edf7f8;
+  border: 1px solid white;
+}
+
+#manage-menu{
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:40px;
+    background-color:#000000;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+#manage-menu1{
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:40px;
+    background-color:#000000;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  right: 15px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+  width:45px;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+#admin{
+    display:none;
+}
+
+.info p {
+  text-align:center;
+  color: #999;
+  text-transform:none;
+  font-weight:600;
+  font-size:15px;
+  margin-top:2px
+}
+
+.info i {
+  color:#F6AA93;
+}
+
+form h1 {
+  font-size: 25px;
+  background: #327a81 none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:left
+}
+
+.user-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:5px;
+  margin-bottom:3px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.user-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.conf-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:10px;
+  margin-bottom:2px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.conf-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.contentform {
+  padding: 5px;
+}
+
+#chat-form {
+    border-radius: 5px;
+    max-width:800px;
+    width:auto;
+    height:auto;
+    margin-top:3%;
+    margin-left:auto;
+    margin-right:auto;
+    opacity:0.9;
+    overflow: hidden;
+}
+
+.chat-contentform {
+    padding: 0px;
+    float:middle;
+    margin-top:3%;
+}
+
+.chat-formcontent {
+    width:100%;
+    float:middle;
+    margin:auto;
+    box-sizing: border-box;
+    padding: 0px;
+}
+
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 200;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius: 0px 5px 5px 0px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  width: 92%;
+  height: 42px;
+  float: left;
+  padding: 0px 15px;
+  opacity: 0.8;
+  color:blue;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.icon-case {
+  width: 8%;
+  float: left;
+  border-radius: 5px 0px 0px 5px;
+  background:green;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:white;
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.bouton-update{
+  background-color: green;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+
+.show {
+    z-index:1000;
+    position: absolute;
+    background-color:#ffffff;
+    border: 2px solid orange;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    display: block;
+    font-size:20px;
+    border-radius:20px;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
+.hide {
+    display: none;
+}
+
+.show li{ list-style: none; }
+.show a { border: 0 !important; text-decoration: none; }
+.show a:hover { text-decoration: underline !important; }
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+label span {/* <-- style the artificial checkbox */
+  height: 15px;
+  width: 15px;
+  border: 1px solid black;
+  border-radius:50%;
+  background-color:transparent;
+  margin-right:3px;
+  display: inline-block;
+  position: relative;
+}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  color:white;
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    z-index:1000;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 30px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    font-size: 36px;
+    float:right;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+
+#chat_log {
+    border-radius: 5px;
+    border: 1px solid #EEE;
+    margin: 0;
+    width: 100%;
+    height: 600px;
+    float: middle;
+    padding: 15px;
+    color:black;
+    background:linear-gradient(0deg,rgba(250,250,250,0.8),rgba(250,250,250,0.8)),url("/static/images/chatbackground.jpg");
+    background-size:cover;
+    overflow-y:auto;
+}
+
+#chat_log::-webkit-scrollbar {
+    display: none;
+}
+
+#send-form{
+    width:100%;
+}
+
+.cropping{
+    object-fit:cover;
+}
+
+div#list {
+    width: 100%;
+    height: auto;
+}
+
+div#list > div > div {
+    width: auto;
+    height: auto;
+    padding: 8px 15px 8px 15px;
+    border-radius:5px;
+    margin-bottom: 5px;
+    color: black;
+    word-wrap: break-word;
+    white-space: pre-line;
+    /*word-break: break-all;*/
+}
+
+#photo {
+    display: none;
+    top:15%;
+}
+
+.attach-button {
+    width:33.333333333%;
+    padding:2px;
+}
+
+label.button {
+    background:green;
+    padding:10px 0px 6px 0px;
+    color:white;
+    text-align:center;
+    font-size:15px;
+    font-weight:500;
+    width:100%;
+    border: 1.5px solid #666;
+    border-color: #EEE #CCC #CCC #EEE;
+    border-radius:5px;
+}
+
+i {
+    margin-right:10px;
+}
+
+/* Look like a clicked/depressed button */
+label.button:active {
+    border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.button input[accept*="image"] {
+    display: none;
+}
+
+::placeholder {
+    color: white;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: white;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: white;
+}
+
+
+#manage-menu {
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:auto;
+    background-color:black;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+.menu {
+    padding:2px 15px;
+}
+
+.menu a{
+    color:gray;
+}
+
+.menu a:hover {
+    color:white;
+}
+
+select {
+  background:transparent;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius:3px;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:white;
+  text-align-last:center;
+}
+
+option{
+    color:black;
+}
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+
+#user-scroll-layout::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background: transparent;
+}
+
+#user-scroll-layout::-webkit-scrollbar
+{
+	height: 0px;
+	background: transparent;
+}
+
+#user-scroll-layout::-webkit-scrollbar-thumb
+{
+	background: transparent;
+}
+
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+div#video-container > video {
+    width:45%;
+    height:150px;
+    max-width: 45%;
+    max-height: calc((100vw - 40px) / (16/9));
+    object-fit: cover;
+}
+
+div#video-main-container > video {
+    width:45%;
+    height:150px;
+    max-width: 45%;
+    max-height: calc((100vw - 40px) / (16/9));
+    object-fit: cover;
+}
+
+#video {
+    width:auto;
+    height:auto;
+    max-width:100%;
+    /*min-height:calc((100vw - 40px) / (16/9));*/
+    max-height:450px;
+    object-fit:contain ;
+}
+
+fieldset {
+    margin:0;
+    padding:0;
+    width:100%;
+}
+
+#snackbar {
+    visibility: hidden;
+    min-width: 200px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 12px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+</style>
+
+<!--<script>-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); };-->
+<!--</script>-->
+
+<div id="imageFrame" style="text-align:center; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:6px; padding: 10px;
+	transform:translate(-50%, -50%); width:auto; height:auto; z-index:200; top:350px; display:none;">
+	<img src="" style="width:250px; height:auto; display:none;" id="image_message">
+    <video id="videoresult" autobuffer  controls width="250" autoplay loop style="display:none;">
+        <source src="" id="videohere"/>
+    </video>
+    <br>
+    <span class="fa fa-close" style="font-size:25px; margin-top:5px;" onclick="javascript:document.getElementById('imageFrame').style.display='none';"></span>
+    <span class="fa fa-check" style="font-size:25px; margin-top:5px; color:red; margin-left:30px;" onclick="javascript:okay();"></span>
+</div>
+
+<div id="photo" style="height:auto; position:fixed; left:15%; top:15%; float:middle; transform:translate(-50%, -50%); width:100px; z-index:100;">
+    <img src="{% if friend.photo_url %}{{friend.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+    <div id="st" style="color: red; font-size:16px; padding:3% 3% 3% 3%; min-width:60px; text-align:center; height:auto;
+        border-radius:3px; margin-top:3px; background-color:white; display:none;"></div>
+</div>
+
+<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+
+<div style="width:100%; height:auto;">
+
+    <div style="font-size:25px; font-weight:800; margin-top:10px;
+        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">{{last_conf.name}}</div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3" style="text-align:center;">
+
+            <div style="margin-bottom:20px;">
+                <div style="color:white; font-size:18px; font-weight:500; margin-top:3px; font-family:verdana;">
+                    {% if group %}{{group.name}}{% elif cohort %}{{cohort}}{% else %}{% endif %}
+                </div>
+            </div>
+
+            <input name="conf_id" id="conf_id" value="{{last_conf.pk}}" hidden>
+
+            {% if last_conf.status != 'notified' %}
+                <center><img src="/static/images/processing.gif" style="width:60px; height:30px; z-index:100; display: none;" id="gif2"></center>
+                <button type="button" id="notifyButton" class="bouton-update" onclick="javascript:notifyToGroup();">Notify</button>
+                <form id="notifyform" action="/manager/conference_notify" method="POST" enctype="multipart/form-data" style="display:none;"></form>
+                <script>
+                    function notifyToGroup(){
+                        document.getElementById('gif2').style.display = "block";
+                        var cohrt = document.getElementById('chrt').value;
+                        var g_id = document.getElementById('groupid').value;
+                        var conf_id = document.getElementById('conf_id').value;
+                        var form = document.getElementById('notifyform');
+                        var formData = new FormData(form);
+                        formData.append('group_id', g_id);
+                        formData.append('cohort', cohrt);
+                        formData.append('conf_id', conf_id);
+                        formData.append('csrfmiddlewaretoken', '{% csrf_token %}');
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                              showToast();
+                              document.getElementById('notifyButton').style.display = "none";
+                              document.getElementById('gif2').style.display = "none";
+                            }
+                        };
+                        xhr.open('POST', form.getAttribute('action'), true);
+                        xhr.send(formData);
+                    }
+                </script>
+            {% endif %}
+
+            <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
+                <a href="javascript:void(0);" onclick="javascript:toggleMyConferencesForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
+                    My Conferences
+                    <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow"></span>
+                </a>
+
+                <script>
+                    var showF = false;
+                    var ii = 0;
+                    function toggleMyConferencesForm(){
+                        ii++;
+                        if(showF == true){
+                            showF = false;
+                            document.getElementById('myconfsform').style.display='none';
+                            $('#arrow').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                        }else{
+                            showF = true;
+                            document.getElementById('myconfsform').style.display='block';
+                            if(ii > 1) $('#arrow').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
+                            else $('#arrow').addClass('glyphicon glyphicon-menu-up');
+                        }
+                    }
+                </script>
+
+                <div id="myconfsform" style="display:none; margin-top:15px;">
+
+                    {% if confs %}
+                        <div style="width:100%; max-height:70%; padding-top:1%; padding-bottom:3%; float:left; overflow:auto;" class="conf-frame">
+                            {% for conf in confs %}
+                            <div class="conf-form">
+                                <div class="contentform">
+                                    <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                        <div style="padding:10px; float:left; position:relative;">
+                                            <a href="#">
+                                                <img src="{% if conf.type == 'live' %}/static/images/video/live-icon.jpg{% elif conf.type == 'file' %}/static/images/video/video-icon.jpg{% elif conf.type == 'youtube' %}/static/images/video/youtube-icon.jpg{% else %}{% endif %}"
+                                                    style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                            </a>
+                                        </div>
+                                        <a href="/manager/open_conference?conf_id={{conf.pk}}&group_id={{conf.group_id}}&cohort={{cohort}}" style="flex-grow:1;">
+                                            <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                                {{conf.name}}
+                                                <div style="font-size:12px;">{{conf.event_time}}</div>
+                                            </div>
+                                        </a>
+                                        <div style="float:right; margin:5px;">
+                                            <a href="/manager/delconf?conf_id={{conf.pk}}" style="background-color:transparent; margin-left:15px;">
+                                                <span class="fa fa-close" aria-hidden="true" style="color:white; font-size:20px;" onclick="return confirm('Are you sure you want to remove this conference?')"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {%else %}
+                            <div style="width:100%; text-align:center;">
+                                <br>
+                                <br>
+                                <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No conference created ...</h4>
+                            </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <fieldset style="border:2px solid white; text-align:center; margin-top:20px;">
+                <legend style="color:white; font-size:20px;">Recorded Video</legend>
+                <video id="video" autobuffer  controls autoplay loop>
+                    <source src="{{last_conf.video_url}}"/>
+                </video>
+            </fieldset>
+
+        </div>
+
+        <div class="col-sm-6" style="margin-bottom:20px;">
+
+
+            <div id="meet" style="width:100%; height:auto; margin-top:20px;"></div>
+
+            <script>
+
+                var myId = '{{me.pk}}_{{me.pk}}';
+
+                const domain = 'meet.jit.si';
+                var height = 750;
+                const options = {
+                    roomName: 'motherwise_{{last_conf.pk}}',
+                    // width: 700,
+                    height: height,
+                    parentNode: document.querySelector('#meet'),
+                    interfaceConfigOverwrite: { TILE_VIEW_MAX_COLUMNS: 4, HIDE_INVITE_MORE_HEADER: true },
+                    userInfo: {
+                        participantId: myId,
+                        // email: 'email@jitsiexamplemail.com',
+                        displayName: '{{me.name}}'
+                    }
+                };
+                const api = new JitsiMeetExternalAPI(domain, options);
+                api.executeCommand('avatarUrl', '{{me.photo_url}}');
+                // api.executeCommand('setVideoQuality', 1024);
+            </script>
+
+
+        </div>
+
+        <div class="col-sm-3" id="chat-layout">
+            <div>
+
+                <div style="display:flex;">
+                    <div style="flex-grow:1;"></div>
+                    <button type="button" style="border:0; background-color:transparent; color:white; text-decoration:underline;" onclick="javascript:openMemberList();">
+                        View All Members<span class="fa fa-angle-right" style="margin-left:5px; color:white;"></span>
+                    </button>
+                </div>
+
+                <script>
+
+                    function openMemberList(){
+                        document.getElementById('chat-layout').style.display = 'none';
+                        document.getElementById('member-list').style.display = 'block';
+                    }
+
+                </script>
+
+                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; z-index:100; display: none;" id="gif"></center>
+
+                <!--////////////////////////////////-->
+
+                <div id="chat-form">
+                    <center>
+                        <div id="userList" style="width:100%; text-align:center; height:auto;">
+                            <div id="user-scroll-layout" class="dragscroll" style="white-space: nowrap; overflow-y: hidden; overflow: auto; cursor: grab; cursor : -o-grab; cursor : -moz-grab; cursor : -webkit-grab;">
+                                <!--{% for member in members %}-->
+                                <!--<div class="slide">-->
+                                <!--    <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:50px; height:50px; margin-left:5px; float:left; border-radius:50%;" onclick="">-->
+                                <!--</div>-->
+                                <!--{% endfor %}-->
+                            </div>
+                        </div>
+                    </center>
+                    <div class="chat-contentform">
+                        <div class="chat-formcontent">
+                            <div id="chat_log">
+                                <div id="list" aria-placeholder="No message ..."></div>
+                            </div>
+                            <div id="send-form" style="width:101%; margin-bottom: 15%; margin-top:5px;">
+                                <input type="hidden" id="sender_name" value="{{me.name}}">
+                                <input type="hidden" id="sender_id" value="{{me.pk}}">
+                                <input type="hidden" id="sender_email" value="{{me.email}}">
+                                <input type="hidden" id="sender_photo" value="{{me.photo_url}}">
+                                <input type="hidden" id="group" value="{% if group %}{{me.pk}}gr{{group.pk}}conf{{last_conf.pk}}{% elif cohort %}{{me.pk}}{{cohort}}conf{{last_conf.pk}}{% endif %}">
+                                <input type="hidden" id="groupid" value="{% if group %}{{group.pk}}{% endif %}">
+                                <input type="hidden" id="chrt" value="{% if cohort %}{{cohort}}{% endif %}">
+                                <input type="hidden" id="type" value="">
+                                <input type="hidden" id="lat" value="{% if lat %}{{lat}}{% else %}{% endif %}">
+                                <input type="hidden" id="lng" value="{% if lng %}{{lng}}{% else %}{% endif %}">
+                                <div style="width:99%; margin-bottom:5px; display:none;" id="panel">
+                                    <table  style="width:100%;">
+                                        <tr style="background-color:#993333;">
+                                            <td class="attach-button">
+                                                <label class="button" id="picture-btn" style="background:transparent; border:0;"><i class="fa fa-image" style="font-size:22px;"></i>
+                                                    <input type="file" name="photo" value="http://lorempixel.com/100/100/people/9" id="picture" accept="image/*"/>
+                                                </label>
+                                            </td>
+                                            <script>
+                                                function readFile() {
+
+            			                            if (this.files && this.files[0]) {
+
+            					                        var FR= new FileReader();
+
+            					                        FR.addEventListener("load", function(e) {
+            					                            document.getElementById("imageFrame").style.display = "block";
+            					                            document.getElementById("image_message").style.display = "block";
+            					                            document.getElementById("videoresult").style.display = "none";
+             							                    document.getElementById("image_message").src       = e.target.result;
+                                                            document.getElementById("type").value = 'picture';
+                                                            show_panel();
+            					                        });
+
+            					                        FR.readAsDataURL( this.files[0] );
+
+            					                        file = this.files[0];
+
+                                                        ImageTools.resize(this.files[0], {
+               							                    width: 200, // maximum width
+               							                    height: 200 // maximum height
+            						                    }, function(blob, didItResize) {
+               							                    // didItResize will be true if it managed to resize it, otherwise false (and will return the original file as 'blob')
+               							                    document.getElementById('output').src = window.URL.createObjectURL(blob);
+               							                    // you can also now upload this blob using an XHR.
+            					                        });
+            			                            }
+
+                                                }
+
+                                                document.getElementById("picture").addEventListener("change", readFile);
+                                            </script>
+
+                                            <td class="attach-button">
+                                                <label class="button" id="video-btn" style="background:transparent; border:0;"><i class="fa fa-video-camera" style="font-size:22px;"></i>
+                                                    <input type="file" name="video" value="http://lorempixel.com/100/100/people/9" id="videofile" accept="video/*" style="display:none;"/>
+                                                </label>
+                                            </td>
+                                            <script>
+                                                var file;
+                                                $(document).on("change", "#videofile", function(evt) {
+                                                    var $source = $('#videohere');
+                                                    $source[0].src = URL.createObjectURL(this.files[0]);
+                                                    $source.parent()[0].load();
+                                                    file = this.files[0];
+                                                    document.getElementById("imageFrame").style.display = "block";
+            					                    document.getElementById("image_message").style.display = "none";
+            					                    document.getElementById("videoresult").style.display = "block";
+            					                    document.getElementById("type").value = 'video';
+            					                    show_panel();
+                                                });
+            				                </script>
+
+            				                <td class="attach-button">
+            				                    <label class="button" id="file-btn" style="background:transparent; border:0;"><i class="fa fa-folder-open" style="font-size:22px;"></i>
+                                                    <input type="file" name="allfile" value="http://lorempixel.com/100/100/people/9" id="allfile" style="display:none;"/>
+                                                </label>
+            				                </td>
+
+                                        </tr>
+                                        <tr style="display:none;">
+                                            <td class="attach-button"><label class="button" id="location-btn" onclick="chat_map()"><i class="fa fa-location-arrow"></i>Location</label></td>
+                                            <td class="attach-button">
+                                                                        <!--onclick="open_panel()"-->
+                                                <label class="button" id="audio-btn" onclick="open_panel()"><i class="fa fa-volume-up"></i>Audio
+                                                    <!--<input type="file" style="display:none;" accept="audio/*" id="audio">-->
+                                                </label>
+                                            </td>
+                                            <!--<script>-->
+                                                <!--var file3;-->
+                                                <!--$(document).on("change", "#audio", function(evt) {-->
+                                                    <!--file3 = this.files[0];-->
+            					                    <!--document.getElementById("type").value = 'file';-->
+            					                    <!--uploadFile(file3);-->
+                                                <!--});-->
+            				                <!--</script>-->
+                                        </tr>
+                                    </table>
+                                    <center>
+                                        <div id="audio-panel" style="display:none;">
+                                            <audio controls autoplay></audio>
+                		                    <script type="text/javascript" src="/static/js/recorder.js"> </script>
+                                            <fieldset style="margin:10px; border:2px solid white;">
+                                                <legend style="color:white; font-size:18px; font-weight:600;">RECORD AUDIO</legend>
+                		                        <input onclick="javascript:startRecording();" type="button" value="start recording" style="border-radius:8px; background:#86592d; color:white; padding:6px 15px;"/>
+                		                        <input onclick="javascript:stopRecording();" type="button" value="stop recording" style="border-radius:8px; background:#86592d; color:white; padding:6px 15px;"/>
+                                            </fieldset>
+                                        </div>
+
+                                        <!--<label class="button" id="file-btn" style="width:99%; height:42px;"><i class="fa fa-folder-open"></i>All Files-->
+                                        <!--        <input type="file" name="allfile" value="http://lorempixel.com/100/100/people/9" id="allfile" style="display:none;"/></label>-->
+                                    </center>
+                                            <script>
+                                                var file2;
+                                                $(document).on("change", "#allfile", function(evt) {
+                                                    file2 = this.files[0];
+            					                    document.getElementById("type").value = 'file';
+            					                    uploadFile(file2);
+            					                    show_panel();
+                                                });
+            				                </script>
+                                </div>
+                                <div style="width:100%; display:inline-block; position:relative;">
+                                    <input type="text" required id="message" placeholder="Write something here..." oninput="myFunction()"
+                                       style="width:90%; height:42px; border: 0; padding: 0px 10px; color:white; background-color:transparent; font-size:18px; border-bottom: 1.5px solid white; outline: 0;">
+                                    <img src="/static/images/ic_attachment.png" id="attachment-btn" style="height:42px; width:42px; right:0; top:0; position:absolute; display:block;" onclick="show_panel()">
+                                    <button type="submit" class="send" id="submitBtn" onclick="submitClick()" style="height:42px; width:42px; right:0; top:0; position:absolute; display:none;
+                                        color: #FFF; text-align: center; font-size: 22px; background-color:transparent; border:0;"><span class="glyphicon glyphicon-send" aria-hidden="true" ></span></button>
+                                </div>
+
+                                <script>
+                                    var inputBox = document.getElementById("message");
+                                    inputBox.addEventListener("keyup", function(event) {
+                                      if (event.keyCode === 13) {
+                                          event.preventDefault();
+                                          document.getElementById("submitBtn").click();
+                                      }
+                                    });
+
+                                </script>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--//////////////////////////////////-->
+
+            </div>
+        </div>
+
+        <div class="col-sm-3" id="member-list" style="display:none;">
+
+            <div style="display:flex;">
+                <div style="flex-grow:1;"></div>
+                <button type="button" style="border:0; background-color:transparent; color:white; text-decoration:underline;" onclick="javascript:openChat();">
+                    Open chat<span class="fa fa-angle-right" style="margin-left:5px; color:white;"></span>
+                </button>
+            </div>
+
+            <script>
+
+                function openChat(){
+                    document.getElementById('chat-layout').style.display = 'block';
+                    document.getElementById('member-list').style.display = 'none';
+                }
+
+            </script>
+
+            <div style="width:100%; margin:10px; position:relative;">
+                <div style="color:white; font-size:18px; font-family:verdana;">
+                    Group Members
+                </div>
+                <span class="fas fa-comment-alt" aria-hidden="true" style="position:absolute; left:220px; top:0px; color:red; font-size:20px; display:none;" id="chatnotibadge"></span>
+            </div>
+
+            {% if members %}
+                <div style="width:100%; max-height:80%; padding-top:1%; padding-bottom:15%; overflow:auto;" id="form">
+                    {% for member in members %}
+                    <div class="user-form">
+                        <input type="hidden" id="member_email" value="{{member.email}}">
+                        <div class="contentform">
+                            <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                <div style="padding:10px; float:left; position:relative;">
+                                    <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                                        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                                    </a>
+                                    <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:16px; display:none;" id="badge"></span>
+                                </div>
+                                <a href="#" style="flex-grow:1;">
+                                    <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        {{member.name}}
+                                        <div style="font-size:12px;">{{member.cohort}}</div>
+                                    </div>
+                                </a>
+
+                                <a href="javascript:void(0)" style="background-color:transparent; margin:3px 0px 0px 10px;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
+                                    <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px;"></span>
+                                </a>
+
+                                <a href="/manager/group_private_chat?email={{member.email}}" target="_blank" style="background-color:transparent; margin:3px 10px 0px 15px;">
+                                    <span class="fa fa-comments" aria-hidden="true" style="color:white; font-size:20px;"></span>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            {%else %}
+                    <div style="width:100%; text-align:center;">
+                        <br>
+                        <br>
+                        <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No member in group ...</h4>
+                    </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:50%; display:none;">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE TO GROUP<br>
+                    <div style="color:green; font-size:14px; font-weight:600;">{% if group %}{{group.name}}{% elif cohort %}{{cohort}}{% endif %}</div></div><br>
+            <form action="/manager/group_chat_message/" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea"));</script>
+                </div>
+                <input hidden id="group_id" name="group_id" value="{% if group %}{{group.pk}}{% elif cohort %}{{cohort}}{% endif %}">
+                <input hidden id="option" name="option" value="{% if group %}group{% elif cohort %}cohort{% endif %}">
+                <center>
+                    <button type="submit" class="bouton-update" style="width:60%; margin-bottom:20px;">Submit</button>
+                </center>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<div id="snackbar">Notified this conference to the group</div>
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 || document.getElementById("form").scrollTop > 20) {
+        document.getElementById('myBtn').style.display = "block";
+    } else {
+        document.getElementById('myBtn').style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.getElementById("member-list").scrollTop = 0;
+}
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.conf-frame #date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+   });
+});
+
+function showToast() {
+    var x = document.getElementById("snackbar");
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+</script>
+
+
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDveaXbV1HHMREyZzbvQe53BJEHVIRCf14",
+    authDomain: "motherwise-1585202524394.firebaseapp.com",
+    databaseURL: "https://motherwise-1585202524394.firebaseio.com",
+    projectId: "motherwise-1585202524394",
+    storageBucket: "motherwise-1585202524394.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
+<!--<script src="/static/js/chat/admin_group_chat.js"></script>-->
+
+<script>
+
+    var flag = false;
+    var aflag = false;
+    function show_panel(){
+        if (flag){
+            flag = false; document.getElementById("panel").style.display = "none";
+            document.getElementById("attachment-btn").src = '/static/images/ic_attachment.png';
+            document.getElementById("audio-panel").style.display = "none";
+        }else {
+            flag = true; document.getElementById("panel").style.display = "block";
+            document.getElementById("attachment-btn").src = '/static/images/cancelicon.png';
+            // document.body.scrollTop = 1000;
+            // document.documentElement.scrollTop = 1000;
+        }
+    }
+
+    function open_panel(){
+        if (aflag){
+            aflag = false;
+            document.getElementById("audio-panel").style.display = "none";
+        }else {
+            aflag = true;
+            document.getElementById("audio-panel").style.display = "block";
+            document.body.scrollTop = 1000;
+            document.documentElement.scrollTop = 1000;
+        }
+    }
+
+    function chat_map(){
+        window.location.href = "/map_chat";
+    }
+
+    if (document.getElementById("lat").value.length > 0 && document.getElementById("lng").value.length > 0){
+
+        document.getElementById("imageFrame").style.display = "block";
+	    document.getElementById("image_message").style.display = "block";
+	    document.getElementById("videoresult").style.display = "none";
+ 	    document.getElementById("image_message").src = "/static/images/mapimage.jpg";
+ 	    document.getElementById("type").value = 'map';
+    }
+
+</script>
+
+<script>
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('#conf-form #date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+   });
+});
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+</script>
+
+<script>
+
+ window.URL = window.URL || window.webkitURL;
+ navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+ var recorder;
+ var audio = document.querySelector('audio');
+
+ function startRecording() {
+//  window.location.href = "/recorder";
+  if (navigator.getUserMedia) {
+   navigator.getUserMedia({audio: true}, onSuccess, onFail);
+  } else {
+   console.log('navigator.getUserMedia not present');
+  }
+ }
+
+ function stopRecording() {
+  recorder.stop();
+  recorder.exportWAV(function(s) {
+    audio.src = window.URL.createObjectURL(s);
+    audio.play(); //call this to play the song right away
+    uploadAudio(audio.src);
+  });
+ }
+
+ var onFail = function(e) {
+  console.log('Rejected!', e);
+ };
+
+ var onSuccess = function(s) {
+  var context = new webkitAudioContext();
+  var mediaStreamSource = context.createMediaStreamSource(s);
+  recorder = new Recorder(mediaStreamSource);
+  recorder.record();
+
+  // audio loopback
+  // mediaStreamSource.connect(context.destination);
+ }
+
+ function uploadAudio(url){
+  fetch(url)
+  .then(res => res.blob()) // Gets the response and returns it as a blob
+  .then(blob => {
+    // Here's where you get access to the blob
+    // And you can use it for whatever you want
+    // Like calling ref().put(blob)
+
+    // Here, I use it to make an image appear on the page
+    document.getElementById("type").value = 'audio';
+    uploadFile(blob);
+  });
+ }
+
+</script>
+
+<script>
+
+function dismissLayouts(){
+    document.getElementById('messageBox').style.display='none';
+    document.getElementById('backgroundOverlay').style.display='none';
+}
+
+function openMessageBox(){
+    dismissLayouts();
+    document.getElementById('messageBox').style.display='block';
+    document.getElementById('backgroundOverlay').style.display='block';
+}
+
+
+</script>
+
+
+<script>
+
+var sender_id = document.getElementById("sender_id").value;
+//var user_id = document.getElementById("user_id").value;
+var sender_name = document.getElementById("sender_name").value;
+var sender_email = document.getElementById("sender_email").value;
+var sender_photo = document.getElementById("sender_photo").value;
+var group = document.getElementById("group").value;
+var message = document.getElementById("message");
+var submitBtn = document.getElementById("submitBtn");
+var chat_log = document.getElementById("chat_log");
+var online = document.getElementById("online");
+var st = document.getElementById("st");
+
+var chrt = document.getElementById("chrt").value;
+var groupid = document.getElementById("groupid").value;
+
+var attachBtn = document.getElementById("attachment-btn");
+
+var userList = [];
+var noteList = [];
+
+var semail = sender_email;
+
+sender_email = sender_email.replace(/\./g,"ddoott");
+
+firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+firebase.database().ref('gmusers' + group + '/' + sender_email).push().set({
+    sender_name: sender_name,
+    sender_email: semail,
+    sender_photo: sender_photo,
+    sender_id: sender_id
+});
+
+function submitClick(){
+    var messageText = message.value;
+    var time = new Date().getTime();
+    if (messageText.length > 0){
+        firebase.database().ref('gmmsg' + group).push().set({
+            sender_id: sender_id,
+            sender: sender_name,
+            sender_email: semail,
+            sender_photo: sender_photo,
+            message: messageText,
+            image:'',
+            video:'',
+            lat:'',
+            lon:'',
+            time: time
+        });
+
+ //       firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
+        firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
+            sender_id: sender_id,
+            sender: sender_name,
+            sender_email: semail,
+            sender_photo: sender_photo,
+            cohort:chrt,
+            groupid:groupid,
+            message: messageText,
+            time: time
+        });
+
+        document.getElementById("message").value = "";
+
+        attachBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+
+    }else {
+        window.alert("Please write something...");
+    }
+}
+
+var monthes=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+var starCountRef = firebase.database().ref('gmmsg' + group);
+starCountRef.on('child_added', function(snapshot) {
+  var new_post = snapshot.val();
+  var mes = new_post.message;
+  var image = new_post.image;
+  var video = new_post.video;
+  var lat = new_post.lat;
+  var lng = new_post.lon;
+
+  if (mes.length > 0){
+      var time = parseInt(new_post.time);
+
+      var date = new Date(time);
+
+      var seconds = date.getSeconds();
+      var minutes = date.getMinutes();
+      var hours = date.getHours();
+//
+      var year = date.getFullYear();
+      var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+      var day = date.getDate();
+
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+      var yearStr = year.toString();
+
+      if(day < 10)
+            timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+        else
+            timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+    //   var oneMinuteMilliseconds = 60000;
+    //   var oneHourMilliseconds = 3600000;
+    //   var oneDayMilliseconds = 24*3600*1000;
+    //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+    //   var now = Date.now();
+
+    //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+    //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+    //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+    //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+      var ul = document.getElementById("list");
+      if (new_post.sender_email == semail){
+
+           var li = document.createElement("div");
+           li.style.color = 'white';
+           li.style.fontSize = '16';
+           li.style.paddingRight = '15';
+           li.style.paddingLeft = '15';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#2390f6';
+           li.style.borderTopLeftRadius = '20px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '20px';
+           li.style.borderBottomRightRadius = '0px';
+           li.style.maxWidth = "500";
+           li.style.display = 'inline-block';
+           li.innerHTML = urlify(mes);
+           if(!mes.includes('http'))li.style.wordBreak = "word";
+           li.style.textAlign = 'left';
+
+           if (video.length > 0){
+                if (!mes.includes("Please review the information. If you have questions, you can reply directly to the customer. If you want to accept or decline, please click here.")){
+                    li.style.position = 'relative';
+                    var mark = document.createElement("img");
+                    mark.src = '/static/images/fileicon.png';
+                    mark.style.width = '33';
+                    mark.style.height = '35';
+                    mark.style.position = 'absolute';
+                    mark.style.top = '0px';
+                    mark.style.left = '-40px';
+                    li.appendChild(mark);
+
+                    li.onclick = function(){
+                        if (video.length > 0){
+                            window.open(video);
+                        }
+                    }
+                }
+           }
+
+           var ul2 = document.createElement("div");
+           ul2.append(li);
+
+           ul2.style.textAlign = 'right';
+        //   ul.appendChild(ul2);
+
+           ul.insertBefore(ul2, ul.childNodes[0]);
+
+           var lli = document.createElement("div");
+           lli.style.color = 'black';
+           lli.style.fontSize = '12';
+           lli.style.display = 'inline-block';
+           lli.innerHTML = timeStr;
+           lli.style.textAlign = 'left';
+           var ull2 = document.createElement("div");
+
+           ull2.append(lli);
+           ull2.style.textAlign = 'right';
+
+        //   ul.appendChild(ull2);
+
+           ul.insertBefore(ull2, ul.childNodes[0]);
+
+      }else {
+
+           var img = document.createElement("img");
+           img.style.width = "40px";
+           img.style.height = "40px";
+           img.style.borderRadius = '50%';
+           if(new_post.sender_photo != '') img.src = new_post.sender_photo;
+           else img.src = '/static/images/ic_profile.png';
+           img.classList.add("cropping");
+           var aa = document.createElement("div");
+           aa.appendChild(img);
+           aa.style.textAlign = 'right';
+
+           var bb = document.createElement("div");
+           bb.style.color = 'orange';
+           bb.style.fontSize = '16px';
+           bb.style.fontWeight = '550';
+           bb.style.display = 'inline-block';
+           bb.innerHTML = new_post.sender;
+           bb.style.textAlign = 'left';
+
+           aa.appendChild(bb);
+           aa.style.display = 'inline-block';
+        //   ul.appendChild(aa);
+
+           ul.insertBefore(aa, ul.childNodes[0]);
+
+           var li = document.createElement("div");
+           li.style.textAlign = 'left';
+           li.style.color = 'black';
+           li.style.fontSize = '16';
+           li.style.paddingRight = '15';
+           li.style.paddingLeft = '15';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#e0ccff';
+           li.style.borderTopLeftRadius = '20px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '0px';
+           li.style.borderBottomRightRadius = '20px';
+           li.style.maxWidth = "500";
+           if(!mes.includes('http'))li.style.wordBreak = "word";
+           li.style.display = 'inline-block';
+           li.innerHTML = urlify2(mes);
+
+           if (video.length > 0){
+                if (!mes.includes("Please review the information. If you have questions, you can reply directly to the customer. If you want to accept or decline, please click here.")){
+                    li.style.position = 'relative';
+                    var mark = document.createElement("img");
+                    mark.src = '/static/images/fileicon.png';
+                    mark.style.width = '33';
+                    mark.style.height = '35';
+                    mark.style.position = 'absolute';
+                    mark.style.top = '0px';
+                    mark.style.right = '-40px';
+                    li.appendChild(mark);
+                    li.onclick = function(){
+                        if (video.length > 0){
+                            window.open(video);
+                        }
+                    }
+                }
+           }
+
+           if (mes.includes("Please review the information. If you have questions, you can reply directly to the customer. If you want to accept or decline, please click here.")){
+                var index = mes.indexOf("Thanks");
+                li.innerHTML = mes.substring(0, index-1) + "\n";
+
+                var accept = document.createElement('a');
+                accept.style.textAlign = 'center';
+                accept.style.color = 'red';
+                accept.style.fontSize = '18';
+                accept.style.paddingRight = '10';
+                accept.style.paddingLeft = '10';
+                accept.style.paddingTop = '10';
+                accept.style.paddingBottom = '10';
+                accept.style.backgroundColor = '#e0d0f6';
+                accept.style.display = 'inline-block';
+
+                accept.setAttribute('href',"javascript:accept('accepted', lat, lng, video);");
+                accept.innerHTML = "Accept";
+
+                li.appendChild(accept);
+
+                accept.onclick = function(){
+                   send_msg('accepted', lat, lng, video);
+                }
+
+                var decline = document.createElement("a");
+                decline.style.textAlign = 'center';
+                decline.style.color = 'red';
+                decline.style.fontSize = '18';
+                decline.style.paddingRight = '10';
+                decline.style.paddingLeft = '10';
+                decline.style.paddingTop = '10';
+                decline.style.paddingBottom = '10';
+                decline.style.backgroundColor = '#e0d0f6';
+                decline.style.display = 'inline-block';
+                decline.style.marginLeft = "50";
+                decline.setAttribute('href',"javascript:accept('declined', lat, lng, video);");
+                decline.innerHTML = "Decline";
+                li.appendChild(decline);
+
+                decline.onclick = function(){
+                   send_msg('declined', lat, lng, video);
+                }
+
+                var footer = document.createElement("div");
+                footer.style.textAlign = 'left';
+                footer.style.color = 'black';
+                footer.style.fontSize = '16';
+                footer.style.paddingRight = '10';
+                footer.style.paddingLeft = '10';
+                footer.style.paddingTop = '10';
+                footer.style.paddingBottom = '10';
+                footer.style.backgroundColor = '#e0d0f6';
+                footer.style.maxWidth = "300";
+                footer.style.display = 'inline-block';
+                footer.innerHTML = mes.substring(index, mes.length);
+                li.appendChild(footer);
+           }
+
+           var ul3 = document.createElement("div");
+           ul3.append(li);
+
+        //   ul.appendChild(ul3);
+
+           ul.insertBefore(ul3, ul.childNodes[0]);
+
+           var llli = document.createElement("div");
+           llli.style.textAlign = 'left';
+           llli.style.color = 'black';
+           llli.style.fontSize = '12';
+
+           llli.style.display = 'inline-block';
+           llli.innerHTML = timeStr;
+           var ull3 = document.createElement("div");
+
+           ull3.append(llli);
+        //   ul.appendChild(ull3);
+
+           ul.insertBefore(ull3, ul.childNodes[0]);
+
+      }
+
+      chat_log.scrollTop = 0;
+  }
+
+  if(image.length > 0){
+      var time = parseInt(new_post.time);
+
+      var date = new Date(time);
+
+      var seconds = date.getSeconds();
+      var minutes = date.getMinutes();
+      var hours = date.getHours();
+//
+      var year = date.getFullYear();
+      var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+      var day = date.getDate();
+
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+      var yearStr = year.toString();
+
+      if(day < 10)
+            timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+        else
+            timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+    //   var oneMinuteMilliseconds = 60000;
+    //   var oneHourMilliseconds = 3600000;
+    //   var oneDayMilliseconds = 24*3600*1000;
+    //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+    //   var now = Date.now();
+
+    //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+    //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+    //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+    //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+      var ul = document.getElementById("list");
+      if (new_post.sender_email == semail){
+
+           var img = document.createElement("img");
+
+           img.style.width = "200";
+           img.style.height = "auto";
+           img.style.maxHeight = "200";
+           img.style.borderTopLeftRadius = '10px';
+           img.style.borderTopRightRadius = '10px';
+           img.style.borderBottomLeftRadius = '10px';
+           img.style.borderBottomRightRadius = '0px';
+           img.style.display = 'inline-block';
+           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
+           else img.src = image;
+           img.classList.add("cropping");
+
+           var li = document.createElement("div");
+
+           li.style.paddingRight = '10';
+           li.style.paddingLeft = '10';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#2390f6';
+           li.style.borderTopLeftRadius = '20px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '20px';
+           li.style.borderBottomRightRadius = '0px';
+           li.style.maxWidth = "300";
+           li.style.display = 'inline-block';
+           li.appendChild(img);
+
+           if (video.length > 0){
+                li.style.position = 'relative';
+                var mark = document.createElement("img");
+                mark.src = '/static/images/playbutton.png';
+                mark.style.width = '40';
+                mark.style.height = '30';
+                mark.style.position = 'absolute';
+                mark.style.top = '40%';
+                mark.style.right = '40%';
+                li.appendChild(mark);
+           }
+
+           li.onclick = function(){
+              if (video.length > 0){
+                  window.open(video, '_blank');
+              }else{
+                  if (lat.length > 0){
+                      window.location.href = "/show_chatloc?latlng=" + String(lat) + "_" + String(lng);
+                  }
+                  else{
+                      window.open(image, '_blank');
+                  }
+              }
+           }
+
+           var ul2 = document.createElement("div");
+
+           ul2.append(li);
+           ul2.style.textAlign = 'right';
+        //   ul.appendChild(ul2);
+
+           ul.insertBefore(ul2, ul.childNodes[0]);
+
+           var lli = document.createElement("div");
+           lli.style.color = 'black';
+           lli.style.fontSize = '12';
+           lli.style.display = 'inline-block';
+           lli.innerHTML = timeStr;
+           lli.style.textAlign = 'left';
+           var ull2 = document.createElement("div");
+
+           ull2.append(lli);
+           ull2.style.textAlign = 'right';
+
+        //   ul.appendChild(ull2);
+
+           ul.insertBefore(ull2, ul.childNodes[0]);
+
+      }else {
+
+           var img = document.createElement("img");
+           img.style.width = "40px";
+           img.style.height = "40px";
+           img.style.borderRadius = '50%';
+           if(new_post.sender_photo != '') img.src = new_post.sender_photo;
+           else img.src = '/static/images/ic_profile.png';
+           img.classList.add("cropping");
+           var aa = document.createElement("div");
+           aa.appendChild(img);
+           aa.style.textAlign = 'right';
+
+           var bb = document.createElement("div");
+           bb.style.color = 'orange';
+           bb.style.fontSize = '16px';
+           bb.style.fontWeight = '550';
+           bb.style.display = 'inline-block';
+           bb.innerHTML = new_post.sender;
+           bb.style.textAlign = 'left';
+
+           aa.appendChild(bb);
+           aa.style.display = 'inline-block';
+        //   ul.appendChild(aa);
+
+           ul.insertBefore(aa, ul.childNodes[0]);
+
+           var img = document.createElement("img");
+
+           img.style.width = "200";
+           img.style.height = "auto";
+           img.style.maxHeight = "200";
+           img.style.borderTopLeftRadius = '10px';
+           img.style.borderTopRightRadius = '10px';
+           img.style.borderBottomLeftRadius = '0px';
+           img.style.borderBottomRightRadius = '10px';
+           img.style.display = 'inline-block';
+           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
+           else img.src = image;
+           img.classList.add("cropping");
+
+           var li = document.createElement("div");
+
+           li.style.paddingRight = '10';
+           li.style.paddingLeft = '10';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#e0ccff';
+           li.style.borderTopLeftRadius = '20px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '0px';
+           li.style.borderBottomRightRadius = '20px';
+           li.style.maxWidth = "300";
+           li.style.display = 'inline-block';
+           li.appendChild(img);
+
+           if (video.length > 0){
+                li.style.position = 'relative';
+                var mark = document.createElement("img");
+                mark.src = '/static/images/playbutton.png';
+                mark.style.width = '40';
+                mark.style.height = '30';
+                mark.style.position = 'absolute';
+                mark.style.top = '40%';
+                mark.style.right = '40%';
+                li.appendChild(mark);
+           }
+
+           li.onclick = function(){
+              if (video.length > 0){
+                   window.open(video, '_blank');
+              }else{
+                  if (lat.length > 0){
+                      window.location.href = "/show_chatloc?latlng=" + String(lat) + "_" + String(lng);
+                  }
+                  else{
+                      window.open(image, '_blank');
+                  }
+              }
+           }
+
+           var ul3 = document.createElement("div");
+
+           ul3.append(li);
+        //   ul.appendChild(ul3);
+
+           ul.insertBefore(ul3, ul.childNodes[0]);
+
+           var llli = document.createElement("div");
+           llli.style.textAlign = 'left';
+           llli.style.color = 'black';
+           llli.style.fontSize = '12';
+
+           llli.style.display = 'inline-block';
+           llli.innerHTML = timeStr;
+           var ull3 = document.createElement("div");
+
+           ull3.append(llli);
+        //   ul.appendChild(ull3);
+
+           ul.insertBefore(ull3, ul.childNodes[0]);
+
+      }
+
+      chat_log.scrollTop = 0;
+  }
+
+  chat_log.scrollTop = 0;
+
+});
+
+
+var dragscroll = document.getElementById("user-scroll-layout");
+
+setInterval(refreshUsers, 5000);
+
+function refreshUsers(){
+
+dragscroll.innerHTML = "";
+
+var starCountRef = firebase.database().ref('gmusers' + group);
+starCountRef.on('child_added', function(snapshot) {
+    var starCountRef2 = firebase.database().ref('gmusers' + group + "/" + snapshot.key);
+    starCountRef2.on('child_added', function(snapshot2) {
+        var user_info = snapshot2.val();
+        var sender_name = user_info.sender_name;
+        var sender_email = user_info.sender_email;
+        var sender_photo = user_info.sender_photo;
+
+        var slide = document.createElement("div");
+        slide.style.display = 'inline-block';
+        slide.style.padding = '2px'
+
+        var img = document.createElement("img");
+        if (sender_photo.length > 0) img.src = sender_photo;
+        else img.src = "/static/images/ic_profile.png";
+        img.style.width = "50";
+        img.style.height = "50";
+        img.style.borderRadius = "50%";
+        img.classList.add("cropping");
+        slide.append(img);
+
+        slide.onclick = function(){
+            // firebase.database().ref('gmusers' + group + '/' + semail).remove();
+            // window.location.href = "/meet/" + snapshot.key;
+        }
+
+        dragscroll.appendChild(slide);
+
+        if(!userList.includes(user_info.sender_id) && user_info.sender_id != sender_id) {
+            userList.push(user_info.sender_id);
+        }
+    });
+});
+
+}
+
+
+
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:yellow; word-break: break-all;">' + url + '</a>';
+    })
+}
+
+function urlify2(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:red; word-break: break-all;">' + url + '</a>';
+    })
+}
+
+//window.onload = function () {
+//    if (typeof history.pushState === "function") {
+//        history.pushState("jibberish", null, null);
+//        window.onpopstate = function () {
+//            if (confirm("Do you want to exit the room?")) {
+//                firebase.database().ref('status/' + user_id + '_' + sender_id).remove();
+//                firebase.database().ref('status/' + user_id + '_' + sender_id).push().set({
+//                    sender: sender_name,
+//                    time: new Date().getTime(),
+//                    online: 'offline'
+//                });
+//                history.go(-1);
+//            }
+//        };
+//
+//    }
+//};
+
+
+function myFunction() {
+
+    if(message.value.length > 0){
+        firebase.database().ref('gstatus' + group + '/' + sender_email).remove();
+        firebase.database().ref('gstatus' + group + '/' + sender_email).push().set({
+            user: semail,
+            time: new Date().getTime(),
+            online: 'is typing...'
+        });
+    }else {
+        firebase.database().ref('gstatus' + group + '/' + sender_email).remove();
+        firebase.database().ref('gstatus' + group + '/' + sender_email).push().set({
+            user: semail,
+            time: new Date().getTime(),
+            online: 'online'
+        });
+    }
+
+    isTyping();
+}
+
+
+function isTyping(){
+
+    if(message.value.length > 0){
+        attachBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+    }else{
+        attachBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+    }
+
+    // alert('is typing...');
+
+}
+
+
+
+function okay(){
+   var type = document.getElementById("type").value;
+   var image = getBase64Image(document.getElementById("image_message"));
+   var time = new Date().getTime();
+   if (type == 'picture'){
+
+       var progressBar = document.getElementById('gif');
+
+        progressBar.style.display = 'block';
+        document.getElementById("imageFrame").style.display = "none";
+
+        var storageRef = firebase.storage().ref();
+
+        var uploadTask = storageRef.child(file.name).put(file);
+        uploadTask.on('state_changed', function(snapshot){
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function(error) {
+            // Handle unsuccessful uploads
+        }, function() {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            var downloadURL = uploadTask.snapshot.downloadURL;
+
+            if (image.length > 0){
+                firebase.database().ref('gmmsg' + group).push().set({
+                    sender_id: sender_id,
+                    sender: sender_name,
+                    sender_email: semail,
+                    sender_photo: sender_photo,
+                    message: '',
+                    image:String(downloadURL),
+                    video:'',
+                    lat:'',
+                    lon:'',
+                    time: time
+                });
+
+                firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
+                firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
+                    sender_id: sender_id,
+                    sender: sender_name,
+                    sender_email: semail,
+                    sender_photo: sender_photo,
+                    cohort:chrt,
+                    groupid:groupid,
+                    message: 'Shared a file',
+                    time: time
+                });
+
+                progressBar.style.display = 'none';
+            }
+        });
+   }
+   else if (type == 'video'){
+
+//        var storageRef = firebase.storage().ref(file.name);
+//        storageRef.put(file);
+        var progressBar = document.getElementById('gif');
+
+        progressBar.style.display = 'block';
+        document.getElementById("imageFrame").style.display = "none";
+
+        var thumbnail = getThumbImage(document.getElementById('videoresult'));
+
+        var storageRef = firebase.storage().ref();
+
+        var uploadTask = storageRef.child(file.name).put(file);
+        uploadTask.on('state_changed', function(snapshot){
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function(error) {
+            // Handle unsuccessful uploads
+        }, function() {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            var downloadURL = uploadTask.snapshot.downloadURL;
+
+            firebase.database().ref('gmmsg' + group).push().set({
+                sender_id: sender_id,
+                sender: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                message: '',
+                image: thumbnail,
+                video: String(downloadURL),
+                lat:'',
+                lon:'',
+                time: time
+            });
+
+            firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
+            firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
+                sender_id: sender_id,
+                sender: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                cohort:chrt,
+                groupid:groupid,
+                message: 'Shared a file',
+                time: time
+            });
+
+            progressBar.style.display = 'none';
+        });
+   }
+}
+
+function getBase64Image(img) {
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  var dataURL = canvas.toDataURL("image/png");
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+function getThumbImage(video) {
+  var canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  var dataURL = canvas.toDataURL("image/png");
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+
+function uploadFile(file){
+
+        var progressBar = document.getElementById('gif');
+        progressBar.style.display = 'block';
+
+        var storageRef = firebase.storage().ref();
+
+        var uploadTask = storageRef.child(file.name).put(file);
+        uploadTask.on('state_changed', function(snapshot){
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function(error) {
+            // Handle unsuccessful uploads
+        }, function() {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            var downloadURL = uploadTask.snapshot.downloadURL;
+
+            firebase.database().ref('gmmsg' + group).push().set({
+                sender_id: sender_id,
+                sender: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                message: 'Sent a file: ' + file.name,
+                image: '',
+                video: String(downloadURL),
+                lat:'',
+                lon:'',
+                time: time
+            });
+
+            firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
+            firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
+                sender_id: sender_id,
+                sender: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                cohort:chrt,
+                groupid:groupid,
+                message: 'Shared a file',
+                time: time
+            });
+
+            progressBar.style.display = 'none';
+        });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function accept(sts, lat, lng, mailid){
+ //   alert(sts);
+}
+
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var date = new Date();
+var time = new Date().getTime();
+var seconds = date.getSeconds();
+var minutes = date.getMinutes();
+var hours = date.getHours();
+//
+var year = date.getFullYear();
+var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+var day = date.getDate();
+
+var ampm = hours >= 12 ? 'PM' : 'AM';
+hours = hours % 12;
+hours = hours ? hours : 12; // the hour '0' should be '12'
+minutes = minutes < 10 ? '0'+minutes : minutes;
+var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+
+      var yearStr = year.toString();
+
+      if(day < 10)
+            timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+        else
+            timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+    //   var oneMinuteMilliseconds = 60000;
+    //   var oneHourMilliseconds = 3600000;
+    //   var oneDayMilliseconds = 24*3600*1000;
+    //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+    //   var now = Date.now();
+
+    //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+    //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+    //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+    //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+
+
+var datetime = timeStr;
+
+function send_msg(sts, lat, lng, video){
+    var messageText = '';
+    if (sts == 'accepted'){
+        messageText = 'Hi, ' + friend_name + '\n' + sender_name + ' has accepted you ' +
+            lat + ' with schedule of ' + lng + '\n' + 'Thanks\n' + datetime + '\n' + sender_name;
+    }else if (sts == 'declined'){
+        messageText = 'Hi, ' + friend_name + '\n' + sender_name + ' can\'t do you ' + lat + ' with your requested schedule of ' +
+            lng + '\n' + 'Please select another time or another service provider.\n' + 'We apologize for the inconvenience\n' + datetime + '\n' + sender_name;
+    }
+
+    if (messageText.length > 0){
+
+        firebase.database().ref('gmmsg' + group).push().set({
+            sender_id: sender_id,
+            sender: sender_name,
+            sender_email: semail,
+            sender_photo: sender_photo,
+            message: messageText,
+            image:'',
+            video:'',
+            lat:'',
+            lon:'',
+            time: time
+        });
+
+ //       firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
+        firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
+            sender_id: sender_id,
+            sender: sender_name,
+            sender_email: semail,
+            sender_photo: sender_photo,
+            cohort:chrt,
+            groupid:groupid,
+            message: messageText,
+            time: time
+        });
+
+        // var params = {
+        //     'service': lat,
+        //     'name': friend_name,
+        //     'email': document.getElementById("friend_email").value,
+        //     'service_reqdate': lng,
+        //     'status': sts,
+        //     'mailid': video
+        // }
+        // post("/acchat", params);
+    }
+}
+
+
+
+
+
+//  var timeStr = '';
+//
+//  var currentdate = new Date();
+//
+//  var cseconds = currentdate.getSeconds();
+//  var cminutes = currentdate.getMinutes();
+//  var chours = currentdate.getHours();
+//
+//  var cyear = currentdate.getFullYear();
+//  var cmonth = currentdate.getMonth(); // beware: January = 0; February = 1, etc.
+//  var cday = currentdate.getDate();
+//
+//  if (year == cyear && month == cmonth && day == cday && hours == chours && minutes == cminutes){
+//      timeStr = 'Just Now';
+//  }
+//  else if (year == cyear && month == cmonth && day == cday && hours == chours && minutes != cminutes)
+//  {
+//      timeStr = (cminute - minutes) + ' min ago';
+//  }
+//  else if (year == cyear && month == cmonth && day == cday && hours != chours){
+//      timeStr = (chours - hours) + ' hr ago';
+//  }
+//  else if (year == cyear && month == cmonth && ((cday - day) == 1)){
+//      var ampm = hours >= 12 ? 'PM' : 'AM';
+//      hours = hours % 12;
+//      hours = hours ? hours : 12; // the hour '0' should be '12'
+//      minutes = minutes < 10 ? '0'+minutes : minutes;
+//      timeStr = 'Yesterday' + ' ' + hours + ':' + minutes + ' ' + ampm;
+//  }
+//  else {
+//      var ampm = hours >= 12 ? 'PM' : 'AM';
+//      hours = hours % 12;
+//      hours = hours ? hours : 12; // the hour '0' should be '12'
+//      minutes = minutes < 10 ? '0'+minutes : minutes;
+//      timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+//  }
+
+</script>
+
+<script>
+
+$(document).ready(function()
+{
+    $(window).bind("beforeunload", function() {
+        console.log('Close current page');
+        firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+        return false;
+    });
+});
+
+</script>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

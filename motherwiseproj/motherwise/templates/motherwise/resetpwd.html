@@ -1,0 +1,365 @@
+{% extends 'motherwise/base.html' %}
+{% block title %}Reset Password{% endblock %}
+{% block body %}
+
+<br>
+<br>
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.3)), url("/static/images/admin.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.info p {
+  text-align:center;
+  color: #999;
+  text-transform:none;
+  font-weight:600;
+  font-size:15px;
+  margin-top:2px
+}
+
+.info i {
+  color:#F6AA93;
+}
+
+#edit {
+  border-radius: 5px;
+  max-width:400px;
+  width:auto;
+  height:auto;
+  margin-top: 4%;
+  margin-bottom: auto;
+  margin-left:auto;
+  margin-right:auto;
+  overflow: hidden;
+  /*background:linear-gradient(0deg,rgba(20,150,250,0.2),rgba(0,100,250,0.2));*/
+  background:linear-gradient(0deg,rgba(200,250,250,0.3),rgba(200,200,250,0.3));
+}
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 600;
+  line-height: 2;
+  color:#fff;
+}
+
+input {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.icon-case {
+  width: 8%;
+  float: left;
+  border-radius: 50px 0px 0px 50px;
+  background:green;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:yellow;
+}
+
+.contentform {
+  padding: 20px;
+  float:middle;
+  margin:auto;
+}
+
+.bouton-update{
+  background-color: #0077b3;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  opacity:0.95;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.formcontent {
+  width:100%;
+  float:middle;
+  margin:auto;
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+.validation {
+  display:none;
+  margin: 0 0 10px;
+  font-weight:400;
+  font-size:13px;
+  color: #DE5959;
+}
+
+.pan {
+  max-width:500px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:auto;
+  margin-right:0;
+  opacity:0.9;
+  overflow: hidden;
+}
+
+.pan2 {
+  max-width:500px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:0;
+  margin-right:auto;
+  opacity:0.9;
+  overflow: hidden;
+}
+
+th {color:white;}
+
+td {text-align:middle;}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  right: 10px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+#myBtn:hover {
+  background-color: blue;
+}
+
+#admin{
+    display:none;
+}
+
+.slide {
+    display: inline-block;
+}
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+
+label span {/* <-- style the artificial checkbox */
+  height: 25px;
+  width: 25px;
+  border:2px solid white;
+  margin-right:20px;
+  display: inline-block;
+  position: relative;
+  color:white;
+}
+
+[type=checkbox]:checked + span:before {
+/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top: 0px;
+  left: 5px;
+}
+
+</style>
+
+<script type="text/javascript">
+window.onload = function() {
+	window.moveTo(0, 0);
+	window.resizeTo(screen.availWidth, screen.availHeight);
+}
+</script>
+
+<script>
+	history.pushState(null, null, location.href);
+    history.back();
+    history.forward();
+    window.onpopstate = function () { history.go(1); };
+</script>
+
+{% if note %}<script>alert('Admin account has been updated');</script>{% endif %}
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+
+<img src="/static/images/logo.png" style="width:90px; left:1%; top:30px; position:absolute;">
+
+<div id="edit">
+    <h1 style="font-size:25px; font-weight:800; margin:auto; color: #fff; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); margin-top:20px; text-align:center;">Reset Password</h1>
+    <br>
+    <div>
+        <div class="contentform">
+            <div class="formcontent">
+                <form action="/manager/rstpwd/" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="email" name="email" data-rule="required" data-msg="" required id="email" value="{{email}}" readonly>
+                    </div>
+
+                    <br>
+
+                    <div class="form-group" style="position:relative;">
+                        <input type="password" name="password" data-rule="required" data-msg="" required id="password" value="" placeholder="New password" autocomplete="new-password">
+                        <a href="javascript:void(0)" onclick="javascript:togglePasswordShow();">
+                            <div id="showButton" style="position:absolute; right:10px; top:10px;"><span style="font-size:20px; color:gray;" class="fa fa-eye"></span></div>
+                        </a><br>
+                    </div>
+                    <div class="form-group" style="margin-top:30px; margin-bottom:30px;">
+                        <center><button type="submit" class="bouton-update">UPDATE</button></center>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" id="myBtn" title="Top">Top</button>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "block";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+var showF = false;
+
+function togglePasswordShow(){
+    var passwordBox = document.getElementById("password");
+    var showButton = document.getElementById("showButton");
+    if (!showF) {
+        passwordBox.type = "text";
+        showF = true;
+        showButton.innerHTML = "<span style=\"font-size:20px; color:gray;\" class=\"fa fa-eye-slash\"></span>";
+    } else {
+        passwordBox.type = "password";
+        showF = false;
+        showButton.innerHTML = "<span style=\"font-size:20px; color:gray;\" class=\"fa fa-eye\"></span>";
+    }
+}
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,107 @@
+{% extends 'motherwise/base_group.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block body %}
+
+<style>
+
+html, body{
+  background: url("/static/images/admin.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+#upload_form{
+    border-radius: 10px;
+    max-width:450px;
+    width:100%;
+    padding:10px;
+    text-align:center;
+    margin: 2% auto;
+    /*box-shadow: 15px 15px 0 rgba(0, 0, 0, 0.2);*/
+    background:linear-gradient(0deg,rgba(200,250,250,0.5),rgba(200,200,250,0.5));
+    background-size:100%,100%;
+    overflow: hidden;
+}
+
+label.cameraButton {
+  display: inline-block;
+  /* Styles to make it look like a button */
+  padding: 0.5em;
+  border: 2px solid #666;
+  border-color: #EEE #CCC #CCC #EEE;
+  border-radius:8px;
+  font-size:16px;
+  color:white;
+  width:250px;
+  height:45px;
+  text-align:middle;
+  background-color: green;
+}
+
+</style>
+
+<script>
+    var sss = false;
+	history.pushState(null, null, location.href);
+    history.back();
+    history.forward();
+    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/manager/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };
+    setTimeout(function(){ sss=true; }, 1000);
+</script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<img src="/static/images/logo.png" style="width:90px; left:2%; top:85px; z-index:999; position:fixed;">
+
+<div id="upload_form" align="center" style="margin-top:200px;">
+
+    <center>
+        <img src="/static/images/logotitle.png" style="width:60%; height:auto; border-radius:0; border:0; margin-top:20px; margin-bottom:20px;">
+    </center>
+
+    <h4 align="center" style="color:white; font-weight:600; margin-top:20px;"><img src="/static/images/excelicon.png" style="width:40px; height:40px; margin-right:20px;">{{header}}</h4>
+
+    <div style="color:black; font-size:14px;">We will send mails to them to invite</div>
+    <div style="color:red; font-size:14px; display:none;" id="indicator">A file's been loaded</div>
+
+    {% if note %}
+        <p style="color: red; font-size:18px;">
+            Error of reading file!   Invalid File...<br><br>
+            <a href="/manager/import_view/member/" style="font-size:16px;">Please click here and select a valid Excel file!</a>
+        </p>
+    {% endif %}
+    <!--{% if note %}-->
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+    {% endif %}
+    <!--{% endif %}-->
+
+    <form action="{% url 'import_member_data' %}" enctype="multipart/form-data"  method="post" style="margin-top:20px;">
+        <label class="cameraButton" style="text-align:center;">Select Excel File
+        <table style="display:none;" onchange="javascript:document.getElementById('indicator').style.display='block';">
+            {{ form.as_table }}
+        </table>
+        </label>
+        {% csrf_token %}
+        <!--<input type="submit" value="Submit" style="margin-top:30px; margin-left:150px;">-->
+
+        {% if not note %}
+        <center><button type="submit" class="btn btn-success" style="margin-top:20px; margin-bottom:20px; background-color:green;"> Submit </button></center>
+
+        {% endif %}
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $( function() {
+    $( "#upload_form" ).draggable();
+  } );
+</script>
+
+{% endblock %}

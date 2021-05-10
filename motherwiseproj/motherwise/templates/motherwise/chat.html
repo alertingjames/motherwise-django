@@ -1,0 +1,2521 @@
+{% extends 'motherwise/base_chat.html' %}
+{% block title %}Chat with members{% endblock %}
+{% block body %}
+
+<br>
+<br>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--<link rel="stylesheet" href="/static/css/alert/messi.min.css" />-->
+<script src='https://meet.jit.si/external_api.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  <script>
+      WebFont.load({
+      google: {
+      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+    });
+</script>
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 400px;
+    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 6px;
+    text-align: center;
+}
+
+img {
+  height: 80px;
+  width: 80px;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+.table-users {
+  border: 1px solid #327a81;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+  max-width:500px;
+  width:auto;
+  height:auto;
+  margin: 2% auto;
+  background-color: white;
+  overflow-x:auto;
+}
+
+.table>tbody>tr>td{
+    vertical-align: middle;
+    horizontal-align: middle;
+}
+
+table td, table th {
+  color: #2b686e;
+  padding: 10px;
+  border: 1px solid white;
+  text-align: center;
+  vertical-align: middle;
+}
+table td {
+  text-align: center;
+  vertical-align: middle;
+}
+table td:last-child {
+  font-size: 0.95em;
+  line-height: 0.8;
+  text-align: center;
+}
+table th {
+  background-color: #04a2be;
+  font-weight: 520;
+  color:white;
+  text-align: center;
+  vertical-align: middle;
+}
+table tr:nth-child(2n) {
+  background-color: white;
+  border: 1px solid #327a81;
+}
+
+table tr:nth-child(2n+1) {
+  background-color: #edf7f8;
+  border: 1px solid white;
+}
+
+#manage-menu1{
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:40px;
+    background-color:#000000;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  right: 15px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+  width:45px;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+#admin{
+    display:none;
+}
+
+.info p {
+  text-align:center;
+  color: #999;
+  text-transform:none;
+  font-weight:600;
+  font-size:15px;
+  margin-top:2px
+}
+
+.info i {
+  color:#F6AA93;
+}
+
+form h1 {
+  font-size: 25px;
+  background: #327a81 none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:left
+}
+
+.user-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:5px;
+  margin-bottom:3px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.user-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.contact-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:10px;
+  margin-bottom:3px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.contact-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.contentform {
+  padding: 10px;
+}
+
+#chat-form {
+    border-radius: 5px;
+    max-width:800px;
+    width:auto;
+    height:auto;
+    margin-top:3%;
+    margin-left:auto;
+    margin-right:auto;
+    opacity:0.9;
+    overflow: hidden;
+}
+
+.chat-contentform {
+    padding: 0px;
+    float:middle;
+    margin-top:3%;
+}
+
+.chat-formcontent {
+    width:100%;
+    float:middle;
+    margin:auto;
+    box-sizing: border-box;
+    padding: 0px;
+}
+
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 200;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius: 0px 5px 5px 0px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  width: 92%;
+  height: 42px;
+  float: left;
+  padding: 0px 15px;
+  opacity: 0.8;
+  color:blue;
+}
+
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.icon-case {
+  width: 8%;
+  float: left;
+  border-radius: 5px 0px 0px 5px;
+  background:green;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:white;
+}
+
+.bouton-update{
+  background-color: #845801;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 17px 25px;
+  border-radius: 0px 0px 5px 5px;
+  cursor: pointer;
+  margin-top: 40px;
+  font-size: 18px;
+}
+
+.show {
+    z-index:1000;
+    position: absolute;
+    background-color:#ffffff;
+    border: 2px solid orange;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    display: block;
+    font-size:20px;
+    border-radius:20px;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
+.hide {
+    display: none;
+}
+
+.show li{ list-style: none; }
+.show a { border: 0 !important; text-decoration: none; }
+.show a:hover { text-decoration: underline !important; }
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+label span {/* <-- style the artificial checkbox */
+  height: 15px;
+  width: 15px;
+  border: 1px solid black;
+  border-radius:50%;
+  background-color:transparent;
+  margin-right:3px;
+  display: inline-block;
+  position: relative;
+}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  color:white;
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    z-index:1000;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 30px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    font-size: 36px;
+    float:right;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+
+#chat_log {
+    border-radius: 5px;
+    border: 1px solid #EEE;
+    margin: 0;
+    width: 100%;
+    height: 500px;
+    float: middle;
+    padding: 15px;
+    color:black;
+    background:linear-gradient(0deg,rgba(250,250,250,0.8),rgba(250,250,250,0.8)),url("/static/images/chatbackground.jpg");
+    background-size:cover;
+    overflow-y:auto;
+}
+
+#chat_log::-webkit-scrollbar {
+    display: none;
+}
+
+#send-form{
+    width:100%;
+}
+
+.cropping{
+    object-fit:cover;
+}
+
+div#list {
+    width: 100%;
+    height: auto;
+}
+
+div#list > div > div {
+    width: auto;
+    height: auto;
+    padding: 8px 15px 8px 15px;
+    border-radius:5px;
+    margin-bottom: 5px;
+    color: black;
+    word-wrap: break-word;
+    white-space: pre-line;
+    /*word-break: break-all;*/
+}
+
+#photo {
+    display: none;
+    top:15%;
+}
+
+.attach-button {
+    width:33.333333333%;
+    padding:2px;
+}
+
+label.button {
+    background:green;
+    padding:10px 0px 6px 0px;
+    color:white;
+    text-align:center;
+    font-size:15px;
+    font-weight:500;
+    width:100%;
+    border: 1.5px solid #666;
+    border-color: #EEE #CCC #CCC #EEE;
+    border-radius:5px;
+}
+
+i {
+    margin-right:10px;
+}
+
+/* Look like a clicked/depressed button */
+label.button:active {
+    border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.button input[accept*="image"] {
+    display: none;
+}
+
+::placeholder {
+    color: white;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: white;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: white;
+}
+
+
+#manage-menu {
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:auto;
+    background-color:black;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+.menu {
+    padding:2px 15px;
+}
+
+.menu a{
+    color:gray;
+}
+
+.menu a:hover {
+    color:white;
+}
+
+select {
+  background:transparent;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius:3px;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:white;
+  text-align-last:center;
+}
+
+option{
+    color:black;
+}
+
+#backgroundOverlay{
+  background-color:rgba(0,0,0,0.6);
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:none;
+}
+
+</style>
+
+<!--<script>-->
+<!--    var sss = false;-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); exitChat('home'); sss=false; setTimeout(function(){ sss=true; }, 2000);} };-->
+<!--    setTimeout(function(){ sss=true; }, 2000);-->
+<!--</script>-->
+
+<!--<script src="/static/js/alert/messi.min.js"></script>-->
+
+<div id="imageFrame" style="text-align:center; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:6px; padding: 10px;
+	transform:translate(-50%, -50%); width:auto; height:auto; z-index:200; top:350px; display:none;">
+	<img src="" style="width:250px; height:auto; display:none;" id="image_message">
+    <video id="videoresult" autobuffer  controls width="250" autoplay loop style="display:none;">
+        <source src="" id="videohere"/>
+    </video>
+    <br>
+    <span class="fa fa-close" style="font-size:25px; margin-top:5px;" onclick="javascript:document.getElementById('imageFrame').style.display='none';"></span>
+    <span class="fa fa-check" style="font-size:25px; margin-top:5px; color:red; margin-left:30px;" onclick="javascript:okay();"></span>
+</div>
+
+<div id="photo" style="height:auto; position:fixed; left:15%; top:15%; float:middle; transform:translate(-50%, -50%); width:100px; z-index:100;">
+    <img src="{% if friend.photo_url %}{{friend.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+    <div id="st" style="color: red; font-size:16px; padding:3% 3% 3% 3%; min-width:60px; text-align:center; height:auto;
+        border-radius:3px; margin-top:3px; background-color:white; display:none;"></div>
+</div>
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+
+<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
+	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:350px; z-index:100; top:40px; display:none;">
+    {% if friend %}<i class="fa fa-comments-o" style="margin-right:10px; font-size:30px; color:#F7D479;"></i>{{friend.name}}{% endif %}
+</div>
+
+<div style="width:100%; height:auto; margin-top:10px;">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3" style="text-align:center;">
+
+            <div style="width:100%; margin:10px 0px 10px 0px; text-align:center;">
+                <div style="display:flex; margin:0px;">
+                    <select name="cohort" required id="cohort" style="flex-grow:1;" onchange="setValue(this)">
+                        <option value="">Please choose a group</option>
+                        <option value="E81">E81</option>
+                        <option value="E83">E83</option>
+                        <option value="E84">E84</option>
+                        <option value="E86">E86</option>
+                        <option value="E87">E87</option>
+                        <option value="S82">S82</option>
+                        <option value="S85">S85</option>
+                        <option value="S88">S88</option>
+                        <option value="E(v)89">E(v)89</option>
+                        <option value="E(v)90">E(v)90</option>
+                        <option value="S(v)91">S(v)91</option>
+                        <option value="E(v)92">E(v)92</option>
+                        <option value="E(v)93">E(v)93</option>
+                        <option value="E(v)94">E(v)94</option>
+                        <option value="S(v)95">S(v)95</option>
+                        <option value="E(v)96">E(v)96</option>
+                        <option value="E(v)97">E(v)97</option>
+                        <option value="S(v)98">S(v)98</option>
+                        <option value="E(v)99">E(v)99</option>
+                        <option value="E(v)100">E(v)100</option>
+                        <option value="S(v)101">S(v)101</option>
+                        <option value="E(v)102">E(v)102</option>
+                        <option value="E(v)103">E(v)103</option>
+                        <option value="S(v)104">S(v)104</option>
+                        <option value="E(v)105">E(v)105</option>
+                        <option value="E(v)106">E(v)106</option>
+                        <option value="S(v)107">S(v)107</option>
+                        <option value="E(v)108">E(v)108</option>
+                        <option value="E(v)109">E(v)109</option>
+                        <option value="S(v)110">S(v)110</option>
+                        <option value="MotherWise Alumni">MotherWise Alumni</option>
+                        <option value="MotherWise Team">MotherWise Team</option>
+                    </select>
+                    <input hidden id="selected_cohort">
+                    <script>
+                        function setValue(obj){
+                            var value = obj.value;
+                            if(value.length > 0){
+                                document.getElementById('selected_cohort').value = value;
+                                document.getElementById('cohort_chat_button').style.display = "block";
+                            }else{
+                                document.getElementById('cohort_chat_button').style.display = "none";
+                            }
+                        }
+
+                        function to_cohort_chat(){
+                            var cht = document.getElementById('selected_cohort').value;
+                            window.location.href = "/manager/switch_to_cohort?cohort=" + cht;
+                        }
+
+                    </script>
+
+                    <a href="javascript:void(0)" onclick="javascript:to_cohort_chat();">
+                        <div style="width:100px; height:43px; padding:12px; border-radius:4px; font-size:14px; color:white; margin-left:5px; background:red; display:none;"
+                                id="cohort_chat_button">With Chat</div>
+                    </a>
+
+    			</div>
+            </div>
+
+            <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
+                <a href="javascript:void(0);" onclick="javascript:toggleContactForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
+                    Recent Contacts
+                    <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow"></span>
+                </a>
+
+                <script>
+                    var showF = false;
+                    var ii = 0;
+                    function toggleContactForm(){
+                        ii++;
+                        if(showF == true){
+                            showF = false;
+                            document.getElementById('contactform').style.display='none';
+                            $('#arrow').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                        }else{
+                            showF = true;
+                            document.getElementById('contactform').style.display='block';
+                            if(ii > 1) $('#arrow').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
+                            else $('#arrow').addClass('glyphicon glyphicon-menu-up');
+                        }
+                    }
+                </script>
+
+                <div id="contactform" style="display:none; margin-top:15px;">
+
+                    {% if contacts %}
+                        <div style="width:100%; max-height:70%; padding-top:1%; padding-bottom:3%; float:left; overflow:auto;" id="clist">
+                            {% for member in contacts %}
+                            <div class="contact-form">
+                                <input type="hidden" id="c_email" value="{{member.email}}">
+                                <div class="contentform">
+                                    <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                        <div style="padding:10px; float:left; position:relative;">
+                                            <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                                                <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                            </a>
+                                            <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:15px; display:none;" id="cbadge"></span>
+                                        </div>
+                                        <a href="/manager/switch_chat?member_id={{member.pk}}" style="flex-grow:1;">
+                                            <div style="padding-left:8px; margin-top:10px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                                {{member.name}}
+                                                <div style="font-size:12px;">{{member.cohort}}</div>
+                                            </div>
+                                        </a>
+                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
+                                            <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:17px; margin-top:2px;"></span>
+                                        </a>
+
+                                        <a href="/manager/delcontact?member_id={{member.pk}}" style="background-color:transparent; margin-left:15px;">
+                                            <span class="fa fa-trash" aria-hidden="true" style="color:white; font-size:20px;" onclick="return confirm('Are you sure you want to remove this contact?')"></span>
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {%else %}
+                            <center>
+                                <br>
+                                <br>
+                                <h4 class="my_items col-sm-offset-1" style="color:rgba(255,255,255,0.7); margin: 30px;">No any contact ...</h4>
+                            </center>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+
+            <div style="width:100%; display:inline-block;">
+
+                <!--////////////////////////////////-->
+
+                <div id="chat-form">
+                    <div style="width:100%; height:auto; margin-left:5px;">
+                        <img src="{% if friend.photo_url %}{{friend.photo_url}}{% elif friend.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}"
+                            style="width:50px; height:50px; border-radius:50%; object-fit:cover; float:left;">
+                        <div style="color:white; float:left; display:inline-block; padding: 8px 0px; 0px 0px; margin-left:15px;">
+                            <div style="font-size:18px; font-weight:500;">{{friend.name}}</div>
+                            <div id="online" style="margin-top:2px; font-size:12px;"></div>
+                        </div>
+                        <a href="javascript:void(0)" onclick="openMeet();" style="text-align:center; margin-left:30px; float:left;">
+                            <span class="fa fa-video" style="padding:8px; color:red; font-size:25px; background-color:white; border-radius:50%;"></span>
+                        </a>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                    <div class="chat-contentform">
+                        <div class="chat-formcontent">
+                            <div id="chat_log">
+                                <div id="list" aria-placeholder="No message ..."></div>
+                            </div>
+                            <div id="send-form" style="width:101%; margin-bottom: 15%; margin-top:5px;">
+                                <input type="hidden" id="sender_name" value="{{me.name}}">
+                                <input type="hidden" id="sender_id" value="{{me.pk}}">
+                                <input type="hidden" id="sender_email" value="{{me.email}}">
+                                <input type="hidden" id="sender_photo" value="{{me.photo_url}}">
+                                <input type="hidden" id="friend_name" value="{{friend.name}}">
+                                <!--<input type="hidden" id="user_id" value="{{user.id}}">-->
+                                <input type="hidden" id="friend_email" value="{{friend.email}}">
+                                <input type="hidden" id="type" value="{{friend.email}}">
+                                <input type="hidden" id="lat" value="{% if lat %}{{lat}}{% else %}{% endif %}">
+                                <input type="hidden" id="lng" value="{% if lng %}{{lng}}{% else %}{% endif %}">
+                                <div style="width:99%; margin-bottom:5px; display:none;" id="panel">
+                                    <table  style="width:100%;">
+                                        <tr style="background-color:#993333;">
+                                            <td class="attach-button">
+                                                <label class="button" id="picture-btn" style="background:transparent; border:0;"><i class="fa fa-image" style="font-size:22px;"></i>
+                                                    <input type="file" name="photo" value="http://lorempixel.com/100/100/people/9" id="picture" accept="image/*"/>
+                                                </label>
+                                            </td>
+                                            <script>
+                                                function readFile() {
+
+            			                            if (this.files && this.files[0]) {
+
+            					                        var FR= new FileReader();
+
+            					                        FR.addEventListener("load", function(e) {
+            					                            document.getElementById("imageFrame").style.display = "block";
+            					                            document.getElementById("image_message").style.display = "block";
+            					                            document.getElementById("videoresult").style.display = "none";
+             							                    document.getElementById("image_message").src       = e.target.result;
+                                                            document.getElementById("type").value = 'picture';
+                                                            show_panel();
+            					                        });
+
+            					                        FR.readAsDataURL( this.files[0] );
+
+            					                        file = this.files[0];
+
+                                                        ImageTools.resize(this.files[0], {
+               							                    width: 200, // maximum width
+               							                    height: 200 // maximum height
+            						                    }, function(blob, didItResize) {
+               							                    // didItResize will be true if it managed to resize it, otherwise false (and will return the original file as 'blob')
+               							                    document.getElementById('output').src = window.URL.createObjectURL(blob);
+               							                    // you can also now upload this blob using an XHR.
+            					                        });
+            			                            }
+
+                                                }
+
+                                                document.getElementById("picture").addEventListener("change", readFile);
+                                            </script>
+
+                                            <td class="attach-button">
+                                                <label class="button" id="video-btn" style="background:transparent; border:0;"><i class="fa fa-video-camera" style="font-size:22px;"></i>
+                                                    <input type="file" name="video" value="http://lorempixel.com/100/100/people/9" id="videofile" accept="video/*" style="display:none;"/>
+                                                </label>
+                                            </td>
+                                            <script>
+                                                var file;
+                                                $(document).on("change", "#videofile", function(evt) {
+                                                    var $source = $('#videohere');
+                                                    $source[0].src = URL.createObjectURL(this.files[0]);
+                                                    $source.parent()[0].load();
+                                                    file = this.files[0];
+                                                    document.getElementById("imageFrame").style.display = "block";
+            					                    document.getElementById("image_message").style.display = "none";
+            					                    document.getElementById("videoresult").style.display = "block";
+            					                    document.getElementById("type").value = 'video';
+            					                    show_panel();
+                                                });
+            				                </script>
+
+            				                <td class="attach-button">
+            				                    <label class="button" id="file-btn" style="background:transparent; border:0;"><i class="fa fa-folder-open" style="font-size:22px;"></i>
+                                                    <input type="file" name="allfile" value="http://lorempixel.com/100/100/people/9" id="allfile" style="display:none;"/>
+                                                </label>
+            				                </td>
+
+                                        </tr>
+                                        <tr style="display:none;">
+                                            <td class="attach-button"><label class="button" id="location-btn" onclick="chat_map()"><i class="fa fa-location-arrow"></i>Location</label></td>
+                                            <td class="attach-button">
+                                                                        <!--onclick="open_panel()"-->
+                                                <label class="button" id="audio-btn" onclick="open_panel()"><i class="fa fa-volume-up"></i>Audio
+                                                    <!--<input type="file" style="display:none;" accept="audio/*" id="audio">-->
+                                                </label>
+                                            </td>
+                                            <!--<script>-->
+                                                <!--var file3;-->
+                                                <!--$(document).on("change", "#audio", function(evt) {-->
+                                                    <!--file3 = this.files[0];-->
+            					                    <!--document.getElementById("type").value = 'file';-->
+            					                    <!--uploadFile(file3);-->
+                                                <!--});-->
+            				                <!--</script>-->
+                                        </tr>
+                                    </table>
+                                    <center>
+                                        <div id="audio-panel" style="display:none;">
+                                            <audio controls autoplay></audio>
+                		                    <script type="text/javascript" src="/static/js/recorder.js"> </script>
+                                            <fieldset style="margin:10px; border:2px solid white;">
+                                                <legend style="color:white; font-size:18px; font-weight:600;">RECORD AUDIO</legend>
+                		                        <input onclick="javascript:startRecording();" type="button" value="start recording" style="border-radius:8px; background:#86592d; color:white; padding:6px 15px;"/>
+                		                        <input onclick="javascript:stopRecording();" type="button" value="stop recording" style="border-radius:8px; background:#86592d; color:white; padding:6px 15px;"/>
+                                            </fieldset>
+                                        </div>
+
+                                        <!--<label class="button" id="file-btn" style="width:99%; height:42px;"><i class="fa fa-folder-open"></i>All Files-->
+                                        <!--        <input type="file" name="allfile" value="http://lorempixel.com/100/100/people/9" id="allfile" style="display:none;"/></label>-->
+                                    </center>
+                                            <script>
+                                                var file2;
+                                                $(document).on("change", "#allfile", function(evt) {
+                                                    file2 = this.files[0];
+            					                    document.getElementById("type").value = 'file';
+            					                    uploadFile(file2);
+            					                    show_panel();
+                                                });
+            				                </script>
+                                </div>
+                                <div style="width:100%; display:inline-block; position:relative;">
+                                    <input type="text" required id="message" placeholder="Write something here..." oninput="myFunction()"
+                                       style="width:90%; height:42px; border: 0; padding: 0px 10px; color:white; background-color:transparent; font-size:18px; border-bottom: 1.5px solid white; outline: 0;">
+                                    <img src="/static/images/ic_attachment.png" id="attachment-btn" style="height:42px; width:42px; right:0; top:0; position:absolute; display:block;" onclick="show_panel()">
+                                    <button type="submit" class="send" id="submitBtn" onclick="submitClick()" style="height:42px; width:42px; right:0; top:0; position:absolute; display:none;
+                                        color: #FFF; text-align: center; font-size: 22px; background-color:transparent; border:0;"><span class="glyphicon glyphicon-send" aria-hidden="true" ></span></button>
+                                </div>
+
+                                <script>
+                                    var inputBox = document.getElementById("message");
+                                    inputBox.addEventListener("keyup", function(event) {
+                                      if (event.keyCode === 13) {
+                                          event.preventDefault();
+                                          document.getElementById("submitBtn").click();
+                                      }
+                                    });
+
+                                </script>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--//////////////////////////////////-->
+
+            </div>
+        </div>
+
+        <div class="col-sm-3" id="member-list">
+
+            <div style="width:100%; margin:10px; position:relative;">
+                <div style="color:white; font-size:18px; font-family:verdana;">
+                    Chat with Members
+                </div>
+                <span class="fas fa-comment-alt" aria-hidden="true" style="position:absolute; left:220px; top:0px; color:red; font-size:20px; display:none;" id="chatnotibadge"></span>
+            </div>
+
+            {% if members %}
+                <div style="width:100%; max-height:80%; padding-top:1%; padding-bottom:15%; overflow:auto;" id="mlist">
+                    {% for member in members %}
+                    <div class="user-form">
+                        <input type="hidden" id="member_email" value="{{member.email}}">
+                        <div class="contentform">
+                            <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                <div style="padding:10px; float:left; position:relative;">
+                                    <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                                        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; border-radius:50%; height:40px; object-fit:cover;">
+                                    </a>
+                                    <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:16px; display:none;" id="badge"></span>
+                                </div>
+                                <a href="/manager/switch_chat?member_id={{member.pk}}" style="flex-grow:1;">
+                                    <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        {{member.name}}
+                                        <div style="font-size:12px;">{{member.cohort}}</div>
+                                    </div>
+                                </a>
+                                <div style="float:right; margin-top:5px;">
+                                    <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
+                                        <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px;"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+                </div>
+            {%else %}
+                    <center>
+                        <br>
+                        <br>
+                        <h4 class="my_items col-sm-offset-1" style="color:rgba(255,255,255,0.7); margin: 30px;">No member loaded ...</h4>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+<div id="meet" style="position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); min-width:400px; max-width:700px; width:auto; z-index:200; top:50%; display:none;">
+    <input style="height:1px; opacity:0;">
+</div>
+
+<script>
+    function openMeet(){
+        document.getElementById('meet').style.display = 'block';
+        document.getElementById('backgroundOverlay').style.display='block';
+    }
+
+    function dismissLayouts(){
+        document.getElementById('meet').style.display = 'none';
+        document.getElementById('backgroundOverlay').style.display='none';
+    }
+
+    var roomID = '{{me.pk}}_{{friend.pk}}';
+    if (Number('{{me.pk}}') > Number('{{friend.pk}}')){
+        roomID = '{{friend.pk}}_{{me.pk}}';
+    }
+
+    console.log(roomID);
+
+    var myId = '{{me.pk}}_{{me.pk}}';
+    const domain = 'meet.jit.si';
+    var height = 700;
+    const options = {
+        roomName: roomID,
+        // width: 700,
+        height: height,
+        parentNode: document.querySelector('#meet'),
+        interfaceConfigOverwrite: {
+            // TILE_VIEW_MAX_COLUMNS: 4,
+            HIDE_INVITE_MORE_HEADER: true
+        },
+        userInfo: {
+            participantId: myId,
+            // email: 'email@jitsiexamplemail.com',
+            displayName: '{{me.name}}'
+        }
+    };
+    const api = new JitsiMeetExternalAPI(domain, options);
+    api.executeCommand('avatarUrl', '{{me.photo_url}}');
+    // api.executeCommand('setVideoQuality', 1024);
+
+</script>
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 || document.getElementById("mlist").scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "block";                         // Top button display none;
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200){
+            document.getElementById("photo").style.display = "block";
+        }else document.getElementById("photo").style.display = "none";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("photo").style.display = "none";
+    }
+
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        document.getElementById("photo").style.display = "block";
+    } else {
+        document.getElementById("photo").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.getElementById("member-list").scrollTop = 0;
+}
+
+</script>
+
+
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDveaXbV1HHMREyZzbvQe53BJEHVIRCf14",
+    authDomain: "motherwise-1585202524394.firebaseapp.com",
+    databaseURL: "https://motherwise-1585202524394.firebaseio.com",
+    projectId: "motherwise-1585202524394",
+    storageBucket: "motherwise-1585202524394.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
+<!--<script src="/static/js/chat/admin_chat.js"></script>-->
+
+<script>
+
+    var flag = false;
+    var aflag = false;
+    function show_panel(){
+        if (flag){
+            flag = false; document.getElementById("panel").style.display = "none";
+            document.getElementById("attachment-btn").src = '/static/images/ic_attachment.png';
+            document.getElementById("audio-panel").style.display = "none";
+        }else {
+            flag = true; document.getElementById("panel").style.display = "block";
+            document.getElementById("attachment-btn").src = '/static/images/cancelicon.png';
+            // document.body.scrollTop = 1000;
+            // document.documentElement.scrollTop = 1000;
+        }
+    }
+
+    function open_panel(){
+        if (aflag){
+            aflag = false;
+            document.getElementById("audio-panel").style.display = "none";
+        }else {
+            aflag = true;
+            document.getElementById("audio-panel").style.display = "block";
+            document.body.scrollTop = 1000;
+            document.documentElement.scrollTop = 1000;
+        }
+    }
+
+    function chat_map(){
+        window.location.href = "/map_chat";
+    }
+
+    if (document.getElementById("lat").value.length > 0 && document.getElementById("lng").value.length > 0){
+
+        document.getElementById("imageFrame").style.display = "block";
+	    document.getElementById("image_message").style.display = "block";
+	    document.getElementById("videoresult").style.display = "none";
+ 	    document.getElementById("image_message").src = "/static/images/mapimage.jpg";
+ 	    document.getElementById("type").value = 'map';
+    }
+
+</script>
+
+<script>
+
+ window.URL = window.URL || window.webkitURL;
+ navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+ var recorder;
+ var audio = document.querySelector('audio');
+
+ function startRecording() {
+//  window.location.href = "/recorder";
+  if (navigator.getUserMedia) {
+   navigator.getUserMedia({audio: true}, onSuccess, onFail);
+  } else {
+   console.log('navigator.getUserMedia not present');
+  }
+ }
+
+ function stopRecording() {
+  recorder.stop();
+  recorder.exportWAV(function(s) {
+    audio.src = window.URL.createObjectURL(s);
+    audio.play(); //call this to play the song right away
+    uploadAudio(audio.src);
+  });
+ }
+
+ var onFail = function(e) {
+  console.log('Rejected!', e);
+ };
+
+ var onSuccess = function(s) {
+  var context = new webkitAudioContext();
+  var mediaStreamSource = context.createMediaStreamSource(s);
+  recorder = new Recorder(mediaStreamSource);
+  recorder.record();
+
+  // audio loopback
+  // mediaStreamSource.connect(context.destination);
+ }
+
+ function uploadAudio(url){
+  fetch(url)
+  .then(res => res.blob()) // Gets the response and returns it as a blob
+  .then(blob => {
+    // Here's where you get access to the blob
+    // And you can use it for whatever you want
+    // Like calling ref().put(blob)
+
+    // Here, I use it to make an image appear on the page
+    document.getElementById("type").value = 'audio';
+    uploadFile(blob);
+  });
+ }
+
+</script>
+
+<script>
+
+var list = document.getElementById("mlist");
+var lis = list.querySelectorAll( "#mlist > div" );
+var prods = [];
+for(var i=0; i<lis.length; i++){
+    prods.push(lis[i]);
+}
+
+console.log(prods.length);
+
+var me_email = document.getElementById("me_email").value;
+// var ul = document.getElementById("list");
+// var keys = [];
+me_email = me_email.replace(/\./g,"ddoott");
+var starCountRef = firebase.database().ref('notification/' + me_email);
+starCountRef.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_email = key2.sender
+    if(sender_email.length > 0){
+        for(var i=0; i<prods.length; i++){
+            var emailBox = prods[i].querySelector("input[id='member_email']");
+            var badge = prods[i].querySelector("span[id='badge']");
+            if(emailBox.value == sender_email){
+                if(i > 0) {
+                    badge.style.display = "block";
+                    document.getElementById("chatnotibadge").style.display = 'block';
+                }else{
+                    starCountRef.child(sender_email.replace(/\./g,"ddoott")).remove();
+                }
+            }else{
+                badge.style.display = "none";
+            }
+        }
+    }
+  }
+});
+
+function getChildObj (obj) {
+    var obj2;
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            obj2 = obj[p];
+        }
+    }
+    return obj2;
+}
+
+
+var clist = document.getElementById("clist");
+var clis = clist.querySelectorAll( "#clist > div" );
+var cprods = [];
+for(var i=0; i<clis.length; i++){
+    cprods.push(clis[i]);
+}
+
+
+starCountRef.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_email = key2.sender
+    if(sender_email.length > 0){
+        for(var i=0; i<cprods.length; i++){
+            var emailBox = cprods[i].querySelector("input[id='c_email']");
+            var badge = cprods[i].querySelector("span[id='cbadge']");
+            if(emailBox.value == sender_email){
+                if(i > 0) {
+                    badge.style.display = "block";
+                    document.getElementById("chatnotibadge").style.display = 'block';
+                }else{
+                    starCountRef.child(sender_email.replace(/\./g,"ddoott")).remove();
+                }
+            }else{
+                badge.style.display = "none";
+            }
+        }
+    }
+  }
+});
+
+
+</script>
+
+<script>
+
+var sender_id = document.getElementById("sender_id").value;
+//var user_id = document.getElementById("user_id").value;
+var sender_name = document.getElementById("sender_name").value;
+var sender_email = document.getElementById("sender_email").value;
+var sender_photo = document.getElementById("sender_photo").value;
+var friend_name = document.getElementById("friend_name").value;
+var friend_email = document.getElementById("friend_email").value;
+var message = document.getElementById("message");
+var submitBtn = document.getElementById("submitBtn");
+var chat_log = document.getElementById("chat_log");
+var online = document.getElementById("online");
+var st = document.getElementById("st");
+
+var attachBtn = document.getElementById("attachment-btn");
+
+var semail = sender_email;
+var femail = friend_email;
+
+sender_email = sender_email.replace(/\./g,"ddoott");
+friend_email = friend_email.replace(/\./g,"ddoott");
+
+firebase.database().ref('notification/' + sender_email + '/' + friend_email).remove();
+
+firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+    user: sender_email,
+    time: new Date().getTime(),
+    online: 'online'
+});
+
+function submitClick(){
+    var messageText = message.value;
+    var time = new Date().getTime();
+    if (messageText.length > 0){
+        firebase.database().ref('messages/' + sender_email + '_' + friend_email).push().set({
+            message: messageText,
+            image:'',
+            video:'',
+            lat:'',
+            lon:'',
+            time: new Date().getTime(),
+            user:semail
+        });
+        firebase.database().ref('messages/' + friend_email + '_' + sender_email).push().set({
+            message: messageText,
+            image:'',
+            video:'',
+            lat:'',
+            lon:'',
+            time: new Date().getTime(),
+            user:semail
+        });
+        firebase.database().ref('notification/' + friend_email + '/' + sender_email).remove();
+        firebase.database().ref('notification/' + friend_email + '/' + sender_email).push().set({
+            sender_id: sender_id,
+            sender: semail,
+            senderName: sender_name,
+            msg: messageText,
+            senderPhoto: sender_photo,
+            time: new Date().getTime()
+        });
+        firebase.database().ref('notification2/' + friend_email + '/' + sender_email).remove();
+        firebase.database().ref('notification2/' + friend_email + '/' + sender_email).push().set({
+            sender_id: sender_id,
+            sender: semail,
+            senderName: sender_name,
+            msg: messageText,
+            senderPhoto: sender_photo,
+            time: new Date().getTime()
+        });
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+            sender: sender_name,
+            time: new Date().getTime(),
+            online: 'online'
+        });
+        document.getElementById("message").value = "";
+
+        attachBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+
+        console.log("Status: " + online.innerHTML);
+        if (online.innerHTML != "online" && online.innerHTML != "is typing..."){
+            console.log("Status: " + online.innerHTML);
+            sendPush(document.getElementById("pushform"), messageText);
+        }
+
+    }else {
+        window.alert("Please write something...");
+    }
+}
+
+var monthes=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+var starCountRef = firebase.database().ref('messages/' + sender_email + '_' + friend_email);
+starCountRef.on('child_added', function(snapshot) {
+  var new_post = snapshot.val();
+  var mes = new_post.message;
+  var image = new_post.image;
+  var video = new_post.video;
+  var lat = new_post.lat;
+  var lng = new_post.lon;
+
+  if (mes.length > 0){
+      var time = parseInt(new_post.time);
+
+      var date = new Date(time);
+
+      var seconds = date.getSeconds();
+      var minutes = date.getMinutes();
+      var hours = date.getHours();
+//
+      var year = date.getFullYear();
+      var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+      var day = date.getDate();
+
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+      var yearStr = year.toString();
+
+      if(day < 10)
+            timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+        else
+            timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+    //   var oneMinuteMilliseconds = 60000;
+    //   var oneHourMilliseconds = 3600000;
+    //   var oneDayMilliseconds = 24*3600*1000;
+    //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+    //   var now = Date.now();
+
+    //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+    //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+    //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+    //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+      var ul = document.getElementById("list");
+      if (new_post.user == semail){
+           var li = document.createElement("div");
+           li.style.color = 'white';
+           li.style.fontSize = '16';
+           li.style.paddingRight = '15';
+           li.style.paddingLeft = '15';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#2390f6';
+           li.style.borderTopLeftRadius = '20px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '20px';
+           li.style.borderBottomRightRadius = '0px';
+           li.style.maxWidth = "500";
+           if(!mes.includes('http'))li.style.wordBreak = "word";
+           li.style.display = 'inline-block';
+           li.innerHTML = urlify(mes);
+           li.style.textAlign = 'left';
+
+           if (video.length > 0){
+                if (!mes.includes("Please review the information. If you have questions, you can reply directly to the customer. If you want to accept or decline, please click here.")){
+                    li.style.position = 'relative';
+                    var mark = document.createElement("img");
+                    mark.src = '/static/images/fileicon.png';
+                    mark.style.width = '33';
+                    mark.style.height = '35';
+                    mark.style.position = 'absolute';
+                    mark.style.top = '0px';
+                    mark.style.left = '-40px';
+                    li.appendChild(mark);
+
+                    li.onclick = function(){
+                        if (video.length > 0){
+                            window.open(video);
+                        }
+                    }
+                }
+           }
+
+           var ul2 = document.createElement("div");
+           ul2.append(li);
+
+           ul2.style.textAlign = 'right';
+           ul.appendChild(ul2);
+
+           var lli = document.createElement("div");
+           lli.style.color = 'black';
+           lli.style.fontSize = '12';
+           lli.style.display = 'inline-block';
+           lli.innerHTML = timeStr;
+           lli.style.textAlign = 'left';
+           var ull2 = document.createElement("div");
+
+           ull2.append(lli);
+           ull2.style.textAlign = 'right';
+
+           ul.appendChild(ull2);
+      }else {
+           var li = document.createElement("div");
+           li.style.textAlign = 'left';
+           li.style.color = 'black';
+           li.style.fontSize = '16';
+           li.style.paddingRight = '15';
+           li.style.paddingLeft = '15';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#e0ccff';
+           li.style.borderTopLeftRadius = '0px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '20px';
+           li.style.borderBottomRightRadius = '20px';
+           li.style.maxWidth = "500";
+           if(!mes.includes('http'))li.style.wordBreak = "word";
+           li.style.display = 'inline-block';
+           li.innerHTML = urlify2(mes);
+
+           if (video.length > 0){
+                if (!mes.includes("Please review the information. If you have questions, you can reply directly to the customer. If you want to accept or decline, please click here.")){
+                    li.style.position = 'relative';
+                    var mark = document.createElement("img");
+                    mark.src = '/static/images/fileicon.png';
+                    mark.style.width = '33';
+                    mark.style.height = '35';
+                    mark.style.position = 'absolute';
+                    mark.style.top = '0px';
+                    mark.style.right = '-40px';
+                    li.appendChild(mark);
+                    li.onclick = function(){
+                        if (video.length > 0){
+                            window.open(video);
+                        }
+                    }
+                }
+           }
+
+           if (mes.includes("Please review the information. If you have questions, you can reply directly to the customer. If you want to accept or decline, please click here.")){
+                var index = mes.indexOf("Thanks");
+                li.innerHTML = mes.substring(0, index-1) + "\n";
+
+                var accept = document.createElement('a');
+                accept.style.textAlign = 'center';
+                accept.style.color = 'red';
+                accept.style.fontSize = '18';
+                accept.style.paddingRight = '10';
+                accept.style.paddingLeft = '10';
+                accept.style.paddingTop = '10';
+                accept.style.paddingBottom = '10';
+                accept.style.backgroundColor = '#e0d0f6';
+                accept.style.display = 'inline-block';
+
+                accept.setAttribute('href',"javascript:accept('accepted', lat, lng, video);");
+                accept.innerHTML = "Accept";
+
+                li.appendChild(accept);
+
+                accept.onclick = function(){
+                   send_msg('accepted', lat, lng, video);
+                }
+
+                var decline = document.createElement("a");
+                decline.style.textAlign = 'center';
+                decline.style.color = 'red';
+                decline.style.fontSize = '18';
+                decline.style.paddingRight = '10';
+                decline.style.paddingLeft = '10';
+                decline.style.paddingTop = '10';
+                decline.style.paddingBottom = '10';
+                decline.style.backgroundColor = '#e0d0f6';
+                decline.style.display = 'inline-block';
+                decline.style.marginLeft = "50";
+                decline.setAttribute('href',"javascript:accept('declined', lat, lng, video);");
+                decline.innerHTML = "Decline";
+                li.appendChild(decline);
+
+                decline.onclick = function(){
+                   send_msg('declined', lat, lng, video);
+                }
+
+                var footer = document.createElement("div");
+                footer.style.textAlign = 'left';
+                footer.style.color = 'black';
+                footer.style.fontSize = '16';
+                footer.style.paddingRight = '10';
+                footer.style.paddingLeft = '10';
+                footer.style.paddingTop = '10';
+                footer.style.paddingBottom = '10';
+                footer.style.backgroundColor = '#e0d0f6';
+                footer.style.maxWidth = "300";
+                footer.style.display = 'inline-block';
+                footer.innerHTML = mes.substring(index, mes.length);
+                li.appendChild(footer);
+           }
+
+           var ul3 = document.createElement("div");
+           ul3.append(li);
+
+           ul.appendChild(ul3);
+
+           var llli = document.createElement("div");
+           llli.style.textAlign = 'left';
+           llli.style.color = 'black';
+           llli.style.fontSize = '12';
+
+           llli.style.display = 'inline-block';
+           llli.innerHTML = timeStr;
+           var ull3 = document.createElement("div");
+
+           ull3.append(llli);
+           ul.appendChild(ull3);
+      }
+
+      chat_log.scrollTop = chat_log.scrollHeight;
+  }
+  if(image.length > 0){
+      var time = parseInt(new_post.time);
+
+      var date = new Date(time);
+
+      var seconds = date.getSeconds();
+      var minutes = date.getMinutes();
+      var hours = date.getHours();
+//
+      var year = date.getFullYear();
+      var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+      var day = date.getDate();
+
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+      var yearStr = year.toString();
+
+      if(day < 10)
+            timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+        else
+            timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+    //   var oneMinuteMilliseconds = 60000;
+    //   var oneHourMilliseconds = 3600000;
+    //   var oneDayMilliseconds = 24*3600*1000;
+    //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+    //   var now = Date.now();
+
+    //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+    //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+    //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+    //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+      var ul = document.getElementById("list");
+      if (new_post.user == semail){
+
+           var img = document.createElement("img");
+
+           img.style.width = "200";
+           img.style.height = "auto";
+           img.style.maxHeight = "200";
+           img.style.borderTopLeftRadius = '10px';
+           img.style.borderTopRightRadius = '10px';
+           img.style.borderBottomLeftRadius = '10px';
+           img.style.borderBottomRightRadius = '0px';
+           img.style.display = 'inline-block';
+           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
+           else img.src = image;
+           img.classList.add("cropping");
+
+           var li = document.createElement("div");
+
+           li.style.paddingRight = '10';
+           li.style.paddingLeft = '10';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#2390f6';
+           li.style.borderTopLeftRadius = '20px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '20px';
+           li.style.borderBottomRightRadius = '0px';
+           li.style.maxWidth = "300";
+           li.style.display = 'inline-block';
+           li.appendChild(img);
+
+           if (video.length > 0){
+                li.style.position = 'relative';
+                var mark = document.createElement("img");
+                mark.src = '/static/images/playbutton.png';
+                mark.style.width = '40';
+                mark.style.height = '30';
+                mark.style.position = 'absolute';
+                mark.style.top = '40%';
+                mark.style.right = '40%';
+                li.appendChild(mark);
+           }
+
+           li.onclick = function(){
+              if (video.length > 0){
+                  window.open(video, '_blank');
+              }else{
+                  if (lat.length > 0){
+                      window.location.href = "/show_chatloc?latlng=" + String(lat) + "_" + String(lng);
+                  }
+                  else{
+                      window.open(image, '_blank');
+                  }
+              }
+           }
+
+           var ul2 = document.createElement("div");
+
+           ul2.append(li);
+           ul2.style.textAlign = 'right';
+           ul.appendChild(ul2);
+
+           var lli = document.createElement("div");
+           lli.style.color = 'black';
+           lli.style.fontSize = '12';
+           lli.style.display = 'inline-block';
+           lli.innerHTML = timeStr;
+           lli.style.textAlign = 'left';
+           var ull2 = document.createElement("div");
+
+           ull2.append(lli);
+           ull2.style.textAlign = 'right';
+
+           ul.appendChild(ull2);
+      }else {
+
+           var img = document.createElement("img");
+
+           img.style.width = "200";
+           img.style.height = "auto";
+           img.style.maxHeight = "200";
+           img.style.borderTopLeftRadius = '0px';
+           img.style.borderTopRightRadius = '10px';
+           img.style.borderBottomLeftRadius = '10px';
+           img.style.borderBottomRightRadius = '10px';
+           img.style.display = 'inline-block';
+           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
+           else img.src = image;
+           img.classList.add("cropping");
+
+           var li = document.createElement("div");
+
+           li.style.paddingRight = '10';
+           li.style.paddingLeft = '10';
+           li.style.paddingTop = '10';
+           li.style.paddingBottom = '10';
+           li.style.backgroundColor = '#e0ccff';
+           li.style.borderTopLeftRadius = '0px';
+           li.style.borderTopRightRadius = '20px';
+           li.style.borderBottomLeftRadius = '20px';
+           li.style.borderBottomRightRadius = '20px';
+           li.style.maxWidth = "300";
+           li.style.display = 'inline-block';
+           li.appendChild(img);
+
+           if (video.length > 0){
+                li.style.position = 'relative';
+                var mark = document.createElement("img");
+                mark.src = '/static/images/playbutton.png';
+                mark.style.width = '40';
+                mark.style.height = '30';
+                mark.style.position = 'absolute';
+                mark.style.top = '40%';
+                mark.style.right = '40%';
+                li.appendChild(mark);
+           }
+
+           li.onclick = function(){
+              if (video.length > 0){
+                   window.open(video, '_blank');
+              }else{
+                  if (lat.length > 0){
+                      window.location.href = "/show_chatloc?latlng=" + String(lat) + "_" + String(lng);
+                  }
+                  else{
+                      window.open(image, '_blank');
+                  }
+              }
+           }
+
+           var ul3 = document.createElement("div");
+
+           ul3.append(li);
+           ul.appendChild(ul3);
+
+           var llli = document.createElement("div");
+           llli.style.textAlign = 'left';
+           llli.style.color = 'black';
+           llli.style.fontSize = '12';
+
+           llli.style.display = 'inline-block';
+           llli.innerHTML = timeStr;
+           var ull3 = document.createElement("div");
+
+           ull3.append(llli);
+           ul.appendChild(ull3);
+      }
+
+      chat_log.scrollTop = chat_log.scrollHeight;
+  }
+
+  chat_log.scrollTop = chat_log.scrollHeight;
+
+});
+
+
+var starCountRef = firebase.database().ref('status/' + sender_email + '_' + friend_email);
+starCountRef.on('child_added', function(snapshot) {
+    var new_status = snapshot.val();
+    var onoff = new_status.online;
+    if (onoff == 'offline'){
+        var time = parseInt(new_status.time);
+        var date = new Date(time);
+
+        var seconds = date.getSeconds();
+        var minutes = date.getMinutes();
+        var hours = date.getHours();
+
+        var year = date.getFullYear();
+        var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+        var day = date.getDate();
+
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+        var yearStr = year.toString();
+
+          if(day < 10)
+                timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+            else
+                timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+        //   var oneMinuteMilliseconds = 60000;
+        //   var oneHourMilliseconds = 3600000;
+        //   var oneDayMilliseconds = 24*3600*1000;
+        //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+        //   var now = Date.now();
+
+        //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+        //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+        //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+        //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+        online.innerHTML = 'Last seen at ' + timeStr;
+        st.innerHTML = 'Offline';
+        st.style.display = 'inline-block';
+    }else {
+        online.innerHTML = onoff;
+        st.innerHTML = onoff;
+        st.style.display = 'inline-block';
+    }
+});
+
+
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:yellow; word-break: break-all;">' + url + '</a>';
+    })
+}
+
+function urlify2(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:red; word-break: break-all;">' + url + '</a>';
+    })
+}
+
+
+//window.onload = function () {
+//    if (typeof history.pushState === "function") {
+//        history.pushState("jibberish", null, null);
+//        window.onpopstate = function () {
+//            if (confirm("Do you want to exit the room?")) {
+//                firebase.database().ref('status/' + user_id + '_' + sender_id).remove();
+//                firebase.database().ref('status/' + user_id + '_' + sender_id).push().set({
+//                    sender: sender_name,
+//                    time: new Date().getTime(),
+//                    online: 'offline'
+//                });
+//                history.go(-1);
+//            }
+//        };
+//
+//    }
+//};
+
+
+function myFunction() {
+
+    if(message.value.length > 0){
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+            user: semail,
+            time: new Date().getTime(),
+            online: 'is typing...'
+        });
+    }else {
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+            user: semail,
+            time: new Date().getTime(),
+            online: 'online'
+        });
+    }
+
+    isTyping();
+}
+
+
+function isTyping(){
+
+    if(message.value.length > 0){
+        attachBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+    }else{
+        attachBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+    }
+
+    // alert('is typing...');
+
+}
+
+
+
+function okay(){
+   var type = document.getElementById("type").value;
+   var image = getBase64Image(document.getElementById("image_message"));
+   var time = new Date().getTime();
+   if (type == 'picture'){
+
+       var progressBar = document.getElementById('gif');
+
+        progressBar.style.display = 'block';
+        document.getElementById("imageFrame").style.display = "none";
+
+        var storageRef = firebase.storage().ref();
+
+        var uploadTask = storageRef.child(file.name).put(file);
+        uploadTask.on('state_changed', function(snapshot){
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function(error) {
+            // Handle unsuccessful uploads
+        }, function() {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            var downloadURL = uploadTask.snapshot.downloadURL;
+
+            if (image.length > 0){
+                firebase.database().ref('messages/' + sender_email + '_' + friend_email).push().set({
+                    message: '',
+                    image: String(downloadURL),
+                    video:'',
+                    lat:'',
+                    lon:'',
+                    time: new Date().getTime(),
+                    user:semail
+                });
+                firebase.database().ref('messages/' + friend_email + '_' + sender_email).push().set({
+                    message: '',
+                    image: String(downloadURL),
+                    video:'',
+                    lat:'',
+                    lon:'',
+                    time: new Date().getTime(),
+                    user:semail
+                });
+                firebase.database().ref('notification/' + friend_email + '/' + sender_email).remove();
+                firebase.database().ref('notification/' + friend_email + '/' + sender_email).push().set({
+                    sender_id: sender_id,
+                    sender: semail,
+                    senderName: sender_name,
+                    msg: 'Shared a file',
+                    senderPhoto: sender_photo,
+                    time: new Date().getTime()
+                });
+                firebase.database().ref('notification2/' + friend_email + '/' + sender_email).remove();
+                firebase.database().ref('notification2/' + friend_email + '/' + sender_email).push().set({
+                    sender_id: sender_id,
+                    sender: semail,
+                    senderName: sender_name,
+                    msg: 'Shared a file',
+                    senderPhoto: sender_photo,
+                    time: new Date().getTime()
+                });
+                firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+                firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+                    sender: sender_name,
+                    time: new Date().getTime(),
+                    online: 'online'
+                });
+
+                progressBar.style.display = 'none';
+
+                console.log("Status: " + online.innerHTML);
+                if (online.innerHTML != "online" && online.innerHTML != "is typing..."){
+                    console.log("Status: " + online.innerHTML);
+                    sendPush(document.getElementById("pushform"), 'Shared a picture');
+                }
+            }
+        });
+   }
+   else if (type == 'video'){
+
+//        var storageRef = firebase.storage().ref(file.name);
+//        storageRef.put(file);
+        var progressBar = document.getElementById('gif');
+
+        progressBar.style.display = 'block';
+        document.getElementById("imageFrame").style.display = "none";
+
+        var thumbnail = getThumbImage(document.getElementById('videoresult'));
+
+        var storageRef = firebase.storage().ref();
+
+        var uploadTask = storageRef.child(file.name).put(file);
+        uploadTask.on('state_changed', function(snapshot){
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function(error) {
+            // Handle unsuccessful uploads
+        }, function() {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            var downloadURL = uploadTask.snapshot.downloadURL;
+
+            firebase.database().ref('messages/' + sender_email + '_' + friend_email).push().set({
+                message: '',
+                image: thumbnail,
+                video: String(downloadURL),
+                lat:'',
+                lon:'',
+                time: new Date().getTime(),
+                user:semail
+            });
+            firebase.database().ref('messages/' + friend_email + '_' + sender_email).push().set({
+                message: '',
+                image: thumbnail,
+                video: String(downloadURL),
+                lat:'',
+                lon:'',
+                time: new Date().getTime(),
+                user:semail
+            });
+            firebase.database().ref('notification/' + friend_email + '/' + sender_email).remove();
+            firebase.database().ref('notification/' + friend_email + '/' + sender_email).push().set({
+                sender_id: sender_id,
+                sender: semail,
+                senderName: sender_name,
+                msg: 'Shared a file',
+                senderPhoto: sender_photo,
+                time: new Date().getTime()
+            });
+            firebase.database().ref('notification2/' + friend_email + '/' + sender_email).remove();
+            firebase.database().ref('notification2/' + friend_email + '/' + sender_email).push().set({
+                sender_id: sender_id,
+                sender: semail,
+                senderName: sender_name,
+                msg: 'Shared a file',
+                senderPhoto: sender_photo,
+                time: new Date().getTime()
+            });
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+                sender: sender_name,
+                time: new Date().getTime(),
+                online: 'online'
+            });
+
+            progressBar.style.display = 'none';
+
+            console.log("Status: " + online.innerHTML);
+            if (online.innerHTML != "online" && online.innerHTML != "is typing..."){
+                console.log("Status: " + online.innerHTML);
+                sendPush(document.getElementById("pushform"), 'Shared a video');
+            }
+
+        });
+   }
+   else if (type == 'map'){
+        var lat = document.getElementById("lat").value;
+        var lng = document.getElementById("lng").value;
+        var image = getBase64Image(document.getElementById("image_message"));
+        if (image.length > 0){
+            firebase.database().ref('messages/' + sender_email + '_' + friend_email).push().set({
+                message: '',
+                image: image,
+                video:'',
+                lat:lat,
+                lon:lng,
+                time: new Date().getTime(),
+                user:semail
+            });
+            firebase.database().ref('messages/' + friend_email + '_' + sender_email).push().set({
+                message: '',
+                image: image,
+                video:'',
+                lat:lat,
+                lon:lng,
+                time: new Date().getTime(),
+                user:semail
+            });
+            firebase.database().ref('notification/' + friend_email + '/' + sender_email).remove();
+            firebase.database().ref('notification/' + friend_email + '/' + sender_email).push().set({
+                sender_id: sender_id,
+                sender: semail,
+                senderName: sender_name,
+                msg: 'Shared a location',
+                senderPhoto: sender_photo,
+                time: new Date().getTime()
+            });
+            firebase.database().ref('notification2/' + friend_email + '/' + sender_email).remove();
+            firebase.database().ref('notification2/' + friend_email + '/' + sender_email).push().set({
+                sender_id: sender_id,
+                sender: semail,
+                senderName: sender_name,
+                msg: 'Shared a location',
+                senderPhoto: sender_photo,
+                time: new Date().getTime()
+            });
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+                sender: sender_name,
+                time: new Date().getTime(),
+                online: 'online'
+            });
+            document.getElementById("imageFrame").style.display = "none";
+
+            console.log("Status: " + online.innerHTML);
+            if (online.innerHTML != "online" && online.innerHTML != "is typing..."){
+                console.log("Status: " + online.innerHTML);
+                sendPush(document.getElementById("pushform"), 'Shared a location');
+            }
+
+        }
+   }
+}
+
+function getBase64Image(img) {
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  var dataURL = canvas.toDataURL("image/png");
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+function getThumbImage(video) {
+  var canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  var dataURL = canvas.toDataURL("image/png");
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+
+function uploadFile(file){
+
+        var progressBar = document.getElementById('gif');
+        progressBar.style.display = 'block';
+
+        var storageRef = firebase.storage().ref();
+
+        var uploadTask = storageRef.child(file.name).put(file);
+        uploadTask.on('state_changed', function(snapshot){
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+            }
+        }, function(error) {
+            // Handle unsuccessful uploads
+        }, function() {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            var downloadURL = uploadTask.snapshot.downloadURL;
+
+            firebase.database().ref('messages/' + sender_email + '_' + friend_email).push().set({
+                message: 'Sent a file: ' + file.name,
+                image: '',
+                video: String(downloadURL),
+                lat:'',
+                lon:'',
+                time: new Date().getTime(),
+                user:semail
+            });
+            firebase.database().ref('messages/' + friend_email + '_' + sender_email).push().set({
+                message: 'Sent a file: ' + file.name,
+                image: '',
+                video: String(downloadURL),
+                lat:'',
+                lon:'',
+                time: new Date().getTime(),
+                user:semail
+            });
+            firebase.database().ref('notification/' + friend_email + '/' + sender_email).remove();
+            firebase.database().ref('notification/' + friend_email + '/' + sender_email).push().set({
+                sender_id: sender_id,
+                sender: semail,
+                senderName: sender_name,
+                msg: 'Shared a file',
+                senderPhoto: sender_photo,
+                time: new Date().getTime()
+            });
+            firebase.database().ref('notification2/' + friend_email + '/' + sender_email).remove();
+            firebase.database().ref('notification2/' + friend_email + '/' + sender_email).push().set({
+                sender_id: sender_id,
+                sender: semail,
+                senderName: sender_name,
+                msg: 'Shared a file',
+                senderPhoto: sender_photo,
+                time: new Date().getTime()
+            });
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+                sender: sender_name,
+                time: new Date().getTime(),
+                online: 'online'
+            });
+
+            progressBar.style.display = 'none';
+
+            console.log("Status: " + online.innerHTML);
+            if (online.innerHTML != "online" && online.innerHTML != "is typing..."){
+                console.log("Status: " + online.innerHTML);
+                sendPush(document.getElementById("pushform"), 'Shared a file');
+            }
+
+        });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function accept(sts, lat, lng, mailid){
+ //   alert(sts);
+}
+
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var date = new Date();
+var time = new Date().getTime();
+var seconds = date.getSeconds();
+var minutes = date.getMinutes();
+var hours = date.getHours();
+//
+var year = date.getFullYear();
+var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+var day = date.getDate();
+
+var ampm = hours >= 12 ? 'PM' : 'AM';
+hours = hours % 12;
+hours = hours ? hours : 12; // the hour '0' should be '12'
+minutes = minutes < 10 ? '0'+minutes : minutes;
+var timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+
+
+      var yearStr = year.toString();
+
+      if(day < 10)
+            timeStr = monthes[month] + " 0" + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+        else
+            timeStr = monthes[month] + " " + day + ", " + yearStr.substr(2, 2) + "' " + hours + ':' + minutes + ' ' + ampm;
+
+    //   var oneMinuteMilliseconds = 60000;
+    //   var oneHourMilliseconds = 3600000;
+    //   var oneDayMilliseconds = 24*3600*1000;
+    //   var oneMonthMilliseconds = oneDayMilliseconds*30;
+    //   var now = Date.now();
+
+    //   if(now - time < oneMinuteMilliseconds) timeStr = "Just now";
+    //   if(oneMinuteMilliseconds <= now - time && now - time < oneHourMilliseconds) timeStr = String(parseInt((now - time)/(60000))) + "m ago";
+    //   if(oneHourMilliseconds <= now - time && now - time < oneDayMilliseconds) timeStr = String(parseInt((now - time)/(3600000))) + "h ago";
+    //   if(oneDayMilliseconds <= now - time && now - time < oneMonthMilliseconds) timeStr = String(parseInt((now - time)/(24*3600000))) + "d ago";
+
+
+
+var datetime = timeStr;
+
+function send_msg(sts, lat, lng, video){
+    var messageText = '';
+    if (sts == 'accepted'){
+        messageText = 'Hi, ' + friend_name + '\n' + sender_name + ' has accepted you ' +
+            lat + ' with schedule of ' + lng + '\n' + 'Thanks\n' + datetime + '\n' + sender_name;
+    }else if (sts == 'declined'){
+        messageText = 'Hi, ' + friend_name + '\n' + sender_name + ' can\'t do you ' + lat + ' with your requested schedule of ' +
+            lng + '\n' + 'Please select another time or another service provider.\n' + 'We apologize for the inconvenience\n' + datetime + '\n' + sender_name;
+    }
+
+    if (messageText.length > 0){
+        firebase.database().ref('messages/' + sender_email + '_' + friend_email).push().set({
+            message: messageText,
+            image:'',
+            video:'',
+            lat: '',
+            lon: '',
+            time: new Date().getTime(),
+            user:semail
+        });
+        firebase.database().ref('messages/' + friend_email + '_' + sender_email).push().set({
+            message: messageText,
+            image:'',
+            video:'',
+            lat: '',
+            lon: '',
+            time: new Date().getTime(),
+            user:semail
+        });
+        firebase.database().ref('notification/' + friend_email + '/' + sender_email).remove();
+        firebase.database().ref('notification/' + friend_email + '/' + sender_email).push().set({
+            sender_id: sender_id,
+            sender: semail,
+            senderName: sender_name,
+            msg: messageText,
+            senderPhoto: sender_photo,
+            time: new Date().getTime()
+        });
+        firebase.database().ref('notification2/' + friend_email + '/' + sender_email).remove();
+        firebase.database().ref('notification2/' + friend_email + '/' + sender_email).push().set({
+            sender_id: sender_id,
+            sender: semail,
+            senderName: sender_name,
+            msg: messageText,
+            senderPhoto: sender_photo,
+            time: new Date().getTime()
+        });
+
+        // var params = {
+        //     'service': lat,
+        //     'name': friend_name,
+        //     'email': document.getElementById("friend_email").value,
+        //     'service_reqdate': lng,
+        //     'status': sts,
+        //     'mailid': video
+        // }
+        // post("/acchat", params);
+    }
+}
+
+
+
+//  var timeStr = '';
+//
+//  var currentdate = new Date();
+//
+//  var cseconds = currentdate.getSeconds();
+//  var cminutes = currentdate.getMinutes();
+//  var chours = currentdate.getHours();
+//
+//  var cyear = currentdate.getFullYear();
+//  var cmonth = currentdate.getMonth(); // beware: January = 0; February = 1, etc.
+//  var cday = currentdate.getDate();
+//
+//  if (year == cyear && month == cmonth && day == cday && hours == chours && minutes == cminutes){
+//      timeStr = 'Just Now';
+//  }
+//  else if (year == cyear && month == cmonth && day == cday && hours == chours && minutes != cminutes)
+//  {
+//      timeStr = (cminute - minutes) + ' min ago';
+//  }
+//  else if (year == cyear && month == cmonth && day == cday && hours != chours){
+//      timeStr = (chours - hours) + ' hr ago';
+//  }
+//  else if (year == cyear && month == cmonth && ((cday - day) == 1)){
+//      var ampm = hours >= 12 ? 'PM' : 'AM';
+//      hours = hours % 12;
+//      hours = hours ? hours : 12; // the hour '0' should be '12'
+//      minutes = minutes < 10 ? '0'+minutes : minutes;
+//      timeStr = 'Yesterday' + ' ' + hours + ':' + minutes + ' ' + ampm;
+//  }
+//  else {
+//      var ampm = hours >= 12 ? 'PM' : 'AM';
+//      hours = hours % 12;
+//      hours = hours ? hours : 12; // the hour '0' should be '12'
+//      minutes = minutes < 10 ? '0'+minutes : minutes;
+//      timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
+//  }
+
+</script>
+
+
+<script>
+
+$(document).ready(function()
+{
+    $(window).bind("beforeunload", function() {
+        console.log('Close current page');
+
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+            user: sender_email,
+            time: new Date().getTime(),
+            online: 'offline'
+        });
+
+        return false;
+    });
+});
+
+</script>
+
+
+<form id="pushform" action="/pushsend" method="POST" enctype="multipart/form-data" style="display:none;">
+    {% csrf_token %}
+    <input hidden name="receiver_id" value="{{friend.pk}}">
+    <input hidden name="sender_id" value="{{me.pk}}">
+    <input hidden name="message" id="chatmes" value="">
+</form>
+
+<script>
+
+function sendPush(form, message){
+    document.getElementById("chatmes").value = message;
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log('Result: ' + xhr.response)
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

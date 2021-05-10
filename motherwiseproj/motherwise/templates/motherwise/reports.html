@@ -1,0 +1,668 @@
+{% extends 'motherwise/base_reports.html' %}
+{% block title %}Reports{% endblock %}
+{% block body %}
+
+
+<style>
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 15px;
+    text-align: center;
+}
+
+.header {
+  background-image: linear-gradient(0deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6),rgba(0,0,0,0.6),rgba(0,0,0,0.7)), url("/static/images/accountbg.jpg");
+  background-size: 100%, 100%;
+  text-align:center;
+  height:95px;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+.table-owner {
+  /*box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);*/
+  width: 100%;
+  background-color: white;
+  overflow-x:auto;
+}
+
+.table-owner1 {
+  width: 100%;
+  background-color: white;
+  overflow-x:auto;
+  position: relative;
+  margin-top:95px;
+  display:none;
+}
+
+.table>tbody>tr>td{
+    vertical-align: middle;
+    text-align: middle;
+}
+
+table td, table th {
+  color: #2b686e;
+  padding: 10px;
+  border: 1px solid white;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+table td:last-child {
+  font-size: 0.95em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+table th {
+  background-color: #04a2be;
+  font-weight: 520;
+  color:white;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table tr:nth-child(2n) {
+  background-color: white;
+  border: 1px solid #327a81;
+}
+
+table tr:nth-child(2n+1) {
+  background-color: #edf7f8;
+  border: 1px solid white;
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 60px;
+  right: 10px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+#admin{
+    width:80px; height:80px; border-radius:50%; margin-top:80px; margin-left:10px; z-index:2; position:fixed; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1); display:none;
+}
+
+.owneraddress{
+    color:black;
+}
+.owneraddress:hover{
+    color:blue;
+}
+
+.hyperlink{
+    color:black;
+}
+
+.hint{
+    color:black;
+    font-size:14px;
+    text-align:center;
+    visibility:hidden;
+}
+
+.hyperlink:hover .hint {
+    visibility:visible;
+}
+
+.subscription {
+    color:black;
+    white-space: pre-wrap;      /* CSS3 */
+    white-space: -moz-pre-wrap; /* Firefox */
+    white-space: -pre-wrap;     /* Opera <7 */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    word-wrap: break-word;      /* IE */
+}
+
+.btn-subscr {
+    color:black;
+    text-decoration: underline;
+    font-size:12px;
+}
+
+.btn-subscr:hover {
+    color:red;
+}
+
+.centered-and-cropped { object-fit:cover }
+
+.show {
+    z-index:1000;
+    position: absolute;
+    background-color:#ffffff;
+    border: 2px solid orange;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+    padding:10px;
+    border-radius:20px;
+    display: block;
+    font-size:20px;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
+.hide {
+    display: none;
+}
+
+.show li{ list-style: none; }
+.show a { border: 0 !important; text-decoration: none; }
+.show a:hover { text-decoration: underline !important; }
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+
+label span {/* <-- style the artificial checkbox */
+  height: 15px;
+  width: 15px;
+  border-radius:50%;
+  border: 1px solid black;
+  background-color:transparent;
+  margin-right:3px;
+  display: inline-block;
+  position: relative;
+}
+
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  color:white;
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.3);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+.bouton-update{
+  background-color: #008CBA;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+textarea {
+  border-radius: 5px;
+  border: 1px solid #EEE;
+  width: 100%;
+  height: 80px;
+  float: left;
+  padding: 10px 15px;
+  opacity: 0.8;
+  color:black;
+  text-align:left;
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+label.cameraButton {
+  display: inline-block;
+  font-size:14px;
+  font-weight:300;
+  color: black;
+  width:100%;
+  height:auto;
+  text-align:center;
+  text-decoration:underline;
+}
+
+/* Look like a clicked/depressed button */
+label.cameraButton:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input[accept*="image"] {
+  display: none;
+}
+
+#snackbar {
+    visibility: hidden;
+    min-width: 200px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 12px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+
+</style>
+
+<script>
+	history.pushState(null, null, location.href);
+	window.onpopstate = function () {
+        history.go(1);
+    };
+</script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div id="no_result" style="font-size:25px; font-weight:300; color: black; text-align:center;
+	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
+	transform:translate(-50%, -50%); width:auto; z-index:100; top:400px; display:none;">
+    No report ...
+</div>
+
+<div onclick="showNotifications()" id="alert" style="font-size:18px; font-weight:300; color: black; text-align:center; box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.9);
+	position:fixed; left:2%; float:middle; background-color:white; border-radius:3px; padding: 8px 12px 8px 12px;
+	width:180px; z-index:100; top:85px; display:none;">
+    <i class="fa fa-bell" style="font-size:16px; color:red;"/></i>
+	New Message!<br>
+	<div style="color:red; font-size:14px; margin-top:5px;">Click here to view.</div>
+</div>
+
+
+<img class="centered-and-cropped" src="/static/images/logo.jpg" id="admin" align="top">
+
+<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+<img src="/static/images/progressbar.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle; border-radius: 1px; width:60px; height:60px;
+	transform:translate(-50%, -50%); width:auto; z-index:2000; top:120px; display: none;" id="gif">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div class="table-owner1" id="header" style="z-index:1; position:relative; background:transparent;" align="top">
+    <div class="header"></div>
+    <table cellspacing="0" class="table table-fit">
+        <tr>
+            <th style="width:3%;">id</th>
+            <th style="width:4%;">Picture</th>
+            <th style="width:6%;">Name & Email</th>
+            <th style="width:6%;">Phone Number</th>
+            <th style="width:7%;">City</th>
+            <th style="width:6%;">Since</th>
+            <th style="width:22%;">Report Message</th>
+            <th style="width:6%;">Process</th>
+            <th style="width:5%;">View Reporter</th>
+            <th style="width:3%;">Remove</th>
+        </tr>
+    </table>
+</div>
+
+<div class="table-owner">
+    <div class="header">
+        <!--<div style="margin-top:40px; display:inline-block; color: white; font-size: 1.6em;-->
+        <!--    font-weight:900; text-shadow: 4px 4px 8px #111111; padding: 5px; text-align: left; text-transform: uppercase; font-family:Verdana, cursive;">-->
+        <!--    <img class="centered-and-cropped" src="/static/sharemyfood/images/logo.png" alt=""-->
+        <!--        style="width:40px; height:40px; border-radius:50%; margin-right:20px;box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);"/>-->
+        <!--    <img src="/static/sharemyfood/images/logotitle.png" style="width:250px; height:auto; border-radius:0px;"> Users-->
+        <!--</div>-->
+    </div>
+    <form action="#" method="post">
+        {% csrf_token %}
+    <table cellspacing="0" class="table table-fit">
+        <tr>
+            <th style="width:3%;">id</th>
+            <th style="width:4%;">Picture</th>
+            <th style="width:6%;">Name & Email</th>
+            <th style="width:6%;">Phone Number</th>
+            <th style="width:7%;">City</th>
+            <th style="width:6%;">Since</th>
+            <th style="width:22%;">Report Message</th>
+            <th style="width:6%;">Reported At</th>
+            <th style="width:6%;">Process</th>
+            <th style="width:5%;">View Reporter</th>
+            <th style="width:3%;">Remove</th>
+        </tr>
+        {% if reports %}
+            {% for report in reports %}
+            <tr class="test" id="{{report.member.id}}">
+                <td><label>{{forloop.counter}}</label></td>
+                <td>
+                    <a href="{{report.member.photo_url}}" target="_blank">
+                        <img src="{{report.member.photo_url}}" alt="" style="border-radius:50%; height:60px; width:60px; object-fit:cover;"/>
+                    </a>
+                </td>
+                <td><div style="text-align:left;">{{report.member.name}}<br>{{report.member.email}}</div></td>
+                <td>{{report.member.phone_number}}</td>
+                <td>
+                    <div style="width:100%;">
+                        <a href="https://www.google.com/maps/search/?api=1&query={{report.member.address}}" target="_blank">
+                            <div class="owneraddress"><div>{% if report.member.city %}<i class="fa fa-map-marker" style="color:red; font-size:16px; margin-right:5px;"></i>{% endif %}{{report.member.city}}</div></div>
+                        </a>
+                    </div>
+                </td>
+                <td><div style="color:black; font-size:14px;">{{report.member.registered_time}}</div></td>
+                <td>
+                    <div style="text-align:left; padding:0px 15px 0px 30px; font-style:italic; color:blue;">{{report.message}}</div>
+                </td>
+                <td><div style="color:black; font-size:14px;">{{report.date_time}}</div></td>
+                <td>
+                    <a href="javascript:void(0);" onclick="openMessageBox(this);" id="{{report.member.id}}">
+                        <label style="background:white; font-size:14px; color:green; border:0; width:100%;">Give Warning</label>
+                        <input hidden id="uname" value="{{report.member.name}}">
+                        <input hidden id="upic" value="{{report.member.photo_url}}">
+                    </a>
+                    <a href="javascript:void(0);" onclick="deleteUser(this);" id="{{report.member.id}}">
+                        <label style="background:white; font-size:14px; color:red; border:0; margin-top:12px; width:100%;">Delete Account</label>
+                    </a>
+                </td>
+                <td>
+                    <!--<a href="/viewprofile?user_id={{report.reporter.pk}}">-->
+                    <a href="#">
+                        <div class="hyperlink">
+                            <div class="hint">
+                                <img src="{{report.reporter.photo_url}}" style="border-radius:50%; height:50px; width:50px; object-fit:cover;">
+                                <div style="font-size:14px;">{{report.reporter.name}}</div>
+                            </div>
+                        </div>
+                    </a>
+                </td>
+                <td>
+                    <a href="/delreport?report_id={{report.id}}" role="button" onclick="return confirm('Are you sure you want to delete this report?')">
+                        <img src="/static/images/canceliconblack.png" style="width:30px; height:30px;">
+                    </a>
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        {% else %}
+            <script>document.getElementById('no_result').style.display = 'block';</script>
+        {% endif %}
+        </table>
+
+    </form>
+</div>
+
+<div id="messageBox" style="font-size:16px; font-weight:300; color: black; box-shadow: 0px 0px 100px rgba(0, 0, 0, 1.0);
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:400px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
+    <img id="seluserimage" style="width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <div id="selusername" style="font-size:16px; float:left; margin-top:15px;"></div>
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:document.getElementById('messageBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <br>
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:orange; font-size:25px;"></i></span>SEND WARNING MESSAGE</div><br>
+            <form action="/warning_message" method="post" enctype="multipart/form-data" style="width:100%;" id="msgform">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="hidden" name="member_id" id="member_id" value="">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea" placeholder="Write something here ..." style="height:150px; max-height:300px; border:2px solid black;"></textarea>
+                    <script>autosize(document.getElementById("textarea"));</script>
+                    <div id="validation" style="color:red; font-size:14px; visibility:hidden;">Please write your message.</div>
+                </div>
+                <center><img src="/static/images/progressbar.gif" style="width:30px; height:30px; display: none;" id="gif2"></center>
+                <div class="form-group" style="margin-top:5px;">
+        			<center>
+                        <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
+                            onclick="javascript:formSubmit(document.getElementById('msgform'), document.getElementById('gif2'));">Submit</button>
+                    </center>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="backgroundOverlay"></div>
+
+<div id="snackbar">Submited</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $(window).on('scroll', function () {
+
+  var $w = $(window);
+  $('.position-fixed-x').css('left', $w.scrollLeft());
+  $('.table-owner1').css('top', $w.scrollTop());
+
+});
+</script>
+
+<script>
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 150 || document.documentElement.scrollTop > 150) {
+        document.getElementById("header").style.display = "block";
+        document.getElementById("myBtn").style.display = "block";
+        document.getElementById("admin").style.display = "block";
+        document.getElementById("navbar").style.backgroundColor = "black";
+    } else {
+        document.getElementById("header").style.display = "none";
+        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("admin").style.display = "none";
+        document.getElementById("navbar").style.backgroundColor = "transparent";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+</script>
+
+
+<script>
+
+ScrollTo({{member_id}});
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+</script>
+
+<script>
+
+function showToast(text) {
+    var x = document.getElementById("snackbar");
+    x.innerHTML = text;
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+function openMessageBox(obj){
+    document.getElementById('member_id').value = obj.id;
+    document.getElementById('backgroundOverlay').style.display='block';
+    document.getElementById('messageBox').style.display='block';
+    var selusername = obj.querySelector("input#uname");
+    document.getElementById('selusername').innerHTML = selusername.value;
+    var seluserimage = obj.querySelector("input#upic");
+    document.getElementById('seluserimage').src = seluserimage.value;
+}
+
+</script>
+
+<script>
+
+    function formSubmit(form, gif){
+        document.getElementById('validation').style.visibility = "hidden";
+        if(document.getElementById('textarea').value == ''){
+            document.getElementById('validation').style.visibility = "visible";
+            document.getElementById('validation').innerHTML = "Please enter your message."
+            return;
+        }
+        gif.style.display = "block";
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log('Response: ' + xhr.response);
+                gif.style.display = "none";
+                if(xhr.response == '0'){
+                    document.getElementById('textarea').value = "";
+                    document.getElementById('messageBox').style.display = "none";
+                    document.getElementById('backgroundOverlay').style.display = "none";
+                    showToast('Message sent!');
+                }else{
+                    document.getElementById('validation').style.visibility = "visible";
+                    document.getElementById('validation').innerHTML = "Something is wrong with server."
+                }
+            }
+        };
+        xhr.open('POST', form.getAttribute('action'), true);
+        xhr.send(formData);
+        console.log(form.getAttribute('action'));
+    }
+
+    function deleteUser(obj){
+        var memberID = obj.id;
+        if(confirm('Are you sure you want to delete this member?')){
+            window.location.href = '/manager/delete_member?member_id=' + memberID;
+            console.log('Deleting member...');
+        }
+    }
+
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

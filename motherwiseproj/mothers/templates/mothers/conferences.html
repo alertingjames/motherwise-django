@@ -1,0 +1,689 @@
+{% extends 'mothers/base_conference.html' %}
+{% block title %}Conferences{% endblock %}
+{% block body %}
+
+<br>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  <script>
+      WebFont.load({
+      google: {
+      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+    });
+</script>
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+img {
+  height: 80px;
+  width: 80px;
+}
+
+.topBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+.topBtn:hover {
+  background-color: orange;
+}
+
+form h1 {
+  font-size: 25px;
+  background: #327a81 none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:left
+}
+
+.conf-form {
+  max-width:600px;
+  width:auto;
+  margin:auto;
+  border-radius:5px;
+  margin-bottom:3px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.conf-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 200;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.bouton-update{
+  background-color: #0077b3;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+select {
+  background:transparent;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius:3px;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:white;
+  text-align-last:center;
+}
+
+option{
+    color:black;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+
+.cropping{
+    object-fit:cover;
+}
+
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  color:white;
+  text-shadow: 2px 2px 4px gray;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: red;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: orange;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+ 	top: 6px;
+	left: 6px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+label.fileBtn {
+  display: inline-block;
+  /* Styles to make it look like a button */
+  padding: 0.5em;
+  border: 0;
+  border-radius:8px;
+  font-size:16px;
+  color:white;
+  width:auto;
+  text-align:center;
+  text-decoration: underline;
+}
+
+/* Look like a clicked/depressed button */
+label.fileBtn:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.fileBtn input[accept*="video"] {
+  display: none;
+}
+
+iframe{
+    background-image: url("/static/images/video/youtube-backg.png");
+    background-size:cover;
+}
+
+video{
+    background-image: url("/static/images/video/videobackg.jpg");
+    background-size:cover;
+}
+
+.formcontent {
+  width:100%;
+  float:middle;
+  margin:auto;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.contentform {
+  float:middle;
+  margin:auto;
+}
+
+#youtubeurl::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: white;
+  opacity: 1; /* Firefox */
+}
+
+#youtubeurl:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+#youtubeurl::-ms-input-placeholder { /* Microsoft Edge */
+  color: white;
+}
+
+#youtubeurl{
+    background-color:transparent;
+    color:white;
+}
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+
+/* The container */
+.container2 {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  color:white;
+  text-shadow: 2px 2px 4px gray;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container2 input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container2:hover input ~ .checkmark2 {
+  background-color: red;
+}
+
+/* When the radio button is checked, add a blue background */
+.container2 input:checked ~ .checkmark2 {
+  background-color: orange;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark2:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container2 input:checked ~ .checkmark2:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container2 .checkmark2:after {
+ 	top: 6px;
+	left: 6px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+
+
+</style>
+
+<!--<script>-->
+<!--    var sss = false;-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/mothers/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
+<!--    setTimeout(function(){ sss=true; }, 1000);-->
+<!--</script>-->
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+
+<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
+	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:105px; display:none;">CONFERENCES</div>
+
+<div style="width:100%; height:auto; margin-top:10px;">
+
+    <div style="font-size:25px; font-weight:800; margin-bottom:30px; font-family:verdana; margin-top:25px;
+        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">CONFERENCES</div>
+
+    <div class="container-fluid" style="margin-top:2%;">
+
+        <div class="row">
+            <div class="col-sm-3" style="text-align:center; margin-bottom:20px;">
+
+                <div style="width:auto; text-align:center; font-size:22px; font-family:verdana; font-weight:600; color:white; margin-bottom:30px;">
+                    {{note}}
+                </div>
+
+            </div>
+
+            <div class="col-sm-6" style="margin-bottom:30px;">
+
+                {% if confs %}
+                    <div style="width:100%; height:auto; padding-bottom:15%; overflow:auto;" id="conf-form">
+                        {% for conf in confs %}
+                        <div class="conf-form">
+                            <div class="contentform">
+                                <div style="width:100%; padding-bottom:8px; display:flex;" >
+                                    <div style="padding:10px; float:left; position:relative;">
+                                        <a href="#">
+                                            <img src="{% if conf.type == 'live' %}/static/images/video/live-icon.jpg{% elif conf.type == 'file' %}/static/images/video/video-icon.jpg{% elif conf.type == 'youtube' %}/static/images/video/youtube-icon.jpg{% else %}{% endif %}"
+                                                style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                                        </a>
+                                    </div>
+                                    <a href="javascript:void(0);" style="flex-grow:1;" onclick="javascript:openCodeBox(this);" id="{{conf.pk}}">
+                                        <input type="hidden" id="conf_type" value="{{conf.type}}">
+                                        <input type="hidden" id="conf_group_id" value="{{conf.group_id}}">
+                                        <input type="hidden" id="conf_cohort" value="{{conf.cohort}}">
+                                        <input type="hidden" id="conf_code" value="{{conf.code}}">
+                                        <div style="padding-left:8px; margin-top:10px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                            {{conf.name}}<br>
+                                            {% if conf.event_time %}
+                                            <div style="display:flex; margin-top:3px; float:left; margin-right:15px;"><div style="font-size:12px;">Start At:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.event_time}}</div></div>
+                                            <div style="display:flex; margin-top:3px; float:left; margin-right:15px;"><div style="font-size:12px;">Created:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.created_time}}</div></div>
+                                            {% else %}
+                                            <div style="display:flex; margin-top:3px; float:left; margin-right:15px;"><div style="font-size:12px;">Created:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.created_time}}</div></div>
+                                            {% endif %}
+                                            <br>
+                                            <div style="font-size:14px; font-weight:600; color:yellow; float:left;">{{conf.gname}}</div>
+                                        </div>
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+                {%else %}
+                        <div style="width:100%; text-align:center;">
+                            <br>
+                            <br>
+                            <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No conference found...</h4>
+                        </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="col-sm-3">
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="confCodeBox" style="font-size:16px; font-weight:300; color: black;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
+    <span style="font-size:25px; color:red; float:left;" class="fas fa-video"></span>
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">Enter A Code</div><br>
+            <div style="width:100%;">
+                <div class="form-group">
+                    <input type="text" id="code" value="" placeholder="Conference code...">
+                </div>
+                <center>
+                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;" onclick="javascript:entryConference(document.getElementById('code').value);">Entry</button>
+                </center>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" class="topBtn" id="topBtn" style="right:15px;"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("topBtn").style.display = "block";
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("topBtn").style.display = "none";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.getElementById("member-list").scrollTop = 0;
+}
+
+</script>
+
+<script>
+
+$(document).ready(function() {
+    $('#conf-form #date').each(function(i) {
+        this.innerHTML = getDate(parseInt(this.innerHTML));
+    });
+
+    $('#conf-form #date2').each(function(i) {
+        this.innerHTML = getDate(parseInt(this.innerHTML));
+    });
+});
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+
+function dismissLayouts(){
+    document.getElementById('confCodeBox').style.display='none';
+    document.getElementById('backgroundOverlay').style.display='none';
+}
+
+var confid = 0;
+var type = "";
+var groupid = "";
+var cohort = "";
+var code = "";
+
+function openCodeBox(obj){
+    confid = obj.id;
+    type = obj.querySelector("input#conf_type").value;
+    groupid = obj.querySelector("input#conf_group_id").value;
+    cohort = obj.querySelector("input#conf_cohort").value;
+    code = obj.querySelector("input#conf_code").value;
+
+    // if(type == 'live'){
+    //     document.getElementById('confCodeBox').style.display='block';
+    //     document.getElementById('backgroundOverlay').style.display='block';
+    // }else{
+        window.location.href = '/mothers/open_conference?conf_id=' + confid + '&group_id=' + groupid + '&cohort=' + cohort;
+    // }
+}
+
+function entryConference(cd){
+    if(cd == ''){
+        alert('Please enter the conference entry code.');
+        return;
+    }
+
+    if(code != cd){
+        alert('The code is incorrect. Please enter a correct conference entry code.');
+        return;
+    }
+
+    window.location.href = '/mothers/open_conference?conf_id=' + confid + '&group_id=' + groupid + '&cohort=' + cohort;
+}
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

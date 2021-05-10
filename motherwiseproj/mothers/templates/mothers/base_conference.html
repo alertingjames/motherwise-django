@@ -1,0 +1,259 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Motherwise Network{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+    <link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+    <link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+    <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+    <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<style>
+
+.dropdown-menu{
+    background-color: #fff;
+    padding:20px;
+    width:220px;
+}
+
+#m{
+    background-color: #fff;
+    padding:15px;
+    width:300px;
+}
+
+.menu{
+    color: black;
+}
+
+.menu:hover{
+    background-color:#eee;
+    color:red;
+}
+
+.menu a{
+    color:black;
+}
+
+h4{
+    color:white;
+}
+
+h4:hover{
+    color:white;
+    text-decoration:underline;
+}
+
+</style>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
+</head>
+
+<body>
+
+<nav id="navbar" class="navbar navbar-inverse" style="background:rgba(0,0,0,0.7); padding-top:30px;">
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar" aria-expanded="false" aria-label="Toggle navigation" onclick="javascript:changeNavbarBackgroundColor();">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+        </div>
+
+        <div class="collapse navbar-collapse" id="topNavBar" style="border:0;">
+            <ul class="nav navbar-nav">
+                <li style="margin-right:30px;">
+                    <a href="javascript:void(0)" onclick="exitGroup('home');">
+                        <h4 style=""><span class="fa fa-home" aria-hidden="true" style="margin-right:10px;"></span>Home</h4>
+                    </a>
+                </li>
+
+            </ul>
+
+            <!--<div class="" style="position:absolute; left:50%; text-align:center; margin-top:35px; float:middle; transform:translate(-50%, -50%);">-->
+            <!--    <h1 style="font-size:25px; font-weight:600; font-family:verdana; margin:auto; color: #fff; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);">{{post.post.title}}</h1>-->
+            <!--</div>-->
+
+            <ul class="nav navbar-nav navbar-right">
+
+                <!--<li style="margin-right:30px;">-->
+                <!--    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">-->
+                <!--        <h4><span class="fa fa-search" aria-hidden="true" style="margin-right:10px;"></span>Search</h4>-->
+                <!--    </a>-->
+                <!--    <ul class="dropdown-menu" role="menu" id="m">-->
+
+                <!--        <div style="font-size:14px; color:gray; font-weight:500; margin-top:10px;">Search by keyword</div>-->
+
+                <!--        <li>-->
+                <!--            <form role="search" method="POST" action="/mothers/search_post/">-->
+                <!--                {% csrf_token %}-->
+                <!--                <div class="input-group">-->
+                <!--                    <input type="text" class="form-control" name="q" value="" placeholder="Type a keyword..." required>-->
+                <!--                    <span class="input-group-btn">-->
+                <!--                        <button type="submit" class="btn btn-success"><i class="fa fa-search" style="color:white; font-size:18px; padding:1.5px;"></i></button>-->
+                <!--                    </span>-->
+                <!--                </div>-->
+                <!--            </form>-->
+                <!--        </li>-->
+
+                <!--        <li class="menu" style="margin-top:20px;">-->
+                <!--            <h5><a href="javascript:void(0)" onclick="javascript:openCohortBox(); hideMenuBar();">-->
+                <!--                <span class="fa fa-sitemap" style="font-size:14px; margin-right:15px;"></span>Search by Group</a>-->
+                <!--            </h5>-->
+                <!--        </li>-->
+                <!--        <li class="menu">-->
+                <!--            <h5><a href="javascript:void(0)" onclick="javascript:openGroupBox(); hideMenuBar();">-->
+                <!--                <span class="fa fa-sitemap" style="font-size:14px; margin-right:15px;"></span>Search by Community</a>-->
+                <!--            </h5>-->
+                <!--        </li>-->
+
+                <!--        <div style="font-size:14px; color:gray; font-weight:500; margin-top:20px;">Search by date</div>-->
+
+                <!--        <link rel="stylesheet" href="/static/css/jquery.datetimepicker.min.css">-->
+                <!--        <script src="/static/js/jquery.datetimepicker.full.js"></script>-->
+
+                <!--        <li>-->
+
+                <!--            <form role="search" method="POST" action="/mothers/search_post/">-->
+                <!--                {% csrf_token %}-->
+                <!--                <div class="input-group" id="datetimebox" onchange="updatedatetime();">-->
+                <!--                    <input type="text" class="form-control" value="" placeholder="Enter a date..." required id="fromdateBox" autocomplete="off">-->
+                <!--                    <span class="input-group-btn">-->
+                <!--                        <button type="submit" class="btn btn-success"><i class="fa fa-search" style="color:white; font-size:18px; padding:1.5px;"></i></button>-->
+                <!--                    </span>-->
+                <!--                </div>-->
+                <!--                <input type="hidden" name="q" id="fromdate">-->
+                <!--                <br>-->
+                <!--                <script>-->
+                <!--                     jQuery('#datetimebox').datetimepicker({-->
+                <!--                        timepicker: false,-->
+		              <!--                  datepicker: true,-->
+                <!--                     });-->
+                <!--                     function updatedatetime(){-->
+                <!--                          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];-->
+                <!--                          var datetime = document.getElementById("datetimebox").value;-->
+                <!--                          var year = datetime.substring(0, 4);-->
+                <!--                          var month = datetime.substring(5, 7);-->
+                <!--                          var day = datetime.substring(8, 10);-->
+                <!--                          var hour = datetime.substring(11, 13);-->
+                <!--                          var minute = datetime.substring(14, 16);-->
+                <!--                          var ap = '';-->
+                <!--                          if (parseInt(hour) > 12) {-->
+                <!--                               hour = String(parseInt(hour) - 12);-->
+                <!--                               ap = 'PM';-->
+                <!--                          }else ap = 'AM';-->
+                <!--                          var monthindex = parseInt(month);-->
+                <!--                          month = months[monthindex - 1];-->
+                <!--                          document.getElementById("fromdateBox").value = month + ' ' + day + ', ' + year;-->
+                <!--                          document.getElementById("fromdate").value = new Date(datetime).getTime();-->
+                <!--                     }-->
+                <!--                </script>-->
+                <!--            </form>-->
+                <!--        </li>-->
+
+                <!--        <li class="menu">-->
+                <!--            <h5><a href="/mothers/filter?option=last3">-->
+                <!--                <span class="fa fa-calendar" style="font-size:14px; margin-right:15px;"></span>Last 3 Days</a>-->
+                <!--            </h5>-->
+                <!--        </li>-->
+                <!--        <li class="menu">-->
+                <!--            <h5><a href="/mothers/filter?option=last7">-->
+                <!--                <span class="fa fa-calendar" style="font-size:14px; margin-right:15px;"></span>Last 7 Days</a>-->
+                <!--            </h5>-->
+                <!--        </li>-->
+                <!--        <li class="menu">-->
+                <!--            <h5><a href="/mothers/filter?option=last30">-->
+                <!--                <span class="fa fa-calendar" style="font-size:14px; margin-right:15px;"></span>Last 30 Days</a>-->
+                <!--            </h5>-->
+                <!--        </li>-->
+                <!--    </ul>-->
+                <!--</li>-->
+
+            </ul>
+
+        </div>
+
+    </div>
+</nav>
+
+
+<script>
+
+    function exitGroup(option){
+    //   if (confirm("Do you want to exit the room?")) {
+          try {
+              firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+          }
+          catch(err) {
+
+          }
+          if(option == 'home') window.location.href = "/mothers/home";
+          else if(option == 'logout') window.location.href = "/mothers/logout";
+    //   }
+   }
+
+    var openF = false;
+
+    function changeNavbarBackgroundColor(){
+        console.log("Clicked on nav button");
+        var navbar = document.getElementById('navbar');
+        if(!openF) {
+            navbar.style.backgroundColor = "rgba(0,0,0,0.7)";
+            openF = true;
+        }else{
+            // navbar.style.backgroundColor = "transparent";
+            openF = false;
+        }
+    }
+
+</script>
+
+<script>
+    $(document).click(function(){
+        hideMenuBar();
+    });
+
+    function hideMenuBar(){
+        // $(".dropdown-menu").hide();
+        $('.navbar-collapse').collapse('hide');
+    }
+
+</script>
+
+
+{% block body %}
+{% endblock %}
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,343 @@
+{% extends 'mothers/base_profile.html' %}
+{% block title %}My Profile{% endblock %}
+{% block body %}
+
+<br>
+
+<style>
+
+html, body{
+  background: linear-gradient(45deg,rgba(0,0,0,0.0),rgba(0,0,0,0.0),rgba(0,51,102,0.2),rgba(0,51,102,0.2),rgba(0,0,0,0.0),rgba(0,0,0,0.0)), url("/static/images/mother4.jpeg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+form h1 {
+  font-size: 22px;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:middle;
+  font-family: verdana;
+}
+
+#form {
+  border-radius: 5px;
+  max-width:1000;
+  height:auto;
+  margin-top: 0%;
+  margin-bottom: 2% auto;
+  margin-left:auto;
+  margin-right:auto;
+  padding:5%;
+  overflow: hidden;
+  background:transparent;
+}
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 600;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:20px 0px 0px 0px
+}
+
+.field {
+  margin-bottom: 5px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  color:white;
+  text-align:left;
+  background-color:transparent;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.icon-case {
+  width: 8%;
+  float: left;
+  border-radius: 50px 0px 0px 50px;
+  border:0;
+  background:white;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:gray;
+}
+
+.contentform {
+  padding: 30px 8px 0px 8px;
+  float:middle;
+  margin:auto;
+}
+
+.bouton-update{
+  background-color: #0077b3;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.formcontent {
+  width:100%;
+  float:middle;
+  margin:auto;
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+.validation {
+  display:none;
+  margin: 0 0 10px;
+  font-weight:400;
+  font-size:13px;
+  color: #DE5959;
+}
+
+.centered-and-cropped { object-fit:cover; }
+
+.pan {
+  max-width:450px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:auto;
+  margin-right:0;
+  overflow: hidden;
+}
+
+.pan2 {
+  max-width:450px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:0;
+  margin-right:auto;
+  overflow: hidden;
+}
+
+/* Look like a clicked/depressed button */
+label.cameraButton:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input[accept*="image"] {
+  display: none;
+}
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+
+label span {/* <-- style the artificial checkbox */
+  height: 25px;
+  width: 25px;
+  border:2px solid white;
+  margin-right:20px;
+  display: inline-block;
+  position: relative;
+}
+
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top: 0px;
+  left: 5px;
+}
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.3);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+</style>
+
+<!--<script>-->
+<!--    var sss = false;-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/mothers/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
+<!--    setTimeout(function(){ sss=true; }, 1000);-->
+<!--</script>-->
+
+<script type="text/javascript">
+window.onload = function() {
+	window.moveTo(0, 0);
+	window.resizeTo(screen.availWidth, screen.availHeight);
+}
+</script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; z-index:2000; top:120px; display: none;" id="gif">
+
+<form id="form">
+	  {% csrf_token %}
+    <center>
+        <img src="/static/images/logotitle.png" style="width:250px; height:auto; border-radius:0; border:0; margin-top:50px; margin-bottom:20px;"><br>
+        <!--<img src="/static/images/logo.png" style="width:90px;">-->
+    </center>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6" style="position:relative;">
+                <div class="pan">
+                    <div class="contentform">
+    		            <div class="formcontent">
+
+    		                <div class="form-group" style="margin-bottom:20px;">
+                				<center>
+                				    <div style="display:inline-block; position:relative; width:100%;">
+                				        <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                    				        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}"
+                    				            style="width:200px; height:200px; margin-top:10px; margin-bottom:10px; border-radius:50%; object-fit:cover;" id="picture">
+                    				    </a>
+                				    </div>
+                				 </center>
+                            </div>
+
+                            {% if member.status != '' %}<center><div style="color:white; font-size:14px;">(Private)</div></center>{% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <a href="/mothers/edit_profile"><span class="fas fa-edit" style="color:white; font-size:40px; position:absolute; top:0; right:10%;"></span></a>
+
+            </div>
+            <div class="col-sm-6">
+                <div class="pan2">
+                    <div class="contentform">
+    		            <div class="formcontent">
+    		                <div class="form-group">
+                                    <div class="field" style="font-size:25px; font-weight:600;">{{member.name}}</div>
+                        		</div>
+    		                <div class="form-group">
+                    			<div class="field" style="font-size:20px; font-weight:500;">{{member.email}}</div>
+                    		</div>
+                			<div class="form-group">
+                    			<div class="field" style="font-size:20px; font-weight:500;">{{member.phone_number}}</div>
+                    		</div>
+                            <div class="form-group">
+                                <div class="field" style="font-size:20px; font-weight:500;">{{member.cohort}}</div>
+                			</div>
+                			<div class="form-group">
+                                <a href="https://www.google.com/maps/search/?api=1&query={{member.address}}">
+                                    <div class="field" style="font-size:20px; font-weight:500; height:auto;">{{member.address}}</div>
+                                </a>
+                    		</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

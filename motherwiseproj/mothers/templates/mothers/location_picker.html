@@ -1,0 +1,521 @@
+<html>
+<head>
+  <title>Search Places</title>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js"></script>
+  <link rel="shortcut icon" href="/static/images/logo.jpg" type="image/jpg">
+  <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>-->
+
+<script>
+
+var geocoder;
+var map;
+var marker;
+var infowindow;
+var addr;
+var latLng;
+
+function initialize(){
+    geocoder = new google.maps.Geocoder();
+    infowindow = new google.maps.InfoWindow;
+    latLng = new google.maps.LatLng(38.785678,-104.845099);
+    var mapOptions = {
+        zoom: 8,
+        center: latLng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (p) {
+            latLng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
+            var mapOptions = {
+                center: latLng,
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+            marker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: "<div style = 'height:60px;width:200px'><b>Your location:</b><br />Latitude: " + p.coords.latitude + "<br />Longitude: " + p.coords.longitude
+            });
+            google.maps.event.addListener(marker, "click", function (e) {
+                var infoWindow = new google.maps.InfoWindow();
+                infoWindow.setContent(marker.title);
+                infoWindow.open(map, marker);
+            });
+            <!--latLng = new google.maps.LatLng(38.785678, -104.8454625);-->
+            if (geocoder){
+                {% if address %}
+                    codeAddress2();
+                {% else %}
+                    codeAddress();
+                {% endif %}
+            }
+        });
+    } else {
+        alert('Geo Location feature is not supported in this browser.');
+    }
+
+}
+
+<!--function initialize() {-->
+
+   <!--infowindow = new google.maps.InfoWindow({-->
+      <!--content: 'My Location'-->
+   <!--});-->
+  <!--geocoder = new google.maps.Geocoder();-->
+  <!--latlng = new google.maps.LatLng(38.785678,-104.845099);-->
+
+  <!--var mapOptions = {-->
+    <!--zoom: 8,-->
+    <!--center: latlng,-->
+    <!--mapTypeId: google.maps.MapTypeId.ROADMAP-->
+  <!--}-->
+  <!--map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);-->
+  <!--google.maps.event.addListener(map, 'click', function() {-->
+    <!--infowindow.close();-->
+  <!--});-->
+  <!--geocodePosition(latlng);-->
+<!--}-->
+
+
+function geocodePosition(pos) {
+
+  if (marker) {
+        if (infowindow) infowindow.close();
+  }
+  infowindow = new google.maps.InfoWindow();
+  geocoder.geocode({
+    latLng: pos
+  }, function(responses) {
+    if (responses && responses.length > 0) {
+      marker.formatted_address = responses[0].formatted_address;
+    } else {
+      marker.formatted_address = 'Cannot determine address at this location.';
+    }
+
+    document.getElementById('addr').value = marker.formatted_address;
+    document.getElementById('lat').value = marker.getPosition().lat();
+    document.getElementById('lng').value = marker.getPosition().lng();
+    document.getElementById('address').value = marker.formatted_address;
+
+    lat = marker.getPosition().lat();
+    lng = marker.getPosition().lng();
+
+    infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    infowindow.open(map, marker);
+
+    codeLatLng(lat, lng);
+
+  });
+}
+
+function codeAddress() {
+  var address;
+  var addr;
+   infowindow = new google.maps.InfoWindow();
+
+  geocoder.geocode({
+    'latLng': latLng
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+
+      document.getElementById('address').value = results[0].formatted_address;
+
+      address = document.getElementById('address').value;
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        position: results[0].geometry.location
+      });
+       marker.addListener('click', toggleBounce);
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          addr = marker.formatted_address;
+          infowindow.setContent("My location:" + marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          addr = address;
+          infowindow.setContent("My location:" + address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        document.getElementById('address').value = addr;
+        document.getElementById('addr').value = addr;
+        document.getElementById('lat').value = marker.getPosition().lat();
+        document.getElementById('lng').value = marker.getPosition().lng();
+
+        lat = marker.getPosition().lat();
+        lng = marker.getPosition().lng();
+
+        infowindow.open(map, marker);
+
+        codeLatLng(lat, lng);
+
+      });
+      google.maps.event.trigger(marker, 'click');
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+
+function codeAddress2() {
+  var address = document.getElementById('address').value;
+  var addr;
+   infowindow = new google.maps.InfoWindow();
+
+  geocoder.geocode({
+    'address': address
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        position: results[0].geometry.location
+      });
+       marker.addListener('click', toggleBounce);
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          addr = marker.formatted_address;
+          infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          addr = address;
+          infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        document.getElementById('address').value = addr;
+        document.getElementById('addr').value = addr;
+        document.getElementById('lat').value = marker.getPosition().lat();
+        document.getElementById('lng').value = marker.getPosition().lng();
+
+        lat = marker.getPosition().lat();
+        lng = marker.getPosition().lng();
+
+        geocodePosition(marker.getPosition());
+
+        infowindow.open(map, marker);
+
+        codeLatLng(lat, lng);
+
+      });
+      google.maps.event.trigger(marker, 'click');
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+
+function toggleBounce() {
+    if (marker.getAnimation() !== null) {
+        marker.setAnimation(null);
+    } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+}
+
+function initMap() {
+
+    <!--map = map;-->
+    var pyrmont = {lat: map.getCenter().lat(), lng: map.getCenter().lng()};
+
+    map = new google.maps.Map(document.getElementById('map_canvas'), {
+        center: pyrmont,
+        zoom: 15
+    });
+
+    var service = new google.maps.places.PlacesService(map);
+    service.nearbySearch({
+        location: pyrmont,
+        radius: 500,
+        type: ['store']
+    }, callback);
+
+	<!--map.addListener('idle', performSearch);-->
+}
+
+	<!--function performSearch() {-->
+        <!--var request = {-->
+          <!--bounds: map.getBounds(),-->
+          <!--keyword: 'best view'-->
+        <!--};-->
+        <!--service.radarSearch(request, callback);-->
+      <!--}-->
+
+function callback(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+        }
+    }
+    else{
+        alert("Service failed...");
+    }
+}
+
+function createMarker(place) {
+
+    var infowindow = new google.maps.InfoWindow();
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent(place.name);
+        infowindow.open(map, this);
+    });
+}
+
+google.maps.event.addDomListener(window, "load", initialize);
+
+function codeLatLng(lat, lng) {
+    var latlng = new google.maps.LatLng(lat, lng);
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        console.log(results)
+        if (results[1]) {
+            //formatted address
+            // alert(results[0].formatted_address)
+            //find country name
+            for (var i=0; i<results[0].address_components.length; i++) {
+                for (var b=0;b<results[0].address_components[i].types.length;b++) {
+
+                //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                    if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
+                        //this is the object you are looking for
+                        city= results[0].address_components[i];
+                        break;
+                    }
+                }
+            }
+            //city data
+            // alert(city.short_name + " " + city.long_name);
+            document.getElementById('city').value = city.long_name;
+
+        }else {
+          alert("No results found");
+        }
+      } else {
+        alert("Geocoder failed due to: " + status);
+      }
+    });
+}
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBwhfTWDzet-mu2KwXqkfP9bnQjMaFzq4&libraries=places&callback=initialize" async defer></script>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#map_canvas {
+  width: 100%;
+  height: 100%;
+}
+input{
+  padding:5px;
+  font-size:14px;
+  border-radius:3px;
+}
+select{
+  padding:5px;
+  font-size:14px;
+  border-radius:3px;
+}
+
+@media print {
+  html,
+  body {
+    height: auto;
+  }
+  #map_canvas {
+    height: 100%;
+  }
+}
+
+.button{
+    font-size:14px;
+     font-weight:500;
+     color:white;
+     border-radius:3px;
+     padding:5px;
+     float:left;
+     background-color:green;
+     border:0;
+     width:100px;
+     margin:2px;
+ }
+
+.button2 {
+  background:green;
+  color:white;
+  font-size:14px;
+  border-radius:3px;
+  border:0;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+  <div style="top:60px; left:5px; position:fixed; z-index:12; width:250px;">
+      <button class="button" onclick="back()">Back</button>
+      <button class="button" style="display:none;" onclick="show_control()">Search</button>
+  </div>
+
+  <form id="form" action="/mothers/attach_location_profile" method="post" enctype="multipart/form-data" style="display:none;">
+        {% csrf_token %}
+      <div style="display:none;">
+          <input id="addr" hidden value="" name="address">
+          <input id="city" hidden value="" name="city">
+          <input id="lat" hidden value="" name="lat">
+          <input id="lng" hidden value="" name="lng">
+      </div>
+  </form>
+
+  <div id="inputbox" style="width:320px; top:100px; z-index:12; left:5px; position:fixed; display:block;">
+
+    <div style="width:100%; display:flex;">
+        <input id="address" type="text" value="{{address}}" style=" flex-grow:1; float:left;" placeholder="Enter address..." required="address">
+        <input type="button" value="Find" onclick="codeAddress2()" class="button2" style="float:left; margin-left:5px;">
+    </div>
+    <div style="100%; margin-top:5px;">
+        <input type="submit" value="Confirm address to pick" class="button2" onclick="showInfo()" style="text-align:center; width:100%;">
+    </div>
+
+  </div>
+
+  <script>
+    var input = document.getElementById("address");
+    input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            codeAddress2();
+        }
+    });
+  </script>
+
+
+<div id="map_canvas"></div>
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+
+function show_control(){
+    if(document.getElementById('inputbox').style.display == 'block'){
+        document.getElementById('inputbox').style.display = 'none';
+    }else{
+        document.getElementById('inputbox').style.display = 'block';
+        document.getElementById('address').value = "";
+    }
+}
+
+// $( function() {
+//     $( "#inputbox" ).draggable();
+// } );
+
+// var draggable = document.getElementById('inputbox');
+//   draggable.addEventListener('touchmove', function(event) {
+//       var touch = event.targetTouches[0];
+//       // Place element where the finger is
+//       draggable.style.left = touch.pageX-100 + 'px';
+//       draggable.style.top = touch.pageY-150 + 'px';
+//       event.preventDefault();
+// }, false);
+
+</script>
+
+<script>
+    function back(){
+        history.go(-1);
+    }
+    function showInfo(){
+        var address = document.getElementById('addr').value;
+        var form = document.getElementById('form');
+        if(confirm('Would you select ' + address + '?')){
+            form.submit();
+        }
+    }
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

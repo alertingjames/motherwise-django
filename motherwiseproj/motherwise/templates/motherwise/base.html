@@ -1,0 +1,144 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Motherwise Network{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+    <link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+    <link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+    <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+    <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+    <!-- add styles -->
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="/static/css/jquery.Jcrop.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- add scripts -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.Jcrop.min.js"></script>
+
+
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function(){
+            OneSignal.init({
+                appId:"a15ac902-c246-45ad-95f0-83f5ce8fcace",
+                autoRegister: false,
+                notifyButton: {
+                    enable: true,
+                },
+            });
+            OneSignal.registerForPushNotifications();
+        });
+
+        OneSignal.push(function() {
+          OneSignal.getUserId(function(userId) {
+
+            console.log('OneSignal Player ID: ' + userId);
+            document.getElementById('playerID').value = userId;
+
+          });
+        });
+    </script>
+
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg, rgba(0, 0, 102,0.4), rgba(0, 0, 102,0.4), rgba(0, 0, 102,0.6)), url("/static/images/adminloginblur2.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 40px;
+  right: 30px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: yellow;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+#myBtn:hover {
+  background-color: red;
+}
+#advanced{
+    width:300px;
+    background-color:#000000;
+}
+.menu{
+    margin-left:10px;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js">
+</script>
+
+</head>
+
+<body>
+
+<div style="display:inline-block; width:auto; border-radius:30px; z-index:1000;">
+    <div id="google_translate_element"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+{% block body %}
+{% endblock %}
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

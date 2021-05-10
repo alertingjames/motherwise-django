@@ -1,0 +1,369 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Motherwise Network{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+    <link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+    <link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+    <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+    <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function(){
+            OneSignal.init({
+                appId:"a15ac902-c246-45ad-95f0-83f5ce8fcace",
+                autoRegister: false,
+                notifyButton: {
+                    enable: true,
+                },
+            });
+            OneSignal.registerForPushNotifications();
+        });
+
+        OneSignal.push(function() {
+          OneSignal.getUserId(function(userId) {
+
+            console.log('OneSignal Player ID: ' + userId);
+
+          });
+        });
+    </script>
+
+<style>
+
+.dropdown-menu{
+    background-color: #fff;
+    padding:20px;
+    width:220px;
+}
+
+#m1{
+    background-color: #fff;
+    padding:15px;
+    width:220px;
+}
+
+#m2{
+    background-color: #fff;
+    padding:15px;
+    width:300px;
+}
+
+#m3{
+    background-color: #fff;
+    padding:15px;
+    width:300px;
+}
+
+#m4{
+    background-color: #eee;
+    padding:1px 1px 0px 1px;
+    width:300px;
+    border-radius:3px;
+}
+
+.menu{
+    color: black;
+}
+
+.menu:hover{
+    background-color:#eee;
+    color:red;
+}
+
+.menu a{
+    color:black;
+}
+
+h4{
+    color:white;
+}
+
+h4:hover{
+    color:white;
+    text-decoration:underline;
+}
+
+#chat_log {
+    width: 100%;
+    height: auto;
+    max-height:300px;
+    float: middle;
+    color:black;
+    overflow-y:auto;
+}
+
+div#list {
+    width: 100%;
+    height: auto;
+}
+
+div#list > div {
+    background:white;
+    background-size:cover;
+    padding:5px 10px 5px 10px;
+    margin-top: 1px;
+}
+
+div#list > div > div {
+    width: auto;
+    height: auto;
+    color: black;
+    word-wrap: break-word;
+}
+
+#chat_log::-webkit-scrollbar-track
+{
+	border: 1px solid gray;
+	background-color: #eee;
+	border-radius:30px;
+}
+
+#chat_log::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #eee;
+}
+
+#chat_log::-webkit-scrollbar-thumb
+{
+	background-color: gray;
+	border-radius:30px;
+}
+
+.cropping{
+    object-fit:cover;
+}
+
+</style>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
+
+</head>
+
+<body>
+
+<nav id="navbar" class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:rgba(0,0,0,0.7); padding-top:30px;">
+
+    <div style="color:white; opacity:0.5; position:fixed; top:3px; left:0px; width:100%; text-align:center;">Please tap to see all you can do</div>
+
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false" aria-label="Toggle navigation"
+                onclick="javascript:changeNavbarBackgroundColor();">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse" style="border:0; max-height:500px; overflow:auto;">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/mothers/home">
+                        <h4 style=""><span class="fas fa-user-friends" aria-hidden="true" style="margin-right:10px;"></span>Network</h4>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
+                        <h4><span class="fa fa-search" aria-hidden="true"></span></h4>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" id="m2">
+                        <li>
+                            <form role="search" method="POST" action="/mothers/search_members/">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="q" value="" placeholder="Type a keyword..." required>
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-success"><i class="fa fa-search" style="color:white; font-size:18px; padding:1.5px;"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+                        </li>
+                        <li class="menu" style="margin-top:20px;">
+                            <h5><a href="javascript:void(0)" onclick="javascript:openCohortBox(); hideMenuBar();">
+                                <span class="fa fa-sitemap" style="font-size:16px; margin-right:15px;"></span>Search by Group</a>
+                            </h5>
+                        </li>
+                        <li class="menu" style="margin-top:20px;">
+                            <h5><a href="javascript:void(0)" onclick="javascript:openGroupBox(); hideMenuBar();">
+                                <span class="fa fa-sitemap" style="font-size:16px; margin-right:15px;"></span>Search by Community</a>
+                            </h5>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
+                        <div id="noticon" style="display:block;"><h4><span class="fa fa-bell-o" aria-hidden="true" style="margin-right:10px;" id="badge"></span></h4></div>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" id="m4">
+                        <li>
+                            <div id="chat_log">
+                                <div id="list">
+
+                                    <button style="background-color:gray; width:100%; padding:8px; color:white; border:0; margin-bottom:2px;"
+                                        onclick="if(document.getElementById('list2').innerHTML == ''){alert('No history browsing'); return;}
+                                            document.getElementById('notiLayout').style.display='block'; hideMenuBar();">Click here to browse history...</button>
+
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                <li style="margin-right:30px;">
+                    <a href="javascript:void(0)" onclick="javascript:openCohortBox(); hideMenuBar();">
+                        <h4 style=""><span class="fa fa-sitemap" style="margin-right:10px;"></span>Groups</h4>
+                    </a>
+                </li>
+
+                <li style="margin-right:30px;">
+                    <a href="javascript:void(0)" onclick="javascript:openGroupBox(); hideMenuBar();">
+                        <h4><span class="fa fa-group" aria-hidden="true" style="margin-right:10px;"></span>Communities</h4>
+                    </a>
+                </li>
+
+                <li style="margin-right:30px;">
+                    <a href="/mothers/conferences">
+                        <h4><span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Conferences</h4>
+                    </a>
+                </li>
+
+                <li style="margin-right:30px;">
+                    <a href="/mothers/posts">
+                        <h4><span class="fa fa-flag" aria-hidden="true" style="margin-right:10px;"></span>Posts</h4>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/mothers/notifications">
+                        <h4 id="msg-caption"><span class="far fa-comment-alt" aria-hidden="true"></span>&nbsp; Messages</h4>
+                    </a>
+                </li>
+
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+
+                <!--<li style="margin-right:30px;">-->
+                <!--    <a href="/mothers/videotest">-->
+                <!--        <h4><span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Videos</h4>-->
+                <!--    </a>-->
+                <!--</li>-->
+
+                <li style="margin-right:30px;">
+                    <a href="/mothers/account/">
+                        <h4 style=""><span class="fa fa-user-circle" aria-hidden="true" style="margin-right:10px;"></span>My Profile</h4>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/mothers/logout">
+                        <h4><span class="glyphicon glyphicon-off" aria-hidden="true" style="margin-right:10px;"></span>Logout</h4>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+<script>
+
+    function openMessageBox(){
+        document.getElementById('backgroundOverlay').style.display='block';
+        document.getElementById('messageBox').style.display='block';
+        document.getElementById('cohortBox').style.display='none';
+        document.getElementById('groupBox').style.display='none';
+    }
+
+    function openCohortBox(){
+        document.getElementById('backgroundOverlay').style.display='block';
+        document.getElementById('cohortBox').style.display='block';
+        document.getElementById('groupBox').style.display='none';
+        document.getElementById('messageBox').style.display='none';
+    }
+
+    function openGroupBox(){
+        {% if groups %}
+        document.getElementById('backgroundOverlay').style.display='block';
+        document.getElementById('groupBox').style.display='block';
+        document.getElementById('messageBox').style.display='none';
+        document.getElementById('cohortBox').style.display='none';
+        {% else %}
+        alert('You aren\'t in any communities yet.');
+        {% endif %}
+    }
+
+    var openF = false;
+
+    function changeNavbarBackgroundColor(){
+        console.log("Clicked on nav button");
+        var navbar = document.getElementById('navbar');
+        if(!openF) {
+            navbar.style.backgroundColor = "rgba(0,0,0,0.7)";
+            openF = true;
+        }else{
+            // navbar.style.backgroundColor = "transparent";
+            openF = false;
+        }
+    }
+
+</script>
+
+<script>
+    $(document).click(function(){
+        // hideMenuBar();
+    });
+
+    function hideMenuBar(){
+        // $(".dropdown-menu").hide();
+        $('.navbar-collapse').collapse('hide');
+    }
+
+</script>
+
+
+{% block body %}
+{% endblock %}
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

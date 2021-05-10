@@ -1,0 +1,781 @@
+{% extends 'motherwise/base_group.html' %}
+{% block title %}My Groups{% endblock %}
+{% block body %}
+
+<br>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  <script>
+      WebFont.load({
+      google: {
+      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+    });
+</script>
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 400px;
+    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 6px;
+    text-align: center;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  right: 15px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+form h1 {
+  font-size: 25px;
+  background: #327a81 none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:left
+}
+
+.user-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:5px;
+  margin-bottom:2px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.user-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.group-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:10px;
+  margin-bottom:2px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.group-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.contentform {
+  padding: 5px;
+}
+
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 200;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius:50px;
+  border:0;
+  width:100%;
+  height:42px;
+  /*float:left;*/
+  padding:0px 15px;
+  color:black;
+  text-align:center;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.bouton-update{
+  background-color: green;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 10px 15px;
+  border-radius: 5px;
+  height:auto;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#manage-menu, #manage-menu2, #manage-menu3, #manage-menu4 {
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:auto;
+    background-color:black;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+.menu {
+    padding:2px 15px;
+}
+
+.menu a{
+    color:gray;
+}
+
+.menu a:hover {
+    color:white;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+</style>
+
+<script>
+    var sss = false;
+	history.pushState(null, null, location.href);
+    history.back();
+    history.forward();
+    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/manager/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };
+    setTimeout(function(){ sss=true; }, 1000);
+</script>
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+
+<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
+	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">COMMUNITIES</div>
+
+<div style="width:100%; height:auto;">
+
+    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:20px;
+        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">COMMUNITIES</div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3" style="text-align:center;">
+
+            <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
+                <a href="javascript:void(0);" onclick="javascript:toggleCreateForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
+                    Create New Community
+                    <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow"></span>
+                </a>
+
+                <script>
+                    var showF = false;
+                    var ii = 0;
+                    function toggleCreateForm(){
+                        ii++;
+                        if(showF == true){
+                            showF = false;
+                            document.getElementById('creategroupform').style.display='none';
+                            $('#arrow').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                        }else{
+                            showF = true;
+                            document.getElementById('creategroupform').style.display='block';
+                            if(ii > 1) $('#arrow').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
+                            else $('#arrow').addClass('glyphicon glyphicon-menu-up');
+                        }
+                    }
+                </script>
+
+                <div id="creategroupform" style="width:100%; height:auto; padding:20px 0px 0px 0px; display:none;">
+                    <center>
+                        <form action="/manager/create_group/" method="post" enctype="multipart/form-data" style="width:90%;">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="" placeholder="Enter a community name">
+                        	</div>
+                            <div class="form-group">
+                            	<center>
+                                    <button type="submit" class="bouton-update" style="width:60%;">Create</button>
+                                </center>
+                            </div>
+                        </form>
+                    </center>
+                </div>
+            </div>
+
+            <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
+                <a href="javascript:void(0);" onclick="javascript:toggleMyGroupsForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
+                    My Communities
+                    <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow2"></span>
+                </a>
+
+                <script>
+                    var showF2 = false;
+                    var ii2 = 0;
+                    function toggleMyGroupsForm(){
+                        ii2++;
+                        if(showF2 == true){
+                            showF2 = false;
+                            document.getElementById('mygroupsform').style.display='none';
+                            $('#arrow2').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                        }else{
+                            showF2 = true;
+                            document.getElementById('mygroupsform').style.display='block';
+                            if(ii2 > 1) $('#arrow2').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
+                            else $('#arrow2').addClass('glyphicon glyphicon-menu-up');
+                        }
+                    }
+                </script>
+
+                <div id="mygroupsform" style="display:none; margin-top:15px;">
+
+                    {% if groups %}
+                        <div style="width:100%; max-height:70%; padding-top:1%; padding-bottom:3%; float:left; overflow:auto;" class="group-frame">
+                            {% for group in groups %}
+                            <div class="group-form">
+                                <input type="hidden" id="group_name" value="{{group.name}}">
+                                <div class="contentform">
+                                    <div style="padding-bottom:3px; display:flex;" >
+                                        <div style="padding:10px; float:left; position:relative;">
+                                            <span class="fa fa-group" style="font-size:40px;" id="icon">{{group.color}}</span>
+                                            <div style="color:white; top:15px; left:0px; position:absolute; font-size:25px; width:100%; text-align:center; font-weight:600;" id="code">{{group.code}}</div>
+                                        </div>
+                                        <a href="/manager/switch_group?group_id={{group.pk}}" style="flex-grow:1;">
+                                            <div style="padding-left:8px; margin-top:8px; color:white; float:left;">
+                                                <div style="font-weight:600; font-size:14px; text-align:left; word-wrap: break-word; text-overflow:ellipsis;">{{group.name}}</div>
+                                                <div style="width:100%; margin-top:2px;">
+                                                    <div style="font-size:12px; float:left; margin-right:10px;">Members: {{group.member_count}}</div>
+                                                    <div style="font-size:10px; float:left;">{{group.last_connected_time}}</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <a href="/manager/delgroup?group_id={{group.pk}}" style="background-color:transparent; margin-left:8px;">
+                                            <span class="fa fa-close" aria-hidden="true" style="color:white; font-size:20px;" onclick="return confirm('Are you sure you want to remove this group?')"></span>
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {%else %}
+                            <div style="width:100%; text-align:center;">
+                                <br>
+                                <br>
+                                <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No group created ...</h4>
+                            </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-2" style="text-align:center;">
+
+            <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px 3px 8px 3px; display:inline-block;">
+                <a href="javascript:void(0);" onclick="javascript:toggleRecentsForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
+                    Recents
+                    <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow3"></span>
+                </a>
+
+                <script>
+                    var showF3 = false;
+                    var ii3 = 0;
+                    function toggleRecentsForm(){
+                        ii3++;
+                        if(showF3 == true){
+                            showF3 = false;
+                            document.getElementById('recentsform').style.display='none';
+                            $('#arrow3').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                        }else{
+                            showF3 = true;
+                            document.getElementById('recentsform').style.display='block';
+                            if(ii3 > 1) $('#arrow3').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
+                            else $('#arrow3').addClass('glyphicon glyphicon-menu-up');
+                        }
+                    }
+                </script>
+
+                <div id="recentsform" style="display:none; margin-top:15px;">
+
+                    {% if recents %}
+                        <div style="width:100%; max-height:70%; padding:1%; padding-bottom:3%; float:left; overflow:auto;" class="group-frame">
+                            {% for group in recents %}
+                            <div class="group-form">
+                                <input type="hidden" id="group_name" value="{{group.name}}">
+                                <div class="contentform">
+                                    <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                        <div style="float:left; position:relative;">
+                                            <span class="fa fa-group" style="font-size:35px;" id="icon">{{group.color}}</span>
+                                            <div style="color:white; top:5px; left:0px; position:absolute; font-size:20px; width:100%; text-align:center; font-weight:600;" id="code">{{group.code}}</div>
+                                        </div>
+                                        <a href="/manager/switch_group?group_id={{group.pk}}" style="flex-grow:1;">
+                                            <div style="float:left; padding-left:5px; margin-top:3px; color:white;">
+                                                <div style="font-weight:600; font-size:13px; text-align:left; margin-left:5px; text-overflow:ellipsis; word-wrap: break-word;">{{group.name}}</div>
+                                                <div style="width:100%; margin-top:2px;">
+                                                    <div style="font-size:10px; float:left; margin-right:10px;">Members: {{group.member_count}}</div>
+                                                    <div style="font-size:10px; float:left;">{{group.last_connected_time}}</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <a href="#" style="background-color:transparent; margin-left:5px;">
+                                            <span class="fa fa-close" aria-hidden="true" style="color:white; font-size:16px;" onclick="return confirm('Are you sure you want to remove this group from recents?')"></span>
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {%else %}
+                            <div style="width:100%; text-align:center;">
+                                <br>
+                                <br>
+                                <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No group recently connected ...</h4>
+                            </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-4" style="text-align:center;">
+            <div style="width:100%;">
+                <div style="color:white; font-size:18px; font-weight:500; font-family:verdana;">
+                    {% if group %}<label style="font-weight:600; font-size:22px;">{{group.name}}</label>'s Members{% else %}Group Members{% endif %}
+                </div>
+            </div>
+
+            <input hidden id="selected_group_id" value="{{group.pk}}">
+            <input hidden id="selected_group_name" value="{{group.name}}">
+
+            {% if group_members %}
+
+                <div style="width:100%; padding:10px 0px 10px 0px; display:flex; flex-direction:row;">
+                    <button type="button" class="bouton-update" style="flex-grow:1; float:left; background-color:red;" onclick="toConference(document.getElementById('selected_group_id').value);">Video Conference</button>
+                    <button type="button" class="bouton-update" style="flex-grow:1; float:left; margin-left:0.5%; background-color:orange;" onclick="toGroupChat(document.getElementById('selected_group_id').value);">Group Chat</button>
+                    <button type="button" class="bouton-update" style="flex-grow:1; float:left; margin-left:0.5%;" onclick="javascript:openMessageBox('group');">Send Message</button>
+                </div>
+
+            {% endif %}
+
+            {% if group_members %}
+                <div style="width:100%; max-height:80%; padding-top:1%; padding-bottom:3%; overflow:auto;">
+                    {% for member in group_members %}
+                    <div class="user-form">
+                        <input type="hidden" id="member_email" value="{{member.email}}">
+                        <div class="contentform">
+                            <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                <div style="padding:10px; float:left; position:relative;">
+                                    <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                                        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                                    </a>
+                                    <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:16px; display:none;" id="badge"></span>
+                                </div>
+                                <a href="#" style="flex-grow:1;">
+                                    <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        {{member.name}}
+                                        <div style="font-size:12px;">{{member.cohort}}</div>
+                                    </div>
+                                </a>
+                                <a href="javascript:void(0)" style="background-color:transparent; margin-top:5px;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
+                                    <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                </a>
+                                <a href="/manager/group_private_chat?email={{member.email}}" target="_blank" style="background-color:transparent; margin-left:15px; margin-top:5px;">
+                                    <span class="fa fa-comments" aria-hidden="true" style="color:white; font-size:20px;"></span>
+                                </a>
+                                <a href="/manager/delugroup?member_id={{member.pk}}&group_id={{group.pk}}" onclick="return confirm('Are you sure you want to remove this member from the group?')" style="background-color:transparent; margin-left:15px; margin-top:5px;">
+                                    <span class="fa fa-trash" aria-hidden="true" style="color:white; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            {%else %}
+                    <div style="width:100%; text-align:center;">
+                        <br>
+                        <br>
+                        <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No member in group ...</h4>
+                    </div>
+
+            {% endif %}
+        </div>
+
+        <div class="col-sm-3" id="member-list" style="text-align:center;">
+
+            <div style="width:100%; margin:10px;">
+                {%if members %}<div style="margin-right:10px; float:right;"><button type="button" class="bouton-update" onclick="javascript:openMessageBox('invite');">Add To Group</button></div>{% endif %}
+                <div style="color:white; font-size:18px; font-weight:500; font-family:verdana;">
+                    New Members
+                </div>
+            </div>
+
+            {% if members %}
+
+                <div style="width:100%; max-height:85%; padding-top:1%; padding-bottom:3%; overflow:auto; border-radius:10px; border:1.2px solid white;" id="mlist">
+                    {% for member in members %}
+                    <div class="user-form">
+                        <input type="hidden" id="member_email" value="{{member.email}}">
+                        <div class="contentform">
+                            <div style="width:100%; padding-bottom:3px; display:flex;" >
+                                <div style="padding:10px; float:left; position:relative;">
+                                    <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
+                                        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                                    </a>
+                                    <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:16px; display:none;" id="badge"></span>
+                                </div>
+                                <a href="/manager/switch_chat?member_id={{member.pk}}" style="flex-grow:1;">
+                                    <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-break: break-all; word-wrap: break-word;">
+                                        {{member.name}}
+                                        <div style="font-size:12px;">{{member.cohort}}</div>
+                                    </div>
+                                </a>
+                                <a href="#" style="background-color:transparent; margin-left:15px; margin-top:5px;">
+                                    <span class="fas fa-user-plus" aria-hidden="true" style="color:white; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+                </div>
+            {%else %}
+                    <div style="width:100%; text-align:center;">
+                        <br>
+                        <br>
+                        <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No member ...</h4>
+                    </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:50%; display:none;">
+    <div style="float:left; position:relative;">
+        <span class="fa fa-group" style="font-size:30px;" id="box-icon">{{group.color}}</span>
+        <div style="color:white; top:0px; left:0px; position:absolute; font-size:25px; font-weight:600; width:100%; text-align:center;">{{group.code}}</div>
+    </div>
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE</div><br>
+            <form action="/manager/message_to_group/" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea"));</script>
+                </div>
+                <input hidden id="group_id" name="group_id" value="">
+                <input hidden id="option" name="option" value="">
+                <center>
+                    <button type="submit" class="bouton-update" style="width:60%; margin-bottom:20px;">Submit</button>
+                </center>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("navbar").style.backgroundColor = "black";
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+        // document.getElementById("navbar").style.backgroundColor = "transparent";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.getElementById("member-list").scrollTop = 0;
+}
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.group-frame #date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+        var back = ["#ff0000", "blue", "gray"];
+        $('.group-frame #icon').each(function(i) {
+            var color = this.innerHTML;
+            $(this).css('color', color);
+            this.innerHTML = "";
+        });
+   });
+});
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+       color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+</script>
+
+<script>
+
+var color = "";
+var boxIcon = document.getElementById('box-icon');
+
+function dismissLayouts(){
+    document.getElementById('messageBox').style.display='none';
+    document.getElementById('backgroundOverlay').style.display='none';
+    if(color.length > 0) boxIcon.innerHTML = color;
+}
+
+function openMessageBox(option){
+    if(option == 'group'){
+        dismissLayouts();
+        document.getElementById('messageBox').style.display='block';
+        document.getElementById('backgroundOverlay').style.display='block';
+        var groupId = document.getElementById('selected_group_id').value;
+        var groupName = document.getElementById('selected_group_name').value;
+        document.getElementById('messageboxtitle').innerHTML = 'INVITE THE NEW MEMBERS<br>TO ' + String(groupName).toUpperCase();
+        document.getElementById('group_id').value = groupId;
+        document.getElementById('option').value = option;
+        color = boxIcon.innerHTML;
+        boxIcon.style.color = color;
+        boxIcon.innerHTML = "";
+    }else if(option == 'invite'){
+        var groupId = document.getElementById('selected_group_id').value;
+        document.getElementById('group_id').value = groupId;
+        document.getElementById('option').value = option;
+        var form = document.getElementById("msgForm");
+        form.submit();
+    }
+}
+
+function toGroupChat(group_id){
+    window.location.href = '/manager/open_group_chat?group_id=' + group_id;
+}
+
+function toConference(group_id){
+    window.location.href = '/manager/open_conference?group_id=' + group_id + '&cohort=';
+}
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

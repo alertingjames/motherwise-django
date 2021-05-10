@@ -1,0 +1,1634 @@
+{% extends 'motherwise/base_home.html' %}
+{% block title %}Motherwise Manager Home{% endblock %}
+{% block body %}
+
+<style>
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 15px;
+    text-align: center;
+}
+
+.header {
+  background-image: linear-gradient(0deg,rgba(0,0,0,0.8),rgba(0,0,0,0.8));
+  background-size: 100%, 100%;
+  text-align:center;
+  height:100px;
+}
+
+.header1 {
+  background-image: linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url("/static/images/222.jpg");
+  background-size: 100%, 100%;
+  background-color: #fff;
+  text-align:center;
+  height:300px;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+.table-owner {
+  /*box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);*/
+  width: 100%;
+  background-color: white;
+  overflow-x:auto;
+}
+
+.table-owner1 {
+  width: 100%;
+  background-color: white;
+  overflow-x:auto;
+  position: relative;
+  margin-top:0px;
+  display:none;
+}
+
+.table>tbody>tr>td{
+    vertical-align: middle;
+    text-align: middle;
+}
+
+table td, table th {
+  color: #2b686e;
+  padding: 10px;
+  border: 1px solid white;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+table td:last-child {
+  font-size: 0.95em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+table th {
+  background-color: #04a2be;
+  font-weight: 520;
+  color:white;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table tr:nth-child(2n) {
+  background-color: white;
+  border: 1px solid #327a81;
+}
+
+table tr:nth-child(2n+1) {
+  background-color: #edf7f8;
+  border: 1px solid white;
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  right: 15px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+
+.owneraddress{
+    color:black;
+}
+.owneraddress:hover{
+    color:blue;
+}
+
+.hyperlink{
+    color:black;
+    font-size:25px;
+}
+
+.hint0{
+    color:blue;
+    font-size:12px;
+    display:block;
+}
+
+.hint{
+    color:blue;
+    font-size:12px;
+    display:none;
+}
+
+.hyperlink:hover .hint0 {
+    display:none;
+}
+
+.hyperlink:hover .hint {
+    display:inline-block;
+}
+
+.subscription {
+    color:black;
+    white-space: pre-wrap;      /* CSS3 */
+    white-space: -moz-pre-wrap; /* Firefox */
+    white-space: -pre-wrap;     /* Opera <7 */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    word-wrap: break-word;      /* IE */
+}
+
+.btn-subscr {
+    color:black;
+    text-decoration: underline;
+    font-size:12px;
+}
+
+.btn-subscr:hover {
+    color:red;
+}
+
+.centered-and-cropped { object-fit:cover }
+
+.show {
+    z-index:1000;
+    position: absolute;
+    background-color:#ffffff;
+    border: 2px solid orange;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+    padding:10px;
+    border-radius:20px;
+    display: block;
+    font-size:20px;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
+.hide {
+    display: none;
+}
+
+.show li{ list-style: none; }
+.show a { border: 0 !important; text-decoration: none; }
+.show a:hover { text-decoration: underline !important; }
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+
+label span {/* <-- style the artificial checkbox */
+  height: 15px;
+  width: 15px;
+  border-radius:50%;
+  border: 1px solid black;
+  background-color:transparent;
+  margin-right:3px;
+  display: inline-block;
+  position: relative;
+}
+
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  color:white;
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+.bouton-update{
+  background-color: #008CBA;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+textarea {
+  border-radius: 5px;
+  border: 1px solid #EEE;
+  width: 100%;
+  height: 80px;
+  float: left;
+  padding: 10px 15px;
+  opacity: 0.8;
+  color:black;
+  text-align:left;
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+label.cameraButton {
+  display: inline-block;
+  font-size:14px;
+  font-weight:300;
+  color: black;
+  width:100%;
+  height:auto;
+  text-align:center;
+  text-decoration:underline;
+}
+
+/* Look like a clicked/depressed button */
+label.cameraButton:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input[accept*="image"] {
+  display: none;
+}
+
+input {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+#cohortSelBox {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  display:inline-block;
+  overflow:hidden;
+  opacity:0.95;
+  float: middle;
+}
+
+select {
+  width: 100%;
+  height: 42px;
+  border-radius: 50px;
+  border: 1px solid #eee;
+  padding: 0px 15px;
+  color:black;
+  text-align-last:center;
+}
+
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+label span {/* <-- style the artificial checkbox */
+  height: 25px;
+  width: 25px;
+  text-align:center;
+  padding-bottom:5px;
+  display: inline-block;
+  position: relative;
+  border:0;
+  border-radius:3px;
+}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top:0;
+  font-size:20px;
+  left: 3px;
+}
+
+[type=checkbox]:checked + span:after {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top:0;
+  left: 3px;
+  font-size:20px;
+  color:red;
+}
+
+.panel-button{
+    width:70px; height:70px; float:left; padding:13px; border-radius:5px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7); display:none;
+}
+
+.cohort-panel-button{
+    width:55px; height:55px; float:left; padding:8px; border-radius:5px;
+}
+
+.button-text{
+    font-size:8px;
+    font-weight:30;
+    color:black;
+    padding:3px 0px 0px 0px;
+}
+
+.cropping{
+    object-fit:cover;
+}
+
+#snackbar {
+    visibility: hidden;
+    min-width: 200px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 12px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+#notiLayout{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:10031;
+    display:none;
+}
+
+#notiForm {
+    max-width:500px;
+    width:auto;
+    height:85%;
+    margin-top: 3px;
+    margin-bottom: auto;
+    margin-left:auto;
+    margin-right:auto;
+    overflow-y: auto;
+}
+.contentform2 {
+    padding: 0px 5px 5px 5px;
+    float:middle;
+}
+.formcontent2 {
+    width:100%;
+    float:middle;
+    margin:auto;
+    box-sizing: border-box;
+}
+
+#chat_log2 {
+    width: 100%;
+    height: auto;
+    float: middle;
+    color:black;
+    overflow-y:auto;
+}
+
+div#list2 {
+    width: 100%;
+    height: auto;
+}
+
+div#list2 > div {
+    background:white;
+    background-size:cover;
+    padding:5px 10px 5px 10px;
+    margin-top: 1px;
+}
+
+div#list2 > div > div {
+    width: auto;
+    height: auto;
+    color: black;
+    word-wrap: break-word;
+}
+
+#notiForm::-webkit-scrollbar-track
+{
+	border: 1px solid gray;
+	background-color: #eee;
+	border-radius:30px;
+}
+
+#notiForm::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #eee;
+}
+
+#notiForm::-webkit-scrollbar-thumb
+{
+	background-color: gray;
+	border-radius:30px;
+}
+
+</style>
+
+<script>
+	history.pushState(null, null, location.href);
+    history.back();
+    history.forward();
+    window.onpopstate = function () { history.go(1); };
+</script>
+
+{% if notify == 'message_sent' %}
+    <script>alert('Your message sent to them successfully.')</script>
+{% endif %}
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div id="no_result" style="font-size:16px; font-weight:300; color: black; text-align:center;
+	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
+	transform:translate(-50%, -50%); width:auto; z-index:100; top:450px; display:none;">
+    No any member registered ...
+</div>
+
+<div onclick="showNotifications()" id="alert" style="font-size:18px; font-weight:300; color: black; text-align:center; box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.9);
+	position:fixed; left:30px; float:middle; background-color:white; border-radius:3px; padding: 8px 12px 8px 12px;
+	width:180px; z-index:100; top:85px; display:none;">
+    <i class="fa fa-bell" style="font-size:16px; color:red;"/></i>
+	New Message!<br>
+	<div style="color:red; font-size:14px; margin-top:5px;">Click here to view.</div>
+</div>
+
+
+<div id="title" style="font-size:16px; font-weight:600; color: white; text-align:center; border-radius:50px; padding:8px 20px 8px 20px; background-color:rgb(0,0,0,0.1); display:none;
+	        position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:auto; z-index:100; top:130px;">{{title}}</div>
+
+<div id="tool_panel" style="position:fixed; right:2%; background-color:transparent; width:auto; min-width:350px; z-index:200; bottom:20px; display:inline-block;">
+    <a href="javascript:void(0)" onclick="javascript:toVideo();">
+        <img class="panel-button" id="video" src="/static/images/ic_video.png" style="background-color:red;">
+    </a>
+    <a href="javascript:void(0)" onclick="javascript:toChat('group_chat');">
+        <img class="panel-button" id="gchat" src="/static/images/ic_group_chat.png" style="margin-left:20px; background-color:#0066cc;">
+    </a>
+    <a href="javascript:void(0)" onclick="javascript:toChat('private_chat');">
+        <img class="panel-button" id="chat" src="/static/images/ic_chat.png" style="margin-left:20px; background-color:green;">
+    </a>
+    <a href="javascript:void(0)" onclick="javascript:dismissLayouts(); document.getElementById('messageBox2').style.display='block'; document.getElementById('backgroundOverlay').style.display='block';">
+        <img class="panel-button" id="message" src="/static/images/ic_message.png" style="margin-left:20px; background-color:brown;">
+    </a>
+    <img class="panel-button" id="trash" src="/static/images/cancelicon.png" style="margin-left:20px; background-color:gray;">
+</div>
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle; border-radius: 1px; width:80px; height:auto;
+	transform:translate(-50%, -50%); width:auto; z-index:2000; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" id="logo" style="width:80px; height:auto; border-radius:50%; margin-top:100px; margin-left:10px; z-index:2; position:fixed; display:none;" align="top">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div class="table-owner1" id="header" style="z-index:1; position:relative; background:transparent;" align="top">
+    <div class="header" id="header"></div>
+    <table cellspacing="0" class="table table-fit">
+        <tr>
+            <th style="width:3%;">id</th>
+            <th style="width:4%;">Picture</th>
+            <th style="width:10.5%;">Name & Email</th>
+            <th style="width:6%;">Phone Number</th>
+            <th style="width:12%;">Address</th>
+            <th style="width:6%;">Member Since</th>
+            <th style="width:5%;">Group</th>
+            <th style="width:5%;">Share Video</th>
+            <th style="width:5%;">Contact</th>
+            <th style="width:5%;">Remove</th>
+        </tr>
+    </table>
+</div>
+
+<div class="table-owner">
+    <div class="header1" id="header1" style="position:relative;">
+        <div style="margin-top:120px; display:inline-block; color: white; font-size: 2em;
+            font-weight:900; text-shadow: 4px 4px 8px #111111; padding: 5px; text-align: left; text-transform: uppercase; font-family:Verdana, cursive;">
+            <img src="/static/images/logotitle.png" style="width:450px; height:auto; margin-bottom:20px;">
+        </div>
+        <img src="/static/images/logo.png" style="width:100px; height:auto; left:20px; border-radius:50%; position:absolute; bottom:-15px;"/>
+        <div id="title0" style="font-size:16px; font-weight:500; color:white; left:130px; position:absolute; bottom:10px; font-style: italic;">{{title}}</div>
+        <div style="font-size:30px; font-weight:600; font-family:cursive; color:#ffcc00; right:10%; position:absolute; bottom:10px; font-style: italic;" id="sel_cohort">{{cohort}}</div>
+
+        {% if cohort %}
+        <div style="width:auto; display:inline-block; right:1%; bottom:10px; position:absolute;">
+            <a href="javascript:void(0)" onclick="javascript:post('/manager/do_cohort/', {'cohort':document.getElementById('sel_cohort').innerHTML, 'option':'video'});">
+                <img class="cohort-panel-button" src="/static/images/ic_video.png" style="background:rgba(0,0,0,0.2);">
+            </a>
+            <a href="javascript:void(0)" onclick="javascript:post('/manager/do_cohort/', {'cohort':document.getElementById('sel_cohort').innerHTML, 'option':'group_chat'});">
+                <img class="cohort-panel-button" src="/static/images/ic_group_chat.png" style="margin-left:10px; background:rgba(0,0,0,0.2);">
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+
+<script type = "text/javascript">
+    var header1 = document.getElementById("header1");
+    var currentPos = 0;
+    // var images = ["/static/images/bg.jpg", "/static/images/bg2.jpg", "/static/images/bg3.jpg"]
+    var images = [
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/222.jpg')",
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/555.jpg')",
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/666.jpg')",
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/777.jpg')",
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/333.jpg')",
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/000.jpg')",
+        "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/888.jpg')",
+    ]
+
+    function volgendefoto() {
+        if (++currentPos >= images.length)
+            currentPos = 0;
+
+        header1.style.backgroundImage = images[currentPos];
+        getNewNofiCound();
+    }
+
+    setInterval(volgendefoto, 5000);
+</script>
+
+<script>
+    function getNewNofiCound(){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(xhr.response);
+                var new_msg_count = xhr.response;
+                if(parseInt(new_msg_count) > 0) {
+                    $("#msg-caption").html("<span class='far fa-comment-alt' aria-hidden='true'></span>&nbsp; Messages" + " (" + new_msg_count + ")");
+                }
+            }
+        };
+        xhr.open('GET', "/manager/new_notis", true);
+        xhr.send('');
+    }
+</script>
+
+    <form action="/manager/message_to_selected_members/" method="post" enctype="multipart/form-data" id="form">
+        {% csrf_token %}
+    <table cellspacing="0" class="table table-fit">
+        <tr>
+            <th style="width:3%;">id</th>
+            <th style="width:4%;">Picture</th>
+            <th style="width:7%;">Name & Email</th>
+            <th style="width:6%;">Phone Number</th>
+            <th style="width:12%;">Address</th>
+            <th style="width:6%;">Member Since</th>
+            <th style="width:5%;">Group</th>
+            <th style="width:5%;">Share Video</th>
+            <th style="width:5%;">Contact</th>
+            <th style="width:5%;">Remove</th>
+        </tr>
+        {% if users %}
+            {% for user in users %}
+            <tr class="test" id="{{user.id}}">
+                <td><label>{{forloop.counter}}</label></td>
+                <td>
+                    <a href="{% if user.photo_url %}{{user.photo_url}}{% endif %}" target="_blank">
+                        <img src="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" alt="" style="border-radius:50%; height:60px; width:60px; object-fit:cover;"/>
+                    </a>
+                </td>
+                <td style="position:relative;"><div style="text-align:left;">{{user.name}}<br>{{user.email}}</div>
+                    <div style="color:orange; font-size:12px; position:absolute; top:5px; right:5px; font-style:italic;">{% if user.status %}{{user.status}}{% endif %}</div>
+                </td>
+                <td><a href="tel:{{user.phone_number}}">{{user.phone_number}}</a></td>
+                <td>
+                    <div style="width:100%;">
+                        <a href="https://www.google.com/maps/search/?api=1&query={{user.address}}" target="_blank">
+                            {% if user.address %}<div class="owneraddress"><div style="text-align:left;"><i class="fa fa-map-marker" style="color:red; font-size:16px; margin-right:5px;"></i>{{user.address}}</div></div>{% else %}---{% endif %}
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    {% if user.registered_time != '' %}<div style="color:black; font-size:14px;">{{user.registered_time}}</div>{% else %}---{% endif %}
+                </td>
+                <td><div style="color:black; font-size:14px;"><div style="color:#008CBA; font-size:14px;">{% if user.cohort %}{{user.cohort}}{% else %}---{% endif %}</div></div></td>
+                <td>
+                    {% if user.registered_time %}
+                    <div>
+                        <a href="javascript:void(0)" style="display:inline-block; border-radius:50px; background-color:#e6f2ff;">
+                            <label style="margin-left:10px; color: #04a2be;">
+                                <input type="checkbox" name="users[]" value="{{user.id}}" class="chx" id="selusers" style="width:10px; height:10px;" onchange="highlight(this)">
+                                <span></span><i class="fa fa-user-plus" style="color: gray; font-size:18px; margin-right:10px;"></i>
+                            </label>
+                        </a>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.registered_time %}
+                    <div>
+                        <a href="javascript:void(0)" style="display:inline-block; border-radius:50px; background-color:#e6f2ff;">
+                            <label style="margin-left:10px; color: #04a2be;">
+                                <input type="checkbox" name="users2[]" value="{{user.id}}" class="chx" id="selusers2" style="width:10px; height:10px;" onchange="highlight2(this)">
+                                <span></span><i class="fa fa-user-plus" style="color: gray; font-size:18px; margin-right:10px;"></i>
+                            </label>
+                        </a>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/manager/delete_member?member_id={{user.id}}" role="button" onclick="return confirm('Are you sure you want to delete this member?')">
+                        <img src="/static/images/canceliconblack.png" style="width:35px; height:35px; padding:5px;">
+                    </a>
+                </td>
+            </tr>
+
+            {% endfor %}
+
+            <input type="hidden" id="msg" name="message" value="">
+            <input type="hidden" id="option" name="option" value="">
+
+        {% else %}
+            <script>document.getElementById('no_result').style.display = 'block';</script>
+        {% endif %}
+        </table>
+
+        {% if users %}
+        <ul class="pager" style="float:right; margin-right:20px;">
+            <li><a href="/to_previous?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">&laquo; Previous</a></li>
+            {% for i in range %}
+                {% if i >= 1 %}
+                    {% load tag_library %}
+                    {% if current|to_int == i %}
+                    <li><a href="/to_page?index={{i}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:red; font-weight:600;">{{i}}</a></li>
+                    {% else %}
+                    <li><a href="/to_page?index={{i}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">{{i}}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            <li><a href="/to_next?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">Next &raquo;</a></li>
+        </ul>
+        {% endif %}
+
+    </form>
+</div>
+
+<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:10000; top:320px; display:none;">
+    <img style="width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;"
+        onclick="javascript:dismissLayouts(); document.getElementById('messageBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">SEND MESSAGE TO INVITE</div><br>
+            <form action="/manager/add_member/" method="post" enctype="multipart/form-data" style="width:100%;" id="inviteForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="" placeholder="Name">
+                    <div class="validation"></div>
+    			</div>
+    			<div class="form-group" style="margin-top:20px;">
+                    <input type="email" name="email" id="email" data-rule="required" data-msg="" required value="" placeholder="E-mail">
+                    <div class="validation"></div>
+    			</div>
+    			<div class="form-group" style="margin-top:20px;">
+    				<input type="tel" name="phone_number" id="phone_number" value="" placeholder="Phone Number (Optional)">
+                    <div class="validation"></div>
+    			</div>
+    			<div class="form-group" style="margin-top:20px;">
+    				<select name="cohort" id="cohort" style="width:100%; color:black;">
+    				    <option value="">Please choose a group</option>
+                        <option value="E81">E81</option>
+                        <option value="E83">E83</option>
+                        <option value="E84">E84</option>
+                        <option value="E86">E86</option>
+                        <option value="E87">E87</option>
+                        <option value="S82">S82</option>
+                        <option value="S85">S85</option>
+                        <option value="S88">S88</option>
+                        <option value="E(v)89">E(v)89</option>
+                        <option value="E(v)90">E(v)90</option>
+                        <option value="S(v)91">S(v)91</option>
+                        <option value="E(v)92">E(v)92</option>
+                        <option value="E(v)93">E(v)93</option>
+                        <option value="E(v)94">E(v)94</option>
+                        <option value="S(v)95">S(v)95</option>
+                        <option value="E(v)96">E(v)96</option>
+                        <option value="E(v)97">E(v)97</option>
+                        <option value="S(v)98">S(v)98</option>
+                        <option value="E(v)99">E(v)99</option>
+                        <option value="E(v)100">E(v)100</option>
+                        <option value="S(v)101">S(v)101</option>
+                        <option value="E(v)102">E(v)102</option>
+                        <option value="E(v)103">E(v)103</option>
+                        <option value="S(v)104">S(v)104</option>
+                        <option value="E(v)105">E(v)105</option>
+                        <option value="E(v)106">E(v)106</option>
+                        <option value="S(v)107">S(v)107</option>
+                        <option value="E(v)108">E(v)108</option>
+                        <option value="E(v)109">E(v)109</option>
+                        <option value="S(v)110">S(v)110</option>
+                        <option value="MotherWise Alumni">MotherWise Alumni</option>
+                        <option value="MotherWise Team">MotherWise Team</option>
+                    </select>
+    			</div>
+    			<center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif4"></center>
+                <div class="form-group" style="margin-top:30px;">
+        			<center>
+                        <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
+                            onclick="javascript:if(document.getElementById('name').value == ''){alert('Enter name.'); return;}if(document.getElementById('email').value == ''){alert('Enter email.'); return;}formSubmit(document.getElementById('inviteForm'), document.getElementById('gif4'), 'Invitation message sent.');">Submit</button>
+                    </center>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="messageBox2" style="font-size:16px; font-weight:300; color: black; position:fixed; bottom:2%; margin-left:5%; right:5%; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	 min-width:300px; max-width:600px; width:auto; z-index:999; display:none;">
+    <img id="msg_logo" style="width:50px; height:50px; float:left;" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts(); document.getElementById('messageBox2').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">SEND MESSAGE</div><br>
+            <form action="#" method="post" enctype="multipart/form-data" style="width:100%;">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea"));</script>
+                </div>
+                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif2"></center>
+                <center>
+                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;" onclick="javascript:sendMessageToSelectedMembers();">Submit</button>
+                </center>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="messageBox3" style="font-size:16px; font-weight:300; color: black; z-index:999;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; top:320px; display:none;">
+    <img id="msg_logo" style="width:50px; height:50px; float:left;" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts(); document.getElementById('messageBox3').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="cohortmessageboxtitle">SEND MESSAGE</div><br>
+            <form action="/manager/send_cohort_message/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortMsgForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea2"));</script>
+                </div>
+                <input hidden id="selected_cohort" name="cohort" value="">
+                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif3"></center>
+                <center>
+                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
+                        onclick="javascript:if(document.getElementById('textarea2').value == ''){alert('Enter your message.'); return;}formSubmit(document.getElementById('cohortMsgForm'), document.getElementById('gif3'), 'Message sent.');">Submit</button>
+                </center>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="cohortBox" style="font-size:16px; font-weight:300; color: black; z-index:999;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; top:320px; display:none;">
+    <img style="width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;"
+        onclick="javascript:dismissLayouts(); document.getElementById('cohortBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">CONNECT WITH A GROUP</div><br>
+            <form action="/manager/do_cohort/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortform">
+                {% csrf_token %}
+                <div class="form-group" id="cohortSelBox">
+                    <select name="cohort" required id="cohort2" style="width:100%; color:black;">
+                        <option value="">Please choose a group</option>
+                        <option value="E81">E81</option>
+                        <option value="E83">E83</option>
+                        <option value="E84">E84</option>
+                        <option value="E86">E86</option>
+                        <option value="E87">E87</option>
+                        <option value="S82">S82</option>
+                        <option value="S85">S85</option>
+                        <option value="S88">S88</option>
+                        <option value="E(v)89">E(v)89</option>
+                        <option value="E(v)90">E(v)90</option>
+                        <option value="S(v)91">S(v)91</option>
+                        <option value="E(v)92">E(v)92</option>
+                        <option value="E(v)93">E(v)93</option>
+                        <option value="E(v)94">E(v)94</option>
+                        <option value="S(v)95">S(v)95</option>
+                        <option value="E(v)96">E(v)96</option>
+                        <option value="E(v)97">E(v)97</option>
+                        <option value="S(v)98">S(v)98</option>
+                        <option value="E(v)99">E(v)99</option>
+                        <option value="E(v)100">E(v)100</option>
+                        <option value="S(v)101">S(v)101</option>
+                        <option value="E(v)102">E(v)102</option>
+                        <option value="E(v)103">E(v)103</option>
+                        <option value="S(v)104">S(v)104</option>
+                        <option value="E(v)105">E(v)105</option>
+                        <option value="E(v)106">E(v)106</option>
+                        <option value="S(v)107">S(v)107</option>
+                        <option value="E(v)108">E(v)108</option>
+                        <option value="E(v)109">E(v)109</option>
+                        <option value="S(v)110">S(v)110</option>
+                        <option value="MotherWise Alumni">MotherWise Alumni</option>
+                        <option value="MotherWise Team">MotherWise Team</option>
+                    </select>
+    			</div>
+
+    			<input hidden id="cohort_option" name="option" value="">
+
+                <div class="form-group" style="margin-top:10px; text-align:center;">
+
+                    <div style="width:auto; display:inline-block;">
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('members');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:orange;"><br>
+                                <label class="button-text">Members</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_video.png" style="margin-left:10px; background-color:red;"><br>
+                                <label class="button-text" style="margin-left:5px;">Video</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:toCohortGroupChat();">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group_chat.png" style="margin-left:10px; background-color:#0066cc;"><br>
+                                <label class="button-text" style="margin-left:4px;">Group Chat</label>
+                            </div>
+                        </a>
+                    </div>
+
+                    <script>
+                        function toCohortGroupChat(){
+                            var cht = document.getElementById('cohort2').value;
+                            if(cht.length == 0){
+                                alert('Please choose a group.');
+                                return;
+                            }
+                            window.location.href = "/manager/group_cohort_chat?cohort=" + cht;
+                        }
+                    </script>
+
+                    <br>
+
+                    <div style="width:auto; display:inline-block; margin-top:10px;">
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('group_chat');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:#008080;"><br>
+                                <label class="button-text">Communs</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('private_chat');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_chat.png" style="margin-left:10px; background-color:green;"><br>
+                                <label class="button-text" style="margin-left:5px;">Priv Chat</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:openCohortMessageBox(document.getElementById('cohort2').value);">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_message.png" style="margin-left:10px; background-color:brown;"><br>
+                                <label class="button-text" style="margin-left:5px;">Message</label>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+<input type="hidden" id="me_id" value="{{me.pk}}">
+
+
+<div id="notiLayout" style="display:none;" onclick="javascript:dismissLayouts();">
+    <center>
+        <div style="font-size:16px; font-weight:600; font-family:verdana; color:white; text-align:center; width:280px;
+            border-radius:50px; margin-top:10px; margin-bottom:15px; background-color:orange; padding:3px;">
+            Contact Again
+        </div>
+    </center>
+    <div id="notiForm">
+        <div class="contentform2">
+            <div class="formcontent2">
+                <div id="chat_log2">
+                    <div id="list2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<div id="snackbar">Submited</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $(window).on('scroll', function () {
+
+  var $w = $(window);
+  $('.position-fixed-x').css('left', $w.scrollLeft());
+  $('.table-owner1').css('top', $w.scrollTop());
+
+});
+</script>
+
+<script>
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        document.getElementById("header").style.display = "block";
+        document.getElementById("myBtn").style.display = "block";
+        {% if title %}
+            document.getElementById("title").style.display = "block";
+        {% endif %}
+        document.getElementById("title0").style.display = "none";
+        document.getElementById("logo").style.display = "block";
+        document.getElementById("navbar").style.backgroundColor = "black";
+    } else {
+        document.getElementById("header").style.display = "none";
+        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("title").style.display = "none";
+        document.getElementById("title0").style.display = "block";
+        document.getElementById("logo").style.display = "none";
+        document.getElementById("navbar").style.backgroundColor = "transparent";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+</script>
+
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.10.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.10.0/firebase-messaging.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDveaXbV1HHMREyZzbvQe53BJEHVIRCf14",
+    authDomain: "motherwise-1585202524394.firebaseapp.com",
+    databaseURL: "https://motherwise-1585202524394.firebaseio.com",
+    projectId: "motherwise-1585202524394",
+    storageBucket: "motherwise-1585202524394.appspot.com",
+    messagingSenderId: "805720875706",
+    appId: "1:805720875706:web:1e90b519b4cf8ca0f69883",
+    measurementId: "G-TLGYEHY3TK"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script>
+	function showNotifications(){
+		window.location.href = "/adminNotifications";
+	}
+
+</script>
+
+<script>
+
+// ScrollTo({{member_id}});
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+</script>
+
+<script>
+
+createjs.Sound.registerSound("/static/sound/notification.mp3", "x");
+navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+
+var keys = [];
+var me_email = document.getElementById("me_email").value;
+me_email = me_email.replace(/\./g,"ddoott");
+var ref = firebase.database().ref('notification/' + me_email);
+ref.on('child_added', function(snapshot) {
+	var key = snapshot.val();
+	keys.push(key);
+	if(keys.length == 1){
+// 		createjs.Sound.play("x");
+		document.getElementById("noticon").style.display = 'block';
+		document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:10px;'></span>New!</h4>";
+		if (navigator.vibrate) {
+			// vibration API supported
+			navigator.vibrate(500);
+		}else {
+			window.navigator.vibrate(500); // vibrate for 500ms
+		}
+	}
+});
+
+
+var keys2 = [];
+var me_id = document.getElementById("me_id").value;
+var notiref = firebase.database().ref('notify/' + me_id);
+notiref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+//   console.log(snapshot.key);
+  if (key){
+    var sender_name = key.sender_name;
+    console.log(key.sender_name);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>"
+        + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key.date))
+        + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>"
+        + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key.msg + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    var sender_photo = key.sender_photo;
+    if (sender_photo.length > 0) img.src = sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        var type = key.type
+        var id = key.id
+        var mes_id = key.mes_id
+        if(type == 'gchat'){
+            window.location = "/open_group_chat?group_id=" + id;
+        }else if(type == 'cchat'){
+            window.location = "/group_cohort_chat?cohort=" + id;
+        }else {
+            window.location = "/notifications?noti_id=" + mes_id;
+        }
+
+        notiref.child(snapshot.key).remove();
+    });
+    ul.appendChild(ul2);
+
+    keys2.push(key);
+	if(keys2.length == 1){
+// 		createjs.Sound.play("x");
+		document.getElementById("noticon").style.display = 'block';
+		document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:10px;'></span>New!</h4>";
+		if (navigator.vibrate) {
+			// vibration API supported
+			navigator.vibrate(500);
+		}else {
+			window.navigator.vibrate(500); // vibrate for 500ms
+		}
+	}
+  }
+});
+
+</script>
+
+<script src="/static/js/chat/admin_notification.js"></script>
+
+<script>
+
+var m = 0;
+var m2 = 0;
+
+// document.getElementById("export").style.display = "block";
+
+$(document).ready(function() {
+    $('.table #date').each(function(i) {
+        this.innerHTML = getDate(parseInt(this.innerHTML));
+    });
+});
+
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+function highlight(obj){
+   if(obj.checked) {
+      $(obj).parent().parent().css("background","#ccccff");
+      m++;
+   }else{ $(obj).parent().parent().css("background","#e6f2ff"); if(m>0)m--;}
+   if(m > 0){
+       document.getElementById('video').style.display = 'block';
+   }else document.getElementById('video').style.display = 'none';
+}
+
+function highlight2(obj){
+   if(obj.checked) {
+      $(obj).parent().parent().css("background","#ccccff");
+      m2++;
+   }else{ $(obj).parent().parent().css("background","#e6f2ff");if(m2>0)m2--;}
+   if(m2 > 0){
+       document.getElementById('message').style.display = 'block';
+       document.getElementById('chat').style.display = 'block';
+       document.getElementById('gchat').style.display = 'block';
+   }else {
+       document.getElementById('message').style.display = 'none';
+       document.getElementById('chat').style.display = 'none';
+       document.getElementById('gchat').style.display = 'none';
+   }
+
+   console.log("m2: " + m2);
+}
+
+</script>
+
+<script>
+
+    function dismissLayouts(){
+        document.getElementById('messageBox').style.display='none';
+        document.getElementById('messageBox2').style.display='none';
+        document.getElementById('messageBox3').style.display='none';
+        document.getElementById('cohortBox').style.display='none';
+        document.getElementById('backgroundOverlay').style.display='none';
+        document.getElementById('notiLayout').style.display='none';
+    }
+
+    function openCohortMessageBox(selected_cohort){
+        if(selected_cohort.length == 0){
+            alert('Please select a group.');
+            return;
+        }
+        dismissLayouts();
+        document.getElementById('messageBox3').style.display='block';
+        document.getElementById('backgroundOverlay').style.display='block';
+        document.getElementById('cohortmessageboxtitle').innerHTML = 'SEND MESSAGE TO MEMBERS<br>IN ' + String(selected_cohort).toUpperCase();
+        document.getElementById('selected_cohort').value = selected_cohort;
+    }
+
+    function doCohort(option){
+        if(document.getElementById('cohort2').value == ''){
+            alert('Please choose a group.');
+            return;
+        }
+        document.getElementById('cohort_option').value = option;
+        var form = document.getElementById("cohortform");
+        form.submit();
+    }
+
+</script>
+
+<script>
+
+function getCookie(name) {
+    console.log('getCookie');
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                    }
+            }
+    }
+    console.log('cookie:' + cookieValue);
+    return cookieValue;
+}
+
+function post(path, params, method) {
+   method = method || "post"; // Set method to post by default if not specified.
+
+   // The rest of this code assumes you are not using a library.
+   // It can be made less wordy if you use one.
+   var form = document.createElement("form");
+   form.setAttribute("method", method);
+   form.setAttribute("action", path);
+
+   for(var key in params) {
+      if(params.hasOwnProperty(key)) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", params[key]);
+
+          form.appendChild(hiddenField);
+      }
+   }
+
+   var hiddenField1 = document.createElement("input");
+   hiddenField1.setAttribute("type", "hidden");
+   hiddenField1.setAttribute("name", 'csrfmiddlewaretoken');
+   hiddenField1.setAttribute("value", getCookie('csrftoken'));
+   form.appendChild(hiddenField1);
+
+   document.body.appendChild(form);
+   form.submit();
+}
+
+
+function sendMessageToSelectedMembers(){
+    var chxarr = [];
+    var userchxs =  document.getElementsByName("users2[]");
+    var chxlength = userchxs.length;
+
+    for(k=0;k < chxlength;k++){
+      if(userchxs[k].checked) {
+         chxarr.push(userchxs[k].value);
+      }
+    }
+
+    var message = document.getElementById('textarea');
+    if(message.value.length == 0){
+        alert("Please enter your message ...");
+        return;
+    }
+
+    // for(var i=0; i<chxarr.length; i++){
+    //     firebase.database().ref('adminmessage' + '/' + chxarr[i]).remove();
+    //     firebase.database().ref('adminmessage' + '/' + chxarr[i]).push().set({
+    //       noti: message.value,
+    //       time: new Date().getTime(),
+    //     });
+    // }
+
+    document.getElementById('msg').value = message.value;
+    var form = document.getElementById("form");
+    // form.submit();
+    formSubmit(form, document.getElementById('gif2'), 'Message sent.');
+}
+
+function toChat(option){
+    var userchxs =  document.getElementsByName("users2[]");
+    var chxlength = userchxs.length;
+    if (chxlength > 0){
+        document.getElementById('option').value = option;
+        var form = document.getElementById("form");
+        form.submit();
+    }
+}
+
+function toVideo(){
+    var userchxs =  document.getElementsByName("users[]");
+    var chxlength = userchxs.length;
+    if (chxlength > 0){
+        var form = document.getElementById("form");
+        form.setAttribute("action", '/manager/video_selected_members');
+        form.submit();
+    }
+}
+
+function showToast(text) {
+    var x = document.getElementById("snackbar");
+    x.innerHTML = text;
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+function formSubmit(form, gif, text){
+    gif.style.display = "block";
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            showToast(text);
+            gif.style.display = "none";
+            dismissLayouts();
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+</script>
+
+<script>
+
+{% if groups %}
+{% for group in groups %}
+
+var gref = firebase.database().ref('gmnotis' + {{me.pk}} + "gr" + {{group.pk}});
+gref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.sender;
+    var cohort = key2.cohort;
+    var groupid = key2.groupid;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>" + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key2.message + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.sender_photo.length > 0) img.src = key2.sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        if(groupid != '') window.open('/manager/open_group_chat?group_id=' + groupid);
+        else if(cohort != '') window.open('/manager/group_cohort_chat?cohort=' + cohort);
+    });
+    if({{me.pk}} != parseInt(key2.sender_id)){
+        ul.appendChild(ul2);
+        document.getElementById("noticon").style.display = 'block';
+        document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:10px;'></span>New!</h4>";
+    }
+  }else {
+      var lii = document.createElement("div");
+      lii.style.color = 'white';
+      lii.style.fontSize = '14';
+      lii.style.textAlign = 'center';
+      lii.innerHTML = "No message ...";
+      ul.append(lii);
+  }
+});
+
+{% endfor %}
+{% endif%}
+
+</script>
+
+<script>
+
+var ul0 = document.getElementById("list2");
+var keys = [];
+me_email = me_email.replace(/\./g,"ddoott");
+var starCountRef = firebase.database().ref('notification2/' + me_email);
+starCountRef.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.senderName;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) +
+        "<label style='overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:100; margin-left:8px; float:right; max-width: 160px;'>" + key2.msg + "</label>" + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>Click to contact</label>" + "</div>";
+
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.senderPhoto.length > 0) img.src = key2.senderPhoto;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+       var context = {
+            'member_email': key2.sender
+       }
+       post('/manager/to_chat/', context);
+       console.log('/manager/to_chat/');
+    });
+    ul0.appendChild(ul2);
+  }else {
+      var lii = document.createElement("div");
+      lii.style.color = 'white';
+      lii.style.fontSize = '14';
+      lii.style.textAlign = 'center';
+      lii.innerHTML = "No message ...";
+      ul0.append(lii);
+  }
+});
+
+
+me_id = document.getElementById("me_id").value;
+var notiref2 = firebase.database().ref('notify2/' + me_id);
+notiref2.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+//   console.log(snapshot.key);
+  if (key){
+    var sender_name = key.sender_name;
+    console.log(key.sender_name);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>"
+        + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key.date))
+        + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>"
+        + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key.msg + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    var sender_photo = key.sender_photo;
+    if (sender_photo.length > 0) img.src = sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        var type = key.type
+        var id = key.id
+        var mes_id = key.mes_id
+        if(type == 'gchat'){
+            window.location = "/open_group_chat?group_id=" + id;
+        }else if(type == 'cchat'){
+            window.location = "/group_cohort_chat?cohort=" + id;
+        }else {
+            window.location = "/notifications?noti_id=" + mes_id;
+        }
+
+        notiref2.child(snapshot.key).remove();
+    });
+    ul0.appendChild(ul2);
+  }
+});
+
+
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

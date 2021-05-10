@@ -1,0 +1,779 @@
+{% extends 'motherwise/base_comment.html' %}
+{% block title %}My Post{% endblock %}
+{% block body %}
+
+<br>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="/static/css/emoji.css" rel="stylesheet">
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  <script>
+      WebFont.load({
+      google: {
+      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+    });
+</script>
+
+<style>
+
+html, body{
+  background: url("/static/images/postbg.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 400px;
+    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 6px;
+    text-align: center;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  right: 15px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+form h1 {
+  font-size: 25px;
+  background: #327a81 none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:left
+}
+
+.user-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:5px;
+  margin-bottom:2px;
+  background-size:cover;
+  overflow: hidden;
+}
+
+.user-form:hover {
+  background:linear-gradient(0deg,rgba(0,0,0,0.0),rgba(0,0,0,0.2),rgba(0,0,0,0.2),rgba(0,0,0,0.2));
+  background-size:cover;
+}
+
+.group-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:10px;
+  margin-bottom:2px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.group-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.contentform {
+  padding: 10px;
+}
+
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 200;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  width: 100%;
+  height: 42px;
+  float: left;
+  padding: 0px 15px;
+  color:black;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: gray;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: gray;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: gray;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.bouton-update{
+  background-color: green;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#manage-menu {
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:auto;
+    background-color:white;
+    color:black;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+.menu {
+    padding:2px 15px;
+}
+
+.menu a{
+    color:gray;
+}
+
+.menu a:hover {
+    color:black;
+}
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.3);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+.slide {
+    display: inline-block;
+}
+
+select {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+#postform::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background: white;
+	border-radius:10px;
+}
+
+#postform::-webkit-scrollbar
+{
+	width: 5px;
+	background: gray;
+	border-radius:10px;
+}
+
+#postform::-webkit-scrollbar-thumb
+{
+	background: rgb(20,150,250);
+	width: 5px;
+	border-radius:10px;
+}
+
+#postform2::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background: white;
+	border-radius:10px;
+}
+
+#postform2::-webkit-scrollbar
+{
+	width: 5px;
+	background: gray;
+	border-radius:10px;
+}
+
+#postform2::-webkit-scrollbar-thumb
+{
+	background: rgb(20,150,250);
+	width: 5px;
+	border-radius:10px;
+}
+
+#commentform::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background: white;
+	border-radius:10px;
+}
+
+#commentform::-webkit-scrollbar
+{
+	width: 5px;
+	background: gray;
+	border-radius:10px;
+}
+
+#commentform::-webkit-scrollbar-thumb
+{
+	background: rgb(20,150,250);
+	width: 5px;
+	border-radius:10px;
+}
+
+.hint{
+    display:none;
+}
+
+.hyperlink:hover .hint {
+    display:block;
+}
+
+.hyperlink{
+
+}
+
+</style>
+
+<!--<script>-->
+<!--	history.pushState(null, null, location.href);-->
+<!--	window.onpopstate = function () {-->
+<!--        history.go(1);-->
+<!--    };-->
+<!--</script>-->
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+
+<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
+	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:350px; z-index:100; top:105px; display:none;">Edit Post</div>
+
+<div style="width:100%; height:auto;">
+
+    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:20px;
+        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">Edit Post</div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div style="text-align:center; color:white;" id="postform">
+
+            <div style="width:100%;">
+                <div style="font-size:20px;">{{post.post.title}}</div>
+                 <!--text-overflow:ellipsis; overflow:hidden; white-space:nowrap;-->
+                <div style="font-size:18px; font-weight:500; color:#F7D479; font-family:verdana;">{{post.post.category}}</div>
+            </div>
+
+            <div style="font-size:12px; margin-left:20px;">{{post.post.posted_time}}</div>
+
+            <div class="contentform" style="color:white;">
+                <div style="width:100%; display:inline-block;" >
+
+                    <div style="display:inline-block; float:right; margin-right:10px;">
+
+                        <div style="color: #fff; float:left; font-weight:500; font-size:16px; text-align:center;">
+                            <span class="fa fa-thumbs-o-up"></span> {{post.post.likes}} <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-3" style="text-align:center; color:white; height:auto; height:auto; padding-bottom:10%; overflow:auto;" id="postform2">
+
+                {% if post.pictures %}
+                    {% for picture in post.pictures %}
+                    <center>
+                        <div style="position:relative; width:80%;" class="hyperlink">
+                            <a href="{{picture.picture_url}}" target="_blank"><img src="{{picture.picture_url}}" style="width:100%; height:auto; object-fit:cover;"></a>
+                            <a href="/manager/postdelpicture?picture_id={{picture.pk}}&post_id={{post.post.pk}}" onclick="return confirm('Are you sure you want to delete this picture?')">
+                                <div style="position:absolute; top:5px; right:5px; font-size:40px;" class="hint"><span class="fa fa-times-circle"></span></div>
+                            </a>
+                        </div>
+                    </center>
+                    {% endfor %}
+                {% endif %}
+
+        </div>
+
+        <div class="col-sm-6" style="text-align:center; color:white; height:auto; padding-bottom:10%; overflow:auto;" id="postform">
+
+                <div style="border-radius:10px; background-color:rgba(255,255,255,0.4); width: 100%; height:auto; display:inline-block; margin:0px 0px 30px 0px;">
+
+                    <div style="margin:15px ">
+                        <div style="color:white; font-size:18px; font-weight:500; font-family:verdana;">
+                            Edit Post
+                        </div>
+                    </div>
+
+                    <div text-align:center;">
+                        <div style="display:inline-block; width:90%;">
+                            <form action="/manager/edit_post/" method="post" enctype="multipart/form-data" style="width:100%;">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <input type="text" name="title" id="title" data-rule="required" data-msg="" required value="{{post.post.title}}" placeholder="Enter a title">
+                    			</div>
+                                <input hidden name="post_id" value="{{post.post.pk}}">
+                    			<div class="form-group">
+                                    <select name="category" required id="category" style="color:black;">
+                                        <option value="{{post.post.category}}" style="color:gray;">{{post.post.category}}</option>
+                                        <option value="" style="color:gray;" disabled>Please choose a category-----</option>
+                                        <option value="Helpful tips for pregnancy and baby">Helpful tips for pregnancy and baby</option>
+                                        <option value="Inspiration">Inspiration</option>
+                                        <option value="Shout-outs">Shout-outs</option>
+                                        <option value="Wellness">Wellness</option>
+                                        <option value="Activities Suggestions">Activities Suggestions</option>
+                                        <option value="Resources">Resources</option>
+                                    </select>
+                    			</div>
+
+                    			<div class="form-group">
+                                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                                    <textarea rows="8" name="content" required id="textarea" placeholder="Write something here..."
+                                        style="width:100%; height:100px; min-height:100px; max-height:500px; border:1px solid #ccc; padding:15px; border-radius:5px; color:black;">{{post.post.content}}</textarea>
+                                    <script>autosize(document.getElementById("textarea"));</script>
+                                </div>
+
+                                <div class="form-group" style="width:auto; margin-bottom:20px;">
+        				            <center>
+                                        <img src="" style="width:auto; height:40px; margin-top:8px; display:none;" id="output">
+                                    </center>
+                                    <div id="image-panel" class="form-group" style="display:none;">
+                                        <center>
+                                            <div style="width:100%; text-align:center; max-height:80px;">
+                                                <output id="divv" class="dragscroll" style="white-space: nowrap; overflow-y: hidden; overflow: auto; cursor: grab; cursor : -o-grab; cursor : -moz-grab; cursor : -webkit-grab;">
+                                                </output>
+                                            </div>
+                                        </center>
+        			                </div>
+        				            <label style="float:left; margin-left:10px;"><i class="fa fa-paperclip" style="font-size:25px; color:white;"></i>
+                                        <input type="file" name="pictures" style="display:none;" value="http://lorempixel.com/100/100/people/9" id="picture" accept="image/*" multiple/>
+                                    </label><div style="color:white; font-size:14px;">You can attach 1+ images by CTRL + selection.</div>
+                                    <script>
+                                        function readFile() {
+                                            if (this.files) {
+                                                var output = document.getElementById("divv");
+                                                output.innerHTML = "";
+                                                var files = this.files;  console.log(files.length);
+                                                document.getElementById("image-panel").style.display = "block";
+                                                for(var i = 0; i< files.length; i++)
+                                                {
+                                                    var file = files[i];
+                                                    //Only pics
+                                                    if(!file.type.match('image'))
+                                                      continue;
+                                                    var picReader = new FileReader();
+                                                    picReader.addEventListener("load",function(event){
+                                                        var picFile = event.target;
+
+                                                        document.getElementById("output").src = event.target.result;
+
+                                                        var div = document.createElement("div");
+                                                        div.classList.add("slide");
+                                                        div.innerHTML = "<img src='" + picFile.result + "'" +
+                                                                "title='" + picFile.name + "'" + " style=" + "'width:auto; height:80px; float:left;'" + "/>";
+
+                                                        div.addEventListener("click", function() {
+                                                            document.getElementById("output").src =  picFile.result;
+                                                        });
+                                                        output.insertBefore(div,null);
+                                                    });
+
+                                                     //Read the image
+                                                    picReader.readAsDataURL(file);
+                                                }
+                                            }
+                                        }
+                                        document.getElementById("picture").addEventListener("change", readFile);
+                                    </script>
+                                </div>
+                                <div class="form-group">
+                        			<center>
+                                        <button type="submit" class="bouton-update" style="width:60%;">Submit</button>
+                                    </center>
+                                </div>
+                            </form>
+            			</div>
+                    </div>
+
+                </div>
+
+                <script>
+                    urlify(String(document.getElementById('textarea').value));
+                    function urlify(text) {
+                        var urlRegex = /(https?:\/\/[^\s]+)/g;
+                        return text.replace(urlRegex, function(url) {
+                            return '<a href="' + url + '">' + url + '</a>';
+                        })
+                    }
+
+                </script>
+
+        </div>
+
+
+
+
+        <div class="col-sm-3" style="text-align:center;">
+            <div style="width:100%; margin-bottom:15px;">
+                <div style="color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); font-size:20px; font-weight:600; font-family:verdana;">
+                    Comments
+                </div>
+            </div>
+
+            {% if post.comments %}
+                <form style="width:100%; height:auto; padding-bottom:10%; overflow:auto;" method="post" enctype="multipart/form-data" id="commentform">
+                    {% for comment in post.comments %}
+                    <div class="user-form">
+                        <div class="contentform">
+                            <div style="width:100%; display:flex;" >
+                                <div style="float:left; position:relative;">
+                                    <a href="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% endif %}">
+                                        <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                    </a>
+                                </div>
+                                <a href="#" style="flex-grow:1;">
+                                    <div style="padding-left:8px; color: white; float:left; font-size:14px; text-align:left; word-break: break-all; word-wrap: break-word;">
+                                        <div style="font-weight:600;">{{comment.member.name}}</div>
+                                        <div style="font-size:11px;">{{comment.member.cohort}}</div>
+                                        <div class="date" style="font-size:11px; float:right; margin-right:10px; color:yellow;">{{comment.comment.commented_time}}</div>
+                                    </div>
+                                </a>
+
+                                <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{comment.member.email}}');">
+                                    <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px;"></span>
+                                </a>
+
+                                <a href="/manager/group_private_chat?email={{comment.member.email}}" target="_blank" style="background-color:transparent; margin-left:15px;">
+                                    <span class="fa fa-comments" aria-hidden="true" style="color:white; font-size:20px;"></span>
+                                </a>
+                                {% if comment.member.pk == me.pk %}
+                                    <a href="/manager/delcomment?comment_id={{comment.comment.pk}}" onclick="return confirm('Are you sure you want to remove this comment?')">
+                                        <span class="fa fa-trash" style="color:white; font-size:18px;"></span>
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group" style="display:flex;">
+                                <div style="text-align:left; float:left; flex-grow:1; color:white; padding-left:25px;" id="note">{{comment.comment.comment_text}}</div>
+                                {% if comment.comment.image_url %}
+                                    <div style="float:left; margin:5px 0px 0px 5px;">
+                                        <a href="{{comment.comment.image_url}}" target="_blank"><img src="{{comment.comment.image_url}}" style="width:40px; height:40px; object-fit:cover;"></a>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </form>
+            {%else %}
+                    <div style="width:100%; text-align:center;">
+                        <br>
+                        <br>
+                        <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No comment added ...</h4>
+                    </div>
+
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+<!--<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>-->
+<!--<script src="/static/js/config.js"></script>-->
+<!--<script src="/static/js/util.js"></script>-->
+<!--<script src="/static/js/jquery.emojiarea.js"></script>-->
+<!--<script src="/static/js/emoji-picker.js"></script>-->
+
+<!--<script>-->
+<!--      $(function() {-->
+<!--        // Initializes and creates emoji set from sprite sheet-->
+<!--        window.emojiPicker = new EmojiPicker({-->
+<!--          emojiable_selector: '[data-emojiable=true]',-->
+<!--          assetsPath: '/static/emoji/',-->
+<!--          popupButtonClasses: 'fa fa-smile-o'-->
+<!--        });-->
+<!--        // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields-->
+<!--        // You may want to delay this step if you have dynamically created input fields that appear later in the loading process-->
+<!--        // It can be called as many times as necessary; previously converted input fields will not be converted again-->
+<!--        window.emojiPicker.discover();-->
+<!--      });-->
+<!--    </script>-->
+<!--    <script>-->
+<!--      // Google Analytics-->
+<!--      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){-->
+<!--      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),-->
+<!--      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)-->
+<!--      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');-->
+
+<!--      ga('create', 'UA-49610253-3', 'auto');-->
+<!--      ga('send', 'pageview');-->
+<!--    </script>-->
+
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("navbar").style.backgroundColor = "rgba(0,0,0,0.7)";
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+        // document.getElementById("navbar").style.backgroundColor = "transparent";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.getElementById("member-list").scrollTop = 0;
+}
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('#commentform .date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+        $('#postform .date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+        $('#commentform #note').each(function(i) {
+            const response = this.innerHTML
+            const decoded = response
+              .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+              .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+            this.innerHTML = decoded;
+        });
+   });
+});
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+       color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+</script>
+
+<script>
+
+// ScrollTo({{member_id}});
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

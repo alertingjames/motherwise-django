@@ -1,0 +1,112 @@
+<html>
+    <title>Translate</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+        <style>
+            html, body{
+              background: url("/static/images/postbg.jpg") no-repeat center center fixed;
+              background-size:cover;
+            }
+            option{
+                color:black;
+            }
+            div {
+                -moz-user-select: -moz-none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+                -o-user-select: none;
+                user-select: none;
+            }
+        </style>
+    </head>
+    <body>
+        <br>
+        <br>
+        <center><h1 style="color:white;">MOTHERWISE TRANSLATE</h1></center>
+        <br>
+        <center>
+            <img src="/static/images/processing.gif" style="width:60px; height:60px; display:none;" id="gif2">
+            <form style="width:auto; margin-left:35px; display:inline-block;" id="form">
+                {% csrf_token %}
+                <select name="lang" required id="lang" style="margin-right:40px; padding:5px; border-radius:30px; background:transparent; color:white; font-size:12px; border:0;">
+                    <option value="">Select language</option>
+                    <option value="zh-cn">Chinese</option>
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ko">Korean</option>
+                    <option value="ru">Russian</option>
+                </select>
+                <br>
+                <div style="width:400px; float:left; margin:10px; border:2px solid gray; border-radius:10px;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea name="input" style="width:100%; border:0; border-radius:10px; color:black; font-size:18px; padding:20px; opacity:0.9;"
+                        rows="10" id="inputbox" placeholder="Write something here..."></textarea>
+                    <script>autosize(document.getElementById("inputbox"));</script>
+                </div>
+
+                <button type="button" style="float:left; background-color:green; padding:20px; margin:10px; border:0;" onclick="javascript:translating();">
+                    <span class="fa fa-angle-double-right" style="color:white; font-size:20px; font-weight:600;"></span>
+                </button>
+
+                <div style="width:400px; float:left; min-height:200px; margin:10px; border:2px solid gray; color:black; background-color:white; border-radius:10px; opacity:0.9;
+                    font-size:18px; padding:20px; text-align:left; word-wrap: break-word; white-space: pre-line;" id="outbox"></div>
+
+            </form>
+
+            <script>
+                function translating(){
+                    if(document.getElementById('inputbox').value == ''){
+                        alert('Write something...');
+                        return;
+                    }
+                    if(document.getElementById('lang').value == ''){
+                        alert('Select a language.');
+                        return;
+                    }
+                    document.getElementById('gif2').style.display = "block";
+                    var form = document.getElementById('form');
+                    var formData = new FormData(form);
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            console.log(xhr.response);
+                            var result = xhr.response;
+                            document.getElementById("outbox").innerHTML = result;
+                            document.getElementById('gif2').style.display = "none";
+                        }
+                    };
+                    xhr.open('POST', "/process_translate", true);
+                    xhr.send(formData);
+                }
+            </script>
+        </center>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

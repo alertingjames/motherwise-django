@@ -1,0 +1,231 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Motherwise Network{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+    <link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+    <link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+    <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+    <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<style>
+
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  right: 15px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+#myBtn:hover {
+  background-color: orange;
+}
+
+
+#advanced{
+    width:180px;
+    background-color:#000000;
+}
+
+#advanced1{
+    width:150px;
+    background-color:#000000;
+}
+
+h4{
+    color:white;
+}
+
+h4:hover{
+    color:white;
+    text-decoration:underline;
+}
+
+.cropping{
+    object-fit:cover;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav id="navbar" class="navbar navbar-inverse" style="background:rgba(0,0,0,0.7); padding-top:30px;">
+
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar" aria-expanded="false" aria-label="Toggle navigation" onclick="javascript:changeNavbarBackgroundColor();">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+        </div>
+
+        <div class="collapse navbar-collapse" id="topNavBar" style="border:0;">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="javascript:void(0)" onclick="exitChat('home');">
+                        <h4 style=""><span class="fa fa-home" aria-hidden="true" style="margin-right:10px;"></span>Home</h4>
+                    </a>
+                </li>
+
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+
+                <li>
+                    <a href="javascript:void(0)" onclick="exitChat('logout');">
+                        <h4><span class="glyphicon glyphicon-off" aria-hidden="true" style="margin-right:10px;"></span>Logout</h4>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+
+<!--<div id="google_translate_element" style="display:none;"></div>-->
+
+<!--<script type="text/javascript">-->
+<!--function googleTranslateElementInit() {-->
+<!--  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');-->
+<!--}-->
+<!--</script>-->
+
+<!--<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>-->
+
+
+
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("myBtn").style.display = "none";                         // Top button display none;
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+</script>
+
+
+<script>
+    function exitChat(option){
+        // if (confirm("Do you want to exit the room?")) {
+
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+            firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+                user: sender_email,
+                time: new Date().getTime(),
+                online: 'offline'
+            });
+
+            if(option == 'home') window.location.href = "/manager/home";
+            else if(option == 'logout') window.location.href = "/manager/logout";
+
+        // }
+    }
+
+    var openF = false;
+
+    function changeNavbarBackgroundColor(){
+        console.log("Clicked on nav button");
+        var navbar = document.getElementById('navbar');
+        if(!openF) {
+            navbar.style.backgroundColor = "rgba(0,0,0,0.7)";
+            openF = true;
+        }else{
+            // navbar.style.backgroundColor = "transparent";
+            openF = false;
+        }
+    }
+
+</script>
+
+<script>
+    $(document).click(function(){
+        hideMenuBar();
+    });
+
+    function hideMenuBar(){
+        // $(".dropdown-menu").hide();
+        $('.navbar-collapse').collapse('hide');
+    }
+</script>
+
+
+{% block body %}
+    {% endblock %}
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,385 @@
+{% extends 'motherwise/base.html' %}
+{% block title %}Motherwise Admin Signup{% endblock %}
+{% block body %}
+
+<style>
+
+html, body{
+  background: linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.1)), url("/static/images/mother1_gray.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+form h1 {
+  font-size: 22px;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:middle;
+  font-family: verdana;
+}
+
+#edit {
+  border-radius: 5px;
+  max-width:1000;
+  height:auto;
+  margin-top: 4%;
+  margin-bottom: 2% auto;
+  margin-left:auto;
+  margin-right:auto;
+  overflow: hidden;
+  /*background:linear-gradient(0deg,rgba(20,150,250,0.2),rgba(0,100,250,0.2));*/
+  /*background:linear-gradient(0deg,rgba(200,250,250,0.3),rgba(200,200,250,0.3));*/
+  background-size:cover;
+}
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 600;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:20px 0px 0px 0px
+}
+
+input {
+  border-radius: 50px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+a {
+  text-decoration:inherit
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.icon-case {
+  width: 8%;
+  float: left;
+  border-radius: 50px 0px 0px 50px;
+  border:0;
+  background:white;
+  height:42px;
+  position: relative;
+  text-align: center;
+  line-height:40px;
+  padding-top:11px;
+}
+
+i {
+  color:gray;
+}
+
+.contentform {
+  padding: 0px 8px 0px 8px;
+  float:middle;
+  margin:auto;
+}
+
+.bouton-update{
+  background-color: #0077b3;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 12px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.formcontent {
+  width:100%;
+  float:middle;
+  margin:auto;
+  box-sizing: border-box;
+  padding: 0px;
+}
+
+.validation {
+  display:none;
+  margin: 0 0 10px;
+  font-weight:400;
+  font-size:13px;
+  color: #DE5959;
+}
+
+.centered-and-cropped { object-fit:cover; }
+
+.pan {
+  max-width:450px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:auto;
+  margin-right:0;
+  opacity:0.9;
+  overflow: hidden;
+}
+
+.pan2 {
+  max-width:450px;
+  width:auto;
+  height:auto;
+  margin-bottom: auto;
+  margin-left:0;
+  margin-right:auto;
+  opacity:0.9;
+  overflow: hidden;
+}
+
+label.cameraButton {
+  display: inline-block;
+  /* Styles to make it look like a button */
+  padding: 15px 0px 0px 0px;
+  /*border: 2px solid #666;*/
+  /*border-color: #EEE #CCC #CCC #EEE;*/
+  border-radius:50px;
+  font-size:16px;
+  color:white;
+  width:60px;
+  height:60px;
+  text-align:center;
+  background-color: green;
+}
+
+/* Look like a clicked/depressed button */
+label.cameraButton:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input[accept*="image"] {
+  display: none;
+}
+
+label input {
+  display: none;/* <-- hide the default checkbox */
+}
+
+label span {/* <-- style the artificial checkbox */
+  height: 25px;
+  width: 25px;
+  border:2px solid white;
+  margin-right:20px;
+  display: inline-block;
+  position: relative;
+}
+
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top: 0px;
+  left: 5px;
+}
+
+</style>
+
+<script type="text/javascript">
+window.onload = function() {
+	window.moveTo(0, 0);
+	window.resizeTo(screen.availWidth, screen.availHeight);
+}
+</script>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; z-index:2000; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="width:90px; left:1%; top:30px; z-index:999; position:absolute;">
+
+<form id="edit" action="/manager/signup" method="post" enctype="multipart/form-data">
+	  {% csrf_token %}
+    <center>
+        <img src="/static/images/logotitle.png" style="width:200px; height:auto; border-radius:0; border:0; margin-top:50px; margin-bottom:30px;">
+        <div style="font-size:16px; color:white;">Create Manager Account</div>
+    </center>
+    <div class="container-fluid" style="margin-top:5%;">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="pan">
+                    <div class="contentform">
+    		            <div class="formcontent">
+    		                <div class="form-group">
+                    			<!--<p>Name <span>*</span></p>-->
+                    			<!--<span class="icon-case"><i class="fa fa-user"></i></span>-->
+                                <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="" placeholder="Name">
+                                <div class="validation"></div>
+                    		</div>
+                    		<div class="form-group">
+                				<!--<p>Phone Number <span>*</span></p>-->
+                				<!--<span class="icon-case"><i class="fa fa-phone"></i></span>-->
+                				<input type="tel" name="phone_number" id="phone" data-rule="required" data-msg="" required value="" placeholder="Phone Number">
+                                <div class="validation"></div>
+                			</div>
+                			<input hidden name="playerID" id="playerID">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="pan2" style="padding-bottom:30px;">
+                <div class="contentform">
+		            <div class="formcontent">
+		                <div class="form-group">
+                			<!--<p>E-mail <span>*</span></p>-->
+                			<!--<span class="icon-case"><i class="fa fa-envelope-o"></i></span>-->
+                            <input type="email" name="email" id="email" data-rule="required" data-msg="" required value="" placeholder="E-mail">
+                            <div class="validation"></div>
+                		</div>
+            			<div class="form-group" style="position:relative;">
+                			<!--<p>Password <span>*</span></p>-->
+                			<!--<span class="icon-case"><i class="fa fa-lock"></i></span>-->
+                			<input type="password" name="password" id="password" data-rule="required" data-msg="" required value="" autocomplete="new-password" placeholder="Password">
+                            <a href="javascript:void(0)" onclick="javascript:togglePasswordShow();">
+                                <div id="showButton" style="position:absolute; right:10px; top:10px;"><span style="font-size:20px; color:gray;" class="fa fa-eye"></span></div>
+                            </a>
+                		</div>
+                        <div class="form-group">
+                			<!--<p>Confirm Password <span>*</span></p>-->
+                			<!--<span class="icon-case"><i class="fa fa-lock"></i></span>-->
+                			<input type="password" name="password2" id="password2" data-rule="required" data-msg="" required value="" placeholder="Confirm Password">
+                            <div class="validation"></div>
+                		</div>
+                        <div class="form-group" style="margin-top:8%;">
+            				<button type="submit" class="bouton-update">SIGN UP</button>
+                            <a href="/manager/loginpage" style="width:auto; float:right; margin-top:5%;">
+                                <div style="margin-left:auto; font-size:18px; color:#fff;
+                                        padding:10px 20px 10px 10px; display:inline-block;">
+                                    <div style="font-size:14px; color:#fff; margin-right:15px; float:left; padding-top:3px;">Have an account?</div>LOG IN</div>
+                            </a>
+            			</div>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function progressBar(){
+        var name = document.getElementById("name").value;
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var password2 = document.getElementById("password2").value;
+        var phone = document.getElementById("phone").value;
+
+        if (name.length > 0 && email.length > 0 && password.length > 0 && password2.length > 0 && phone.length > 0){
+
+            if(password != password2){
+                alert('Enter the same password.');
+                return false;
+            }
+
+            document.getElementById("gif").style.display = "block";
+
+            return true;
+
+        }
+
+        return false;
+    }
+
+    var showF = false;
+
+    function togglePasswordShow(){
+    	var passwordBox = document.getElementById("password");
+    	var passwordBox2 = document.getElementById("password2");
+    	var showButton = document.getElementById("showButton");
+        if (!showF) {
+            passwordBox.type = "text";
+            passwordBox2.type = "text";
+            showF = true;
+            showButton.innerHTML = "<span style=\"font-size:20px; color:gray;\" class=\"fa fa-eye-slash\"></span>";
+        } else {
+            passwordBox.type = "password";
+            passwordBox2.type = "password";
+            showF = false;
+            showButton.innerHTML = "<span style=\"font-size:20px; color:gray;\" class=\"fa fa-eye\"></span>";
+        }
+    }
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

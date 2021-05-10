@@ -1,0 +1,926 @@
+{% extends 'motherwise/base_notification.html' %}
+{% block title %}Network Notifications{% endblock %}
+{% block body %}
+
+<br>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  <script>
+      WebFont.load({
+      google: {
+      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+    });
+</script>
+
+<style>
+
+html, body{
+  background: url("/static/images/postbg.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 400px;
+    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border-radius: 8px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.desc {
+    padding: 6px;
+    text-align: center;
+}
+
+.manage {
+  border-radius: 10%;
+}
+
+.topBtn {
+  display: none;
+  position: fixed;
+  bottom: 20%;
+  z-index: 99;
+  border: none;
+  outline: none;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+}
+
+.topBtn:hover {
+  background-color: orange;
+}
+
+form h1 {
+  font-size: 25px;
+  background: #327a81 none repeat scroll 0% 0%;
+  color: rgb(255, 255, 255);
+  padding: 19px 22px;
+  border-radius: 5px 5px 0px 0px;
+  margin: auto;
+  text-shadow: none;
+  text-align:left
+}
+
+.user-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:5px;
+  margin-bottom:2px;
+  background:#f2f2f2;
+  background-size:cover;
+  overflow: hidden;
+}
+
+.user-form:hover {
+  background:#fff;
+  background-size:cover;
+}
+
+.group-form {
+  max-width:100%;
+  width:auto;
+  margin:auto;
+  border-radius:10px;
+  margin-bottom:2px;
+  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
+  background-size:cover;
+  overflow: hidden;
+}
+
+.group-form:hover {
+  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
+  background-size:cover;
+}
+
+.contentform {
+  padding: 10px;
+}
+
+
+p span {
+  color: #F00;
+}
+
+p {
+  margin: 0px;
+  font-weight: 200;
+  line-height: 2;
+  color:#fff;
+}
+
+h1 {
+  text-align:center;
+  color: #666;
+  text-shadow: 1px 1px 0px #FFF;
+  margin:50px 0px 0px 0px
+}
+
+input {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  width: 100%;
+  height: 42px;
+  float: left;
+  padding: 0px 15px;
+  color:black;
+}
+
+a {
+  text-decoration:inherit
+  cursor:pointer;
+}
+
+.form-group {
+  overflow: hidden;
+  width:100%;
+}
+
+.bouton-update{
+  background-color: green;
+  color: #FFF;
+  text-align: center;
+  width: 100%;
+  border:0;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#manage-menu {
+    -webkit-padding-start: 0px;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    width:auto;
+    background-color:white;
+    color:black;
+    position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */
+}
+
+.menu {
+    padding:2px 15px;
+    cursor:pointer;
+}
+
+.menu a{
+    color:gray;
+}
+
+.menu a:hover {
+    color:black;
+}
+
+#backgroundOverlay{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:none;
+}
+
+.slide {
+    display: inline-block;
+}
+
+select {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  margin-bottom: 15px;
+  margin-right:auto;
+  width: 100%;
+  height: 42px;
+  opacity:0.95;
+  float: middle;
+  padding: 0px 15px;
+  color:black;
+  text-align:left;
+}
+
+.postform::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background: white;
+	border-radius:10px;
+}
+
+.postform::-webkit-scrollbar
+{
+	width: 8px;
+	background: gray;
+	border-radius:10px;
+}
+
+.postform::-webkit-scrollbar-thumb
+{
+	background: gray;
+	width: 8px;
+	border-radius:10px;
+}
+
+
+.text {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   word-wrap: break-word;
+   white-space: pre-line;
+   /*word-break: break-all;*/
+   display: -webkit-box;
+   -webkit-line-clamp: 10; /* number of lines to show */
+   -webkit-box-orient: vertical;
+}
+
+#snackbar {
+    visibility: hidden;
+    min-width: 200px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 12px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+</style>
+
+<!--<script>-->
+<!--    var sss = false;-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/manager/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
+<!--    setTimeout(function(){ sss=true; }, 1000);-->
+<!--</script>-->
+
+<div id="no_result" style="font-size:20px; font-weight:300; color: rgba(255,255,255,0.6); text-align:center;
+	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
+	transform:translate(-50%, -50%); width:auto; z-index:100; top:250px; display:none;">
+    No message found ...
+</div>
+
+<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
+	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+
+<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+
+<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
+	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:105px; display:none;">{% if search %}{{search}}{% else %}SENT{% endif %} MESSAGES</div>
+
+<div style="width:100%; height:auto;">
+
+    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:15px;
+        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">{% if search %}{{search}}{% else %}SENT{% endif %} MESSAGES</div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3" style="text-align:center;">
+
+            <div style="width:100%; height:auto; padding-bottom:10%; overflow:auto;">
+
+                {% if list1 %}
+                    <div style="width:100%;" class="postform">
+                        {% for noti in list1 %}
+                        <div class="user-form" id="{{noti.noti.pk}}">
+                            <div class="contentform">
+                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
+                                    <div style="padding:10px; float:left; position:relative;">
+                                        <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
+                                            <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                        </a>
+                                    </div>
+                                    <a href="#">
+                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-break: break-all; word-wrap: break-word;">
+                                            {{noti.receiver.name}}
+                                            <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    <div style="float:right; margin-top:5px;">
+
+                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        </a>
+                                        <a href="/manager/group_private_chat?email={{noti.sender.email}}" target="_blank" style="background-color:transparent; margin-left:15px;">
+                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                        </a>
+                                        <a href="/manager/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
+                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        </a>
+
+                                    </div>
+
+                                    <!--{% if noti.noti.status == '' %}-->
+                                    <!--<div style="margin-top:5px; margin-right:15px;">-->
+                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
+                                    <!--</div>-->
+                                    <!--{% endif %}-->
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
+                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="text-align:left;" class="text">{{noti.noti.message}}</div>
+                                </div>
+
+                                <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
+                                    <input id="notisenderphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
+                                    <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                </a>
+
+                                <a href="/manager/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+
+                    <script>document.getElementById('no_result').style.display = 'block';</script>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="col-sm-3" style="text-align:center;">
+
+            {% if list2 %}
+                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+                    {% for noti in list2 %}
+                        <div class="user-form" id="{{noti.noti.pk}}">
+                            <div class="contentform">
+                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
+                                    <div style="padding:10px; float:left; position:relative;">
+                                        <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
+                                            <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                        </a>
+                                    </div>
+                                    <a href="#">
+                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                            {{noti.receiver.name}}
+                                            <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    <div style="float:right; margin-top:5px;">
+
+                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        </a>
+                                        <a href="/manager/group_private_chat?email={{noti.sender.email}}" target="_blank" style="background-color:transparent; margin-left:15px;">
+                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                        </a>
+                                        <a href="/manager/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
+                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        </a>
+
+                                    </div>
+
+                                    <!--{% if noti.noti.status == '' %}-->
+                                    <!--<div style="float:right; margin-top:5px; margin-right:15px;">-->
+                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
+                                    <!--</div>-->
+                                    <!--{% endif %}-->
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
+                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="text-align:left;" class="text">{{noti.noti.message}}</div>
+                                </div>
+
+                                <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
+                                    <input id="notisenderphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
+                                    <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                </a>
+
+                                <a href="/manager/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        <div class="col-sm-3" style="text-align:center;">
+
+            {% if list3 %}
+                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+                    {% for noti in list3 %}
+                        <div class="user-form" id="{{noti.noti.pk}}">
+                            <div class="contentform">
+                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
+                                    <div style="padding:10px; float:left; position:relative;">
+                                        <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
+                                            <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                        </a>
+                                    </div>
+                                    <a href="#">
+                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                            {{noti.receiver.name}}
+                                            <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    <div style="float:right; margin-top:5px;">
+
+                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        </a>
+                                        <a href="/manager/group_private_chat?email={{noti.sender.email}}" target="_blank" style="background-color:transparent; margin-left:15px;">
+                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                        </a>
+                                        <a href="/manager/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
+                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        </a>
+
+                                    </div>
+
+                                    <!--{% if noti.noti.status == '' %}-->
+                                    <!--<div style="float:right; margin-top:5px; margin-right:15px;">-->
+                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
+                                    <!--</div>-->
+                                    <!--{% endif %}-->
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
+                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="text-align:left;" class="text">{{noti.noti.message}}</div>
+                                </div>
+
+                                <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
+                                    <input id="notisenderphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
+                                    <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                </a>
+
+                                <a href="/manager/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        <div class="col-sm-3" id="postlist2" style="text-align:center;">
+
+            {% if list4 %}
+                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+                    {% for noti in list4 %}
+                        <div class="user-form" id="{{noti.noti.pk}}">
+                            <div class="contentform">
+                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
+                                    <div style="padding:10px; float:left; position:relative;">
+                                        <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
+                                            <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                        </a>
+                                    </div>
+                                    <a href="#">
+                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                            {{noti.receiver.name}}
+                                            <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    <div style="float:right; margin-top:5px;">
+
+                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        </a>
+                                        <a href="/manager/group_private_chat?email={{noti.sender.email}}" target="_blank" style="background-color:transparent; margin-left:15px;">
+                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                        </a>
+                                        <a href="/manager/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
+                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        </a>
+
+                                    </div>
+
+                                    <!--{% if noti.noti.status == '' %}-->
+                                    <!--<div style="float:right; margin-top:5px; margin-right:15px;">-->
+                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
+                                    <!--</div>-->
+                                    <!--{% endif %}-->
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
+                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="text-align:left;" class="text">{{noti.noti.message}}</div>
+                                </div>
+
+                                <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
+                                    <input id="notisenderphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
+                                    <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                </a>
+
+                                <a href="/manager/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
+                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
+    <img style="border-radius:50%; width:50px; height:50px; float:left; object-fit:cover;" id="seluser">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE</div><br>
+            <form action="/manager/send_member_message" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="hidden" name="member_id" id="member_id" value="">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea2"));</script>
+                </div>
+                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; z-index:100; display: none;" id="gif2"></center>
+                <center>
+                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;" onclick="javascript:sendMessage();">Submit</button>
+                </center>
+                <script>
+                    function sendMessage(){
+                        var member_id = document.getElementById('member_id').value;
+                        var message = document.getElementById('textarea2').value;
+                        if(message.length == 0){
+                            alert('Please write something in message box.');
+                            return;
+                        }
+                        document.getElementById('gif2').style.display = "block";
+                        var form = document.getElementById('msgForm');
+                        var formData = new FormData(form);
+                        formData.append('member_id', member_id);
+                        formData.append('message', message);
+                        formData.append('csrfmiddlewaretoken', '{% csrf_token %}');
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                              showToast();
+                              dismissLayouts();
+                              document.getElementById('gif2').style.display = "none";
+                            }
+                        };
+                        xhr.open('POST', form.getAttribute('action'), true);
+                        xhr.send(formData);
+                    }
+                </script>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<form id="readform" action="/motherwise/process_new_message" method="POST" enctype="multipart/form-data" style="display:none;">
+</form>
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<div id="snackbar">Message sent!</div>
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" class="topBtn" id="topBtn" style="right:15px;"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("topBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("navbar").style.backgroundColor = "rgba(0,0,0,0.7)";
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("topBtn").style.display = "none";
+        // document.getElementById("navbar").style.backgroundColor = "transparent";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+var y = document.getElementsByClassName("text");
+var i;
+for (i = 0; i < y.length; i++) {
+  y[i].innerHTML = urlify(y[i].innerHTML);
+}
+
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="word-break: break-all;">' + url + '</a>';
+    });
+}
+
+function openMessageBox(obj){
+    document.getElementById('member_id').value = obj.id;
+    document.getElementById('backgroundOverlay').style.display='block';
+    document.getElementById('messageBox').style.display='block';
+    var seluserpic = obj.querySelector("input#notisenderphoto");
+    document.getElementById('seluser').src = seluserpic.value;
+    var selnotid = obj.querySelector("input#notifid");
+    processNewMessage(selnotid.value, document.getElementById("statusBtn" + selnotid.value));
+}
+
+function dismissLayouts(){
+    document.getElementById('messageBox').style.display='none';
+    document.getElementById('backgroundOverlay').style.display='none';
+}
+
+function showToast() {
+    var x = document.getElementById("snackbar");
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.postform #date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+   });
+});
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+       color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+
+ScrollTo({{notid}});
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#e6f7ff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+
+function processNewMessage(noti_id, obj){
+    console.log("Noti ID: " + noti_id);
+    var form = document.getElementById('readform');
+    var formData = new FormData(form);
+    formData.append('noti_id', noti_id);
+    formData.append('csrfmiddlewaretoken', '{% csrf_token %}');
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          $(obj).parent().css("display","none");
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
