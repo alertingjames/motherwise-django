@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views
+from . import views, tests, comida
 
 app_name='mothers'
 
@@ -8,6 +8,7 @@ urlpatterns=[
     url(r'login', views.member_login, name='member_login'),
     url(r'firstpage', views.firstpage, name='firstpage'),
     url(r'home', views.memberhome, name='memberhome'),
+    url(r'zzzzz', views.posthome, name='posthome'),
     url(r'torequestpwd',views.torequestpwd,  name='torequestpwd'),
     url(r'pwdforgot',views.send_mail_forgotpassword,  name='send_mail_forgotpassword'),
     url(r'resetpassword', views.resetpassword, name='resetpassword'),
@@ -60,11 +61,40 @@ urlpatterns=[
     url(r'send_reply_message',views.send_reply_message,  name='send_reply_message'),
     url(r'conferences',views.conferences,  name='conferences'),
     url(r'noti_detail',views.noti_detail,  name='noti_detail'),
+    url(r'tonewpost',views.tonewpost,  name='tonewpost'),
+    url(r'newpost',views.newpost,  name='newpost'),
+    url(r'react_post',views.react_post,  name='react_post'),
+    url(r'react_comment',views.react_comment,  name='react_comment'),
 
     url(r'notify_group_chat',views.notify_group_chat,  name='notify_group_chat'),
     url(r'pushsend',views.sendfcmpush,  name='sendfcmpush'),
+    url(r'analytics',views.analytics,  name='analytics'),
 
     url(r'clearnotihistory',views.clearnotihistory,  name='clearnotihistory'),
+    url(r'bbbbb',views.getpostlinks,  name='getpostlinks'),
+    url(r'sendcomment',views.send_comment,  name='sendcomment'),
+    url(r'commentdelete',views.comment_delete,  name='commentdelete'),
+
+
+
+
+    ################################## Comida Connection ####################################
+    url(r'comidaconnection', comida.comida_home, name='comidaconnection'),
+    url(r'refcomida', comida.refresh_comida_home, name='refcomida'),
+    url(r's_____comida', comida.search_comida_home, name='s_____comida'),
+    url(r'refrecipe', comida.refresh_recipe, name='refrecipe'),
+
+
+
+
+    ############################### Test ###################################################
+    url(r'xxxxx',tests.testhome,  name='xxxxx'),
+    url(r'hhhhhhh',tests.refresh_home_list,  name='hhhhhhh'),
+    url(r'nnnnnnnnn',tests.search_home_list,  name='nnnnnnnnn'),
+    url(r'ggggg',tests.getcoloradocities,  name='ggggg'),
+    url(r'subcomments',tests.comment_comment_list,  name='subcomments'),
+
+
 ]
 
 

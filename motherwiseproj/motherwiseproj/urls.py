@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework.urlpatterns import format_suffix_patterns
-from motherwise import views
+from motherwise import views, tests
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^manager/import_view/member/$', views.import_view_member, name='import_view_member'),
     url(r'^manager/import_member/$', views.import_member_data, name='import_member_data'),
     url(r'^manager/add_member/$', views.add_member, name='add_member'),
+    url(r'^manager/reinv/$', views.reinvite_member, name='reinvite_member'),
     url(r'^manager/delete_member/$', views.delete_member, name='delete_member'),
     url(r'^manager/active_members/$', views.active_members, name='active_members'),
     url(r'^manager/inactive_members/$', views.inactive_members, name='inactive_members'),
@@ -52,6 +53,7 @@ urlpatterns = [
     url(r'^manager/delcontact',views.admin_delete_contact,  name='admin_delete_contact'),
     url(r'^manager/delgroup',views.admin_delete_group,  name='admin_delete_group'),
     url(r'^manager/posts',views.to_posts,  name='to_posts'),
+    url(r'^manager/memberposts',views.member_posts,  name='memberposts'),
     url(r'^manager/mineppppp',views.my_posts,  name='my_posts'),
     url(r'^manager/create_post',views.create_post,  name='create_post'),
     url(r'^manager/add_post_comment',views.add_post_comment,  name='add_post_comment'),
@@ -81,9 +83,13 @@ urlpatterns = [
     url(r'^manager/new_notis',views.new_notis,  name='new_notis'),
     url(r'^manager/send_reply_message',views.send_reply_message,  name='send_reply_message'),
     url(r'^manager/send_member_message',views.send_member_message,  name='send_member_message'),
+    url(r'^manager/toplevelsetup',views.toplevelsetup,  name='toplevelsetup'),
 
     url(r'^manager/to_conferences',views.to_conferences,  name='to_conferences'),
     url(r'^manager/noti_detail',views.noti_detail,  name='noti_detail'),
+    url(r'^manager/openbroadcast',views.openbroadcast,  name='openbroadcast'),
+    url(r'^manager/broadcast', views.broadcast, name='broadcast'),
+    url(r'^manager/bexcludedemailsave', views.bexcludedemailsave, name='bexcludedemailsave'),
 
     url(r'^manager/notify_group_chat',views.notify_group_chat,  name='notify_group_chat'),
     url(r'^verifypwreport',views.verifypwreport,  name='verifypwreport'),
@@ -92,12 +98,23 @@ urlpatterns = [
     url(r'^delreport',views.delreport,  name='delreport'),
     url(r'^warning_message',views.warning_message,  name='warning_message'),
 
+    url(r'manager/tonewpost',views.tonewpost,  name='tonewpost'),
+    url(r'manager/newpost',views.newpost,  name='newpost'),
+    url(r'manager/analytics',views.analytics,  name='analytics'),
+
     url(r'pushsend',views.sendfcmpush,  name='sendfcmpush'),
 
     url(r'^translate',views.open_translate,  name='open_translate'),
     url(r'^process_translate',views.process_translate,  name='process_translate'),
+    url(r'^testtranslate',views.testtranslate,  name='testtranslate'),
 
-    url(r'^manager/sms_send',views.sms_test,  name='sms_test'),
+    # url(r'^manager/sms_send',views.sms_test,  name='sms_test'),
+
+    url(r'^smtp_test',views.smtp_test,  name='smtp_test'),
+
+    url(r'^assignUrlPreviewToPosts',tests.assignUrlPreviewToPosts,  name='assignUrlPreviewToPosts'),
+
+    url(r'^always_on', views.always_on,  name='always_on'),
 
 ]
 

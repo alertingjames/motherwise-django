@@ -1,4 +1,4 @@
-{% extends 'motherwise/base.html' %}
+{% extends 'mothers/base.html' %}
 {% block title %}Complete Your Profile{% endblock %}
 {% block body %}
 
@@ -7,7 +7,7 @@
 <style>
 
 html, body{
-  background: linear-gradient(45deg,rgba(0,0,0,0.0),rgba(0,0,0,0.0),rgba(0,51,102,0.2),rgba(0,51,102,0.2),rgba(0,0,0,0.0),rgba(0,0,0,0.0)), url("/static/images/vacayusermain.jpg") no-repeat center center fixed;
+  background: linear-gradient(45deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url("https://raisingchildren.net.au/__data/assets/image/0021/48405/new-mums-first-weeks.jpg") no-repeat center center fixed;
   background-size:cover;
 }
 
@@ -30,6 +30,10 @@ form h1 {
   margin-left: auto;
   margin-right: auto;
   overflow: hidden;
+}
+
+@media (max-width:750px) {
+    #edit { max-width:430px; }
 }
 
 p span {
@@ -164,11 +168,21 @@ i {
 select {
   width: 100%;
   height: 42px;
+  border-radius:50px;
   border:0px;
   outline:none;
   padding: 0px 15px;
   color:black;
-  text-align-last:center;
+  text-align:left;
+}
+
+select:invalid,
+select option[value=""] {
+  color: #999999;
+}
+
+select option {
+  color: black;
 }
 
 /* Look like a clicked/depressed button */
@@ -240,7 +254,7 @@ var file = null;
 <img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
 	transform:translate(-50%, -50%); width:80px; z-index:2000; top:120px; display: none;" id="gif">
 
-<a href="javascript:void(0)" style="width:90px; left:2%; top:8%; position:absolute;" onclick="toFirstPage();">
+<a href="javascript:void(0)" style="width:90px; left:2%; top:2%; position:relative;" onclick="toFirstPage();">
     <div>
         <span class="glyphicon glyphicon-menu-left" aria-hidden="true" style="font-size:25px; color:#fff;"></span>
     </div>
@@ -330,61 +344,47 @@ var file = null;
                 		</div>
                         <div class="form-group" id="cohortBox">
                             <select name="cohort" required id="cohort" style="width:100%; color:black;">
-                                {% if member.cohort %}<option value="{{member.cohort}}">{{member.cohort}}</option>{% endif %}
                                 <option value="">Please choose a group</option>
-                                <option value="E81">E81</option>
-                                <option value="E83">E83</option>
-                                <option value="E84">E84</option>
-                                <option value="E86">E86</option>
-                                <option value="E87">E87</option>
-                                <option value="S82">S82</option>
-                                <option value="S85">S85</option>
-                                <option value="S88">S88</option>
-                                <option value="E(v)89">E(v)89</option>
-                                <option value="E(v)90">E(v)90</option>
-                                <option value="S(v)91">S(v)91</option>
-                                <option value="E(v)92">E(v)92</option>
-                                <option value="E(v)93">E(v)93</option>
-                                <option value="E(v)94">E(v)94</option>
-                                <option value="S(v)95">S(v)95</option>
-                                <option value="E(v)96">E(v)96</option>
-                                <option value="E(v)97">E(v)97</option>
-                                <option value="S(v)98">S(v)98</option>
-                                <option value="E(v)99">E(v)99</option>
-                                <option value="E(v)100">E(v)100</option>
-                                <option value="S(v)101">S(v)101</option>
-                                <option value="E(v)102">E(v)102</option>
-                                <option value="E(v)103">E(v)103</option>
-                                <option value="S(v)104">S(v)104</option>
-                                <option value="E(v)105">E(v)105</option>
-                                <option value="E(v)106">E(v)106</option>
-                                <option value="S(v)107">S(v)107</option>
-                                <option value="E(v)108">E(v)108</option>
-                                <option value="E(v)109">E(v)109</option>
-                                <option value="S(v)110">S(v)110</option>
-                                <option value="MotherWise Alumni">MotherWise Alumni</option>
-                                <option value="MotherWise Team">MotherWise Team</option>
+                                {% for c in cohorts %}
+                                <option value="{{c}}">{{c}}</option>
+                                {% endfor %}
                             </select>
+                            <script>
+                                let cohortsel = document.getElementById('cohort');
+                                cohortsel.value = "{{member.cohort}}";
+                            </script>
             			</div>
             			<div class="form-group">
                 			<!--<p>Phone Number <span>*</span></p>-->
                 			<!--<span class="icon-case"><i class="fa fa-phone"></i></span>-->
-                			<input type="tel" name="phone_number" id="phone" data-rule="required" data-msg="" required value="{{member.phone_number}}" placeholder="Phone Number (+1 xxx xxx xxx)">
+                			<input type="tel" name="phone_number" id="phone" required value="{{member.phone_number}}" placeholder="Phone Number (+1 xxx xxx xxx)">
                             <div class="validation"></div>
                 		</div>
-            			<div class="form-group" style="position:relative; display:none;">
+            			<div class="form-group">
                 			<!--<p>Password <span>*</span></p>-->
                 			<!--<span class="icon-case"><i class="fa fa-lock"></i></span>-->
-                			<input type="text" name="address" id="address" value="{{member.address}}" placeholder="Address (City name, state, postal code etc.)">
-                			<input hidden name="lat" value="{{member.lat}}">
-                			<input hidden name="lng" value="{{member.lng}}">
-                			<input hidden name="city" value="{{member.city}}">
+                			<select name="city" id="address" required placeholder="City Name">
+                			    <option value="" disabled selected>City Name</option>
+                			</select>
+                			<input hidden name="lat" value="{% if member.lat %}{{member.lat}}{% else %}0{% endif %}">
+                			<input hidden name="lng" value="{% if member.lng %}{{member.lng}}{% else %}0{% endif %}">
+                			<!--<input hidden name="city" value="{{member.city}}">-->
                             <!--<a href="/mothers/pick_location?address={{member.address}}">-->
                             <!--    <div style="position:absolute; right:15px; top:10px;"><span style="font-size:20px; color:gray;" class="fa fa-map-marker"></span></div>-->
                             <!--</a>-->
-                            <a href="javascript:void(0)" onclick="javascript:showOnMap();">
+                            <a href="javascript:void(0)" onclick="javascript:showOnMap();" style="display:none;">
                                 <div style="position:absolute; right:15px; top:10px;"><span style="font-size:20px; color:gray;" class="fa fa-map-marker"></span></div>
                             </a>
+                            <script src="/static/js/v0/colorado_cities.js"></script>
+                            <script>
+                                let select = document.getElementById('address');
+                                for (var i = 0; i<colorado_cities.length; i++){
+                                    var opt = document.createElement('option');
+                                    opt.value = colorado_cities[i];
+                                    opt.innerHTML = colorado_cities[i];
+                                    select.appendChild(opt);
+                                }
+                            </script>
                 		</div>
                         <div class="form-group" style="margin-top:8%;">
             				<button type="button" class="bouton-update" onclick="javascript:if(progressBar()) document.getElementById('edit').submit();">NEXT</button>

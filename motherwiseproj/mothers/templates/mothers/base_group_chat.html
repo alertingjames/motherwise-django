@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
@@ -20,7 +20,13 @@
     <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
     <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <style>
+
+input:focus, button:focus {
+    outline:none;
+}
 
 h4{
     color:white;
@@ -34,6 +40,10 @@ h4:hover{
 .cropping{
     object-fit:cover;
 }
+
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
 
 </style>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
@@ -56,7 +66,7 @@ h4:hover{
         <div class="collapse navbar-collapse" id="topNavBar" style="border:0;">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="javascript:void(0)" onclick="exitGroup('home');">
+                    <a href="/mothers/">
                         <h4 style=""><span class="fa fa-home" aria-hidden="true" style="margin-right:10px;"></span>Home</h4>
                     </a>
                 </li>
@@ -66,7 +76,7 @@ h4:hover{
             <ul class="nav navbar-nav navbar-right">
 
                 <li>
-                    <a href="javascript:void(0)" onclick="exitGroup('logout');">
+                    <a href="/mothers/logout">
                         <h4><span class="glyphicon glyphicon-off" aria-hidden="true" style="margin-right:10px;"></span>Logout</h4>
                     </a>
                 </li>
@@ -79,14 +89,25 @@ h4:hover{
 
 <script>
 
-    function exitGroup(option){
-    //   if (confirm("Do you want to exit the room?")) {
-          firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
 
-          if(option == 'home') window.location.href = "/mothers/home";
-          else if(option == 'logout') window.location.href = "/mothers/logout";
-    //   }
-   }
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+</script>
+
+
+<script>
 
    var openF = false;
 
@@ -104,15 +125,46 @@ h4:hover{
 
 </script>
 
+
+<script>
+
+    document.addEventListener("visibilitychange", event => {
+        if (document.visibilityState == "visible") {
+            console.log("tab is active")
+            firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+            firebase.database().ref('gmusers' + group + '/' + sender_email).push().set({
+                sender_name: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                sender_id: sender_id
+            });
+        } else {
+            console.log("tab is inactive")
+            try {
+                firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+            }
+            catch(err) {
+
+            }
+        }
+    })
+
+</script>
+
+
+
 <script>
     $(document).click(function(){
-        hideMenuBar();
+        if(!$( this ).hasClass('dropdown-toggle')){
+            $('.navbar-collapse').collapse('hide');
+        }
     });
 
-    function hideMenuBar(){
-        // $(".dropdown-menu").hide();
-        $('.navbar-collapse').collapse('hide');
-    }
+    $('.navbar-nav li a').on('click', function(){
+        if(!$( this ).hasClass('dropdown-toggle')){
+            $('.navbar-collapse').collapse('hide');
+        }
+    });
 
 </script>
 

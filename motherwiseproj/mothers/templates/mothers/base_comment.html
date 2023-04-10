@@ -1,6 +1,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Motherwise Network{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
@@ -9,7 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
@@ -20,7 +22,13 @@
     <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
     <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <style>
+
+input:focus, button:focus {
+    outline:none;
+}
 
 .dropdown-menu{
     background-color: #fff;
@@ -56,13 +64,18 @@ h4:hover{
     text-decoration:underline;
 }
 
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+/*body > .skiptranslate { display: none; }*/
+
 </style>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
 </head>
 
 <body>
 
-<nav id="navbar" class="navbar navbar-inverse" style="background:rgba(0,0,0,0.7); padding-top:30px;">
+<nav id="navbar" class="navbar navbar-inverse" style="background:rgba(0,0,0,0.7);">
 
     <div class="container-fluid">
 
@@ -77,15 +90,10 @@ h4:hover{
 
         <div class="collapse navbar-collapse" id="topNavBar" style="border:0;">
             <ul class="nav navbar-nav">
-                <li style="margin-right:30px;">
-                    <a href="/mothers/home">
-                        <h4 style=""><span class="fa fa-home" aria-hidden="true" style="margin-right:10px;"></span>Home</h4>
-                    </a>
-                </li>
 
-                <li>
-                    <a href="/mothers/posts">
-                        <h4 style=""><span class="fa fa-flag" aria-hidden="true" style="margin-right:10px;"></span>Posts</h4>
+                <li style="margin-right:30px;">
+                    <a href="/mothers/">
+                        <h4 style=""><span class="fa fa-home" aria-hidden="true" style="margin-right:10px;"></span> Home</h4>
                     </a>
                 </li>
 
@@ -106,6 +114,25 @@ h4:hover{
     </div>
 </nav>
 
+<script>
+
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
+
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+</script>
+
 
 <script>
 
@@ -125,17 +152,6 @@ h4:hover{
 
 </script>
 
-<script>
-    $(document).click(function(){
-        hideMenuBar();
-    });
-
-    function hideMenuBar(){
-        // $(".dropdown-menu").hide();
-        $('.navbar-collapse').collapse('hide');
-    }
-
-</script>
 
 
 {% block body %}

@@ -1,633 +1,119 @@
-{% extends 'mothers/base_chat.html' %}
-{% block title %}Chat with members{% endblock %}
-{% block body %}
+<html>
+<head>
 
-<br>
-<br>
-
+<title>MotherWise Nest | Chat</title>
+{% load static %}
+{% load tag_library %}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src='https://meet.jit.si/external_api.js'></script>
+<link rel="stylesheet" href="/static/css/v1/chat.css">
+
+<!--<script src='https://meet.jit.si/external_api.js'></script>-->
+
+</head>
+
+<body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
-  <script>
-      WebFont.load({
-      google: {
-      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+<script>
+WebFont.load({
+    google: {
+        families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
     }
-    });
+});
+document.addEventListener("visibilitychange", event => {
+    if (document.visibilityState == "visible") {
+        console.log("tab is active")
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+            user: sender_email,
+            time: new Date().getTime(),
+            online: 'online'
+        });
+    } else {
+        console.log("tab is inactive")
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
+        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
+            user: sender_email,
+            time: new Date().getTime(),
+            online: 'offline'
+        });
+    }
+});
 </script>
 
-<style>
-
-html, body{
-  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
-  background-size:cover;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 400px;
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 8px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.desc {
-    padding: 6px;
-    text-align: center;
-}
-
-img {
-  height: 80px;
-  width: 80px;
-}
-
-.manage {
-  border-radius: 10%;
-}
-
-.table-users {
-  border: 1px solid #327a81;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-  max-width:500px;
-  width:auto;
-  height:auto;
-  margin: 2% auto;
-  background-color: white;
-  overflow-x:auto;
-}
-
-.table>tbody>tr>td{
-    vertical-align: middle;
-    horizontal-align: middle;
-}
-
-table td, table th {
-  color: #2b686e;
-  padding: 10px;
-  border: 1px solid white;
-  text-align: center;
-  vertical-align: middle;
-}
-table td {
-  text-align: center;
-  vertical-align: middle;
-}
-table td:last-child {
-  font-size: 0.95em;
-  line-height: 0.8;
-  text-align: center;
-}
-table th {
-  background-color: #04a2be;
-  font-weight: 520;
-  color:white;
-  text-align: center;
-  vertical-align: middle;
-}
-table tr:nth-child(2n) {
-  background-color: white;
-  border: 1px solid #327a81;
-}
-
-table tr:nth-child(2n+1) {
-  background-color: #edf7f8;
-  border: 1px solid white;
-}
-
-#manage-menu1{
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:40px;
-    background-color:#000000;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-#myBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  right: 15px;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-  width:45px;
-  height:45px;
-}
-
-#myBtn:hover {
-  background-color: orange;
-}
-
-#admin{
-    display:none;
-}
-
-.info p {
-  text-align:center;
-  color: #999;
-  text-transform:none;
-  font-weight:600;
-  font-size:15px;
-  margin-top:2px
-}
-
-.info i {
-  color:#F6AA93;
-}
-
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.user-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:3px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.user-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.contact-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:10px;
-  margin-bottom:3px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.contact-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.contentform {
-  padding: 10px;
-}
-
-#chat-form {
-    border-radius: 5px;
-    max-width:800px;
-    width:auto;
-    height:auto;
-    margin-top:3%;
-    margin-left:auto;
-    margin-right:auto;
-    opacity:0.9;
-    overflow: hidden;
-}
-
-.chat-contentform {
-    padding: 0px;
-    float:middle;
-    margin-top:3%;
-}
-
-.chat-formcontent {
-    width:100%;
-    float:middle;
-    margin:auto;
-    box-sizing: border-box;
-    padding: 0px;
-}
-
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 0px 5px 5px 0px;
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  width: 92%;
-  height: 42px;
-  float: left;
-  padding: 0px 15px;
-  opacity: 0.8;
-  color:blue;
-}
-
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.icon-case {
-  width: 8%;
-  float: left;
-  border-radius: 5px 0px 0px 5px;
-  background:green;
-  height:42px;
-  position: relative;
-  text-align: center;
-  line-height:40px;
-  padding-top:11px;
-}
-
-i {
-  color:white;
-}
-
-.bouton-update{
-  background-color: #845801;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 17px 25px;
-  border-radius: 0px 0px 5px 5px;
-  cursor: pointer;
-  margin-top: 40px;
-  font-size: 18px;
-}
-
-.show {
-    z-index:1000;
-    position: absolute;
-    background-color:#ffffff;
-    border: 2px solid orange;
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
-    padding: 10px;
-    display: block;
-    font-size:20px;
-    border-radius:20px;
-    margin: 0;
-    list-style-type: none;
-    list-style: none;
-}
-
-.hide {
-    display: none;
-}
-
-.show li{ list-style: none; }
-.show a { border: 0 !important; text-decoration: none; }
-.show a:hover { text-decoration: underline !important; }
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-label span {/* <-- style the artificial checkbox */
-  height: 15px;
-  width: 15px;
-  border: 1px solid black;
-  border-radius:50%;
-  background-color:transparent;
-  margin-right:3px;
-  display: inline-block;
-  position: relative;
-}
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  color:white;
-  position: absolute;
-  top: -5px;
-  left: 0;
-}
-
-.sidenav {
-    height: 100%;
-    width: 0px;
-    position: fixed;
-    top: 50px;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    z-index:1000;
-}
-
-.sidenav a {
-    padding: 8px 8px 8px 30px;
-    text-decoration: none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidenav a:hover {
-    color: #f1f1f1;
-}
-
-.sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 5px;
-    font-size: 36px;
-    float:right;
-}
-
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
-/* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-
-#chat_log {
-    border-radius: 5px;
-    border: 1px solid #EEE;
-    margin: 0;
-    width: 100%;
-    height: 500px;
-    float: middle;
-    padding: 15px;
-    color:black;
-    background:linear-gradient(0deg,rgba(250,250,250,0.8),rgba(250,250,250,0.8)),url("/static/images/chatbackground.jpg");
-    background-size:cover;
-    overflow-y:auto;
-}
-
-#chat_log::-webkit-scrollbar {
-    display: none;
-}
-
-#send-form{
-    width:100%;
-}
-
-.cropping{
-    object-fit:cover;
-}
-
-div#list {
-    width: 100%;
-    height: auto;
-}
-
-div#list > div > div {
-    width: auto;
-    height: auto;
-    padding: 8px 15px 8px 15px;
-    border-radius:5px;
-    margin-bottom: 5px;
-    color: black;
-    word-wrap: break-word;
-    white-space: pre-line;
-    /*word-break: break-all;*/
-}
-
-#photo {
-    display: none;
-    top:15%;
-}
-
-.attach-button {
-    width:33.333333333%;
-    padding:2px;
-}
-
-label.button {
-    background:green;
-    padding:10px 0px 6px 0px;
-    color:white;
-    text-align:center;
-    font-size:22px;
-    font-weight:500;
-    width:100%;
-    border: 1.5px solid #666;
-    border-color: #EEE #CCC #CCC #EEE;
-    border-radius:5px;
-}
-
-i {
-    margin-right:10px;
-}
-
-/* Look like a clicked/depressed button */
-label.button:active {
-    border-color: #CCC #EEE #EEE #CCC;
-}
-
-/* This is the part that actually hides the 'Choose file' text box for camera inputs */
-label.button input[accept*="image"] {
-    display: none;
-}
-
-::placeholder {
-    color: white;
-    opacity: 1; /* Firefox */
-}
-
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: white;
-}
-
-::-ms-input-placeholder { /* Microsoft Edge */
-    color: white;
-}
-
-
-#manage-menu {
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:auto;
-    background-color:black;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-.menu {
-    padding:2px 15px;
-}
-
-.menu a{
-    color:gray;
-}
-
-.menu a:hover {
-    color:white;
-}
-
-select {
-  background:transparent;
-  border: 1.5px solid rgba(255,255,255,0.5);
-  border-radius:3px;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:white;
-  text-align-last:center;
-}
-
-option{
-    color:black;
-}
-
-#backgroundOverlay{
-  background-color:rgba(0,0,0,0.6);
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  display:none;
-}
-
-</style>
-
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); exitChat('home'); sss=false; setTimeout(function(){ sss=true; }, 2000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 2000);-->
-<!--</script>-->
-
-<div id="imageFrame" style="text-align:center; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:6px; padding: 10px;
-	transform:translate(-50%, -50%); width:auto; height:auto; z-index:200; top:350px; display:none;">
-	<img src="" style="width:250px; height:auto; display:none;" id="image_message">
+<div id="imageFrame">
+	<img src="" id="image_message">
     <video id="videoresult" autobuffer  controls width="250" autoplay loop style="display:none;">
         <source src="" id="videohere"/>
     </video>
     <br>
-    <span class="fa fa-close" style="font-size:25px; margin-top:5px;" onclick="javascript:document.getElementById('imageFrame').style.display='none';"></span>
-    <span class="fa fa-check" style="font-size:25px; margin-top:5px; color:red; margin-left:30px;" onclick="javascript:okay();"></span>
+    <span class="fa fa-times" onclick="javascript:cancelMedia()"></span>
+    <span class="fa fa-check" style="color:red; margin-left:30px;" onclick="javascript:okay();"></span>
 </div>
 
-<div id="photo" style="height:auto; position:fixed; left:15%; top:15%; float:middle; transform:translate(-50%, -50%); width:100px; z-index:100;">
-    <img src="{% if friend.photo_url %}{{friend.photo_url}}{% elif friend.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-    <div id="st" style="color: red; font-size:16px; padding:3% 3% 3% 3%; min-width:60px; text-align:center; height:auto;
-        border-radius:3px; margin-top:3px; background-color:white; display:none;"></div>
+<script>
+    function cancelMedia() {
+        document.getElementById('imageFrame').style.display='none';
+        document.getElementById('picture').value = "";
+        document.getElementById('videofile').value = "";
+    }
+</script>
+
+<div id="photo">
+    <img src="{% if friend.photo_url %}{{friend.photo_url}}{% elif friend.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
+    <div id="st"></div>
 </div>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+<img src="/static/images/processing.gif" id="gif">
 
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+<img src="/static/images/logo.png" class="logo">
 
-<div id="title" style="font-size:22px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:350px; z-index:100; top:35px; display:none;">
-    {% if friend %}<i class="fa fa-comments-o" style="margin-right:10px; font-size:25px; color:#F7D479;"></i>{{friend.name}}{% endif %}</div>
+<div id="title">
+    {% if friend %}<i class="fa fa-comments-o"></i>{{friend.name}}{% endif %}
+</div>
 
-<div style="width:100%; height:auto; margin-top:10px;">
-    <div class="container-fluid">
+<div class="main">
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';"></i>
+    </div>
+    <div class="container-fluid main-body">
       <div class="row">
         <div class="col-sm-3" style="text-align:center;">
 
             <div style="width:100%; margin:10px 0px 10px 0px; text-align:center;">
-                <div style="display:flex; margin:0px;">
-                    <select name="cohort" required id="cohort" style="flex-grow:1; font-size:16px;" onchange="setValue(this)">
-                        <option value="">Please choose a group</option>
-                        <option value="E81">E81</option>
-                        <option value="E83">E83</option>
-                        <option value="E84">E84</option>
-                        <option value="E86">E86</option>
-                        <option value="E87">E87</option>
-                        <option value="S82">S82</option>
-                        <option value="S85">S85</option>
-                        <option value="S88">S88</option>
-                        <option value="E(v)89">E(v)89</option>
-                        <option value="E(v)90">E(v)90</option>
-                        <option value="S(v)91">S(v)91</option>
-                        <option value="E(v)92">E(v)92</option>
-                        <option value="E(v)93">E(v)93</option>
-                        <option value="E(v)94">E(v)94</option>
-                        <option value="S(v)95">S(v)95</option>
-                        <option value="E(v)96">E(v)96</option>
-                        <option value="E(v)97">E(v)97</option>
-                        <option value="S(v)98">S(v)98</option>
-                        <option value="E(v)99">E(v)99</option>
-                        <option value="E(v)100">E(v)100</option>
-                        <option value="S(v)101">S(v)101</option>
-                        <option value="E(v)102">E(v)102</option>
-                        <option value="E(v)103">E(v)103</option>
-                        <option value="S(v)104">S(v)104</option>
-                        <option value="E(v)105">E(v)105</option>
-                        <option value="E(v)106">E(v)106</option>
-                        <option value="S(v)107">S(v)107</option>
-                        <option value="E(v)108">E(v)108</option>
-                        <option value="E(v)109">E(v)109</option>
-                        <option value="S(v)110">S(v)110</option>
-                        <option value="MotherWise Alumni">MotherWise Alumni</option>
-                        <option value="MotherWise Team">MotherWise Team</option>
+                <div style="color:white;font-size:18px;font-family:verdana;text-align:left;">
+                    Chat with Group
+                </div>
+                <div style="display:flex; margin-top:10px;">
+                    <select name="cohort" required id="cohort" style="flex-grow:1;font-size:16px;appearance:none;" onchange="setValue(this)">
+                        <!--<option value="">Please choose a group</option>-->
+                        {% for c in cohorts %}
+                        <option value="{{c}}" {% if c == me.cohort %}selected{% else %}disabled style="color:rgba(0,0,0,0.1);"{% endif %}>{{c}}</option>
+                        {% endfor %}
                     </select>
-                    <input hidden id="selected_cohort">
+                    <input hidden id="selected_cohort" value="{{me.cohort}}">
                     <script>
                         function setValue(obj){
                             var value = obj.value;
@@ -638,26 +124,26 @@ option{
                                 document.getElementById('cohort_chat_button').style.display = "none";
                             }
                         }
-
                         function to_cohort_chat(){
                             var cht = document.getElementById('selected_cohort').value;
+                            if(cht.length == 0) return;
                             window.location.href = "/mothers/switch_cohort_chat?cohort=" + cht;
                         }
-
                     </script>
 
                     <a href="javascript:void(0)" onclick="javascript:to_cohort_chat();">
-                        <div style="width:100px; height:43px; padding:12px; border-radius:4px; font-size:14px; color:white; margin-left:5px; background:red; display:none;"
-                                id="cohort_chat_button">With Chat</div>
+                        <div style="display:{% if me.cohort %}block;{% else %}none;{% endif %}" id="cohort_chat_button">
+                            <i class="fa fa-long-arrow-right"></i>
+                        </div>
                     </a>
 
         		</div>
             </div>
 
-            <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
-                <a href="javascript:void(0);" onclick="javascript:toggleContactForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
-                    Recent Contacts
-                    <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow"></span>
+            <div class="contactors-section">
+                <a href="javascript:void(0);" onclick="javascript:toggleContactForm();">
+                    Chat with Recent Contacts
+                    <span class="fa fa-caret-down" style="color:white; margin-left:20px;" id="arrow"></span>
                 </a>
 
                 <script>
@@ -668,20 +154,19 @@ option{
                         if(showF == true){
                             showF = false;
                             document.getElementById('contactform').style.display='none';
-                            $('#arrow').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                            $('#arrow').removeClass('fa fa-caret-up').addClass('fa fa-caret-down');
                         }else{
                             showF = true;
                             document.getElementById('contactform').style.display='block';
-                            if(ii > 1) $('#arrow').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
-                            else $('#arrow').addClass('glyphicon glyphicon-menu-up');
+                            if(ii > 1) $('#arrow').removeClass('fa fa-caret-down').addClass('fa fa-caret-up');
+                            else $('#arrow').addClass('fa fa-caret-up');
                         }
                     }
                 </script>
 
-                <div id="contactform" style="display:none; margin-top:15px;">
-
+                <div id="contactform" style="display:none;">
                     {% if contacts %}
-                        <div style="width:100%; height:auto; padding-top:1%; padding-bottom:3%; float:left; overflow:auto;" id="clist">
+                        <div style="width:100%;height:auto;margin-top:10px;float:left;overflow:auto;" id="clist">
                             {% for member in contacts %}
                             <div class="contact-form">
                                 <input type="hidden" id="c_email" value="{{member.email}}">
@@ -695,30 +180,25 @@ option{
                                             <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:15px; display:none;" id="cbadge"></span>
                                         </div>
                                         <a href="/mothers/switch_chat?member_id={{member.pk}}" style="flex-grow:1;">
-                                            <div style="padding-left:8px; margin-top:10px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                            <div class="name-section">
                                                 {{member.name}}
                                                 {% if member.cohort == 'admin' %}
-                                                    <div style="font-size:12px; color:yellow;">Manager</div>
+                                                    <div style="font-size:12px;color:yellow;">Manager</div>
                                                 {% else %}
                                                     <div style="font-size:12px;">{{member.cohort}}</div>
                                                 {% endif %}
                                             </div>
                                         </a>
-
-                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
-                                            <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px;"></span>
+                                        <a href="/mothers/switch_chat?member_id={{member.pk}}" style="background-color:transparent;margin-right:20px;">
+                                            <span class="fa fa-comment-o" aria-hidden="true" style="color:white; font-size:18px;"></span>
                                         </a>
-
-                                        <a href="/mothers/delcontact?member_id={{member.pk}}" style="background-color:transparent; margin-left:10px;">
-                                            <span class="fa fa-trash" aria-hidden="true" style="color:white; font-size:20px;" onclick="return confirm('Are you sure you want to remove this contact?')"></span>
+                                        <a href="/mothers/delcontact?member_id={{member.pk}}" style="background-color:transparent; margin-right:5px;">
+                                            <span class="fa fa-trash" aria-hidden="true" style="color:white;font-size:18px;"
+                                                onclick="return confirm('Are you sure you want to remove this contact?')"></span>
                                         </a>
-
                                     </div>
-
                                 </div>
-
                             </div>
-
                             {% endfor %}
 
                         </div>
@@ -752,8 +232,8 @@ option{
                             <div style="font-size:18px; font-weight:500;">{{friend.name}}</div>
                             <div id="online" style="margin-top:2px; font-size:12px;"></div>
                         </div>
-                        <a href="javascript:void(0)" onclick="openMeet();" style="text-align:center; margin-left:30px; float:left;">
-                            <span class="fa fa-video" style="padding:8px; color:red; font-size:25px; background-color:white; border-radius:50%;"></span>
+                        <a href="javascript:void(0)" onclick="openMeet();" class="vmeet">
+                            <span class="fa fa-video"></span>
                         </a>
                     </div>
                     <br>
@@ -777,9 +257,9 @@ option{
                                 <input type="hidden" id="lng" value="{% if lng %}{{lng}}{% else %}{% endif %}">
                                 <div style="width:99%; margin-bottom:5px; display:none;" id="panel">
                                     <table  style="width:100%;">
-                                        <tr style="background-color:#993333;">
+                                        <tr style="background:white;">
                                             <td class="attach-button">
-                                                <label class="button" id="picture-btn" style="background:transparent; border:0;"><i class="fa fa-image" style="font-size:22px;"></i>
+                                                <label class="button" id="picture-btn" style="background:transparent; border:0;"><i class="fa fa-image" style="font-size:19px;"></i>
                                                     <input type="file" name="photo" value="http://lorempixel.com/100/100/people/9" id="picture" accept="image/*"/>
                                                 </label>
                                             </td>
@@ -803,14 +283,6 @@ option{
 
             					                        file = this.files[0];
 
-                                                        ImageTools.resize(this.files[0], {
-               							                    width: 200, // maximum width
-               							                    height: 200 // maximum height
-            						                    }, function(blob, didItResize) {
-               							                    // didItResize will be true if it managed to resize it, otherwise false (and will return the original file as 'blob')
-               							                    document.getElementById('output').src = window.URL.createObjectURL(blob);
-               							                    // you can also now upload this blob using an XHR.
-            					                        });
             			                            }
 
                                                 }
@@ -819,7 +291,7 @@ option{
                                             </script>
 
                                             <td class="attach-button">
-                                                <label class="button" id="video-btn" style="background:transparent; border:0;"><i class="fa fa-video-camera" style="font-size:22px;"></i>
+                                                <label class="button" id="video-btn" style="background:transparent; border:0;"><i class="fa fa-video-camera" style="font-size:19px;"></i>
                                                     <input type="file" name="video" value="http://lorempixel.com/100/100/people/9" id="videofile" accept="video/*" style="display:none;"/>
                                                 </label>
                                             </td>
@@ -839,7 +311,7 @@ option{
             				                </script>
 
             				                <td class="attach-button">
-            				                    <label class="button" id="file-btn" style="background:transparent; border:0;"><i class="fa fa-file" style="font-size:20px;"></i>
+            				                    <label class="button" id="file-btn" style="background:transparent;border:0;"><i class="fa fa-file" style="font-size:17px;"></i>
                                                     <input type="file" name="allfile" value="http://lorempixel.com/100/100/people/9" id="allfile" style="display:none;"/>
                                                 </label>
             				                </td>
@@ -887,12 +359,11 @@ option{
                                                 });
             				                </script>
                                 </div>
-                                <div style="width:100%; display:inline-block; position:relative;">
-                                    <input type="text" required id="message" placeholder="Write something here..." oninput="myFunction()"
-                                       style="width:90%; height:42px; border: 0; padding: 0px 10px; color:white; background-color:transparent; font-size:18px; border-bottom: 1.5px solid white; outline: 0;">
-                                    <img src="/static/images/ic_attachment.png" id="attachment-btn" style="height:42px; width:42px; right:0; top:0; position:absolute; display:block;" onclick="show_panel()">
-                                    <button type="submit" class="send" id="submitBtn" onclick="submitClick()" style="height:42px; width:42px; right:0; top:0; position:absolute; display:none;
-                                        color: #FFF; text-align: center; font-size: 22px; background-color:transparent; border:0;"><span class="glyphicon glyphicon-send" aria-hidden="true" ></span></button>
+                                <div class="chat-footer">
+                                    <input type="text" required id="message" placeholder="Write something here..." oninput="myFunction()">
+                                    <button type="button" id="attachment-btn" class="chat-btn" onclick="show_panel()"><i class="fa fa-paperclip"></i></button>
+                                    <button type="button" id="emoji-btn" class="chat-btn"><i class="fa fa-smile-o"></i></button>
+                                    <button type="submit" class="chat-btn send" id="submitBtn" onclick="submitClick()"><i class="fa fa-send"></i></button>
                                 </div>
 
                                 <script>
@@ -903,7 +374,20 @@ option{
                                           document.getElementById("submitBtn").click();
                                       }
                                     });
+                                </script>
 
+                                <script src="/static/emoji1/fgEmojiPicker.js"></script>
+                                <script>
+                                    const emojiPicker = new FgEmojiPicker({
+                                        trigger: ['#emoji-btn'],
+                                        position: ['top', 'left'],
+                                        preFetch: true,
+                                        insertInto: document.querySelector('input#message'),
+                                        emit(obj, triggerElement) {
+                                            document.getElementById("submitBtn").style.display = "block";
+                                            document.getElementById("attachment-btn").style.display = "none";
+                                        }
+                                    });
                                 </script>
 
                             </div>
@@ -926,7 +410,7 @@ option{
             </div>
 
             {% if members %}
-                <div style="width:100%; max-height:80%; padding-top:1%; padding-bottom:15%; overflow:auto;" id="mlist">
+                <div id="mlist">
                     {% for member in members %}
                     <div class="user-form">
                         <input type="hidden" id="member_email" value="{{member.email}}">
@@ -940,7 +424,7 @@ option{
                                     <span class="fas fa-comment-alt" style="color:red; bottom:5px; position:absolute; right:2px; font-size:16px; display:none;" id="badge"></span>
                                 </div>
                                 <a href="/mothers/switch_chat?member_id={{member.pk}}" style="flex-grow:1;">
-                                    <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                    <div class="name-section">
                                         {{member.name}}
                                         {% if member.cohort == 'admin' %}
                                             <div style="font-size:12px; color:yellow;">Manager</div>
@@ -950,8 +434,13 @@ option{
                                     </div>
                                 </a>
                                 <div style="float:right; margin-top:5px;">
-                                    <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
-                                        <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px;"></span>
+                                    <a href="javascript:void(0)" style="background-color:transparent;display:none;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
+                                        <span class="far fa-comment-alt" aria-hidden="true" style="color:white;font-size:18px;"></span>
+                                    </a>
+                                </div>
+                                <div style="float:right;">
+                                    <a href="/mothers/switch_chat?member_id={{member.pk}}" style="background-color:transparent;">
+                                        <span class="fa fa-comments-o" aria-hidden="true" style="color:white;font-size:20px;margin-right:5px;"></span>
                                     </a>
                                 </div>
                             </div>
@@ -967,6 +456,7 @@ option{
                         <br>
                         <br>
                         <h4 class="my_items col-sm-offset-1" style="color:rgba(255,255,255,0.7); margin: 30px;">No member loaded ...</h4>
+                    </center>
 
             {% endif %}
 
@@ -981,43 +471,44 @@ option{
 </div>
 
 <script>
-    function openMeet(){
-        document.getElementById('meet').style.display = 'block';
-        document.getElementById('backgroundOverlay').style.display='block';
-    }
+    // function openMeet(){
+    //     document.getElementById('meet').style.display = 'block';
+    //     document.getElementById('backgroundOverlay').style.display='block';
+    // }
 
-    function dismissLayouts(){
-        document.getElementById('meet').style.display = 'none';
-        document.getElementById('backgroundOverlay').style.display='none';
-    }
+    // function dismissLayouts(){
+    //     document.getElementById('meet').style.display = 'none';
+    //     document.getElementById('backgroundOverlay').style.display='none';
+    // }
 
-    var roomID = '{{me.pk}}_{{friend.pk}}';
-    if (Number('{{me.pk}}') > Number('{{friend.pk}}')){
-        roomID = '{{friend.pk}}_{{me.pk}}';
-    }
+    // var roomID = '{{me.pk}}_{{friend.pk}}';
+    // if (Number('{{me.pk}}') > Number('{{friend.pk}}')){
+    //     roomID = '{{friend.pk}}_{{me.pk}}';
+    // }
 
-    console.log(roomID);
+    // console.log(roomID);
 
-    var myId = '{{me.pk}}_{{me.pk}}';
-    const domain = 'meet.jit.si';
-    var height = 700;
-    const options = {
-        roomName: roomID,
-        // width: 700,
-        height: height,
-        parentNode: document.querySelector('#meet'),
-        interfaceConfigOverwrite: {
-            // TILE_VIEW_MAX_COLUMNS: 4,
-            HIDE_INVITE_MORE_HEADER: true
-        },
-        userInfo: {
-            participantId: myId,
-            // email: 'email@jitsiexamplemail.com',
-            displayName: '{{me.name}}'
-        }
-    };
-    const api = new JitsiMeetExternalAPI(domain, options);
-    api.executeCommand('avatarUrl', '{{me.photo_url}}');
+    // var myId = '{{me.pk}}_{{me.pk}}';
+    // const domain = 'meet.jit.si';
+    // var height = 700;
+    // const options = {
+    //     roomName: roomID,
+    //     // width: 700,
+    //     height: height,
+    //     parentNode: document.querySelector('#meet'),
+    //     interfaceConfigOverwrite: {
+    //         // TILE_VIEW_MAX_COLUMNS: 4,
+    //         HIDE_INVITE_MORE_HEADER: true
+    //     },
+    //     userInfo: {
+    //         participantId: myId,
+    //         // email: 'email@jitsiexamplemail.com',
+    //         displayName: '{{me.name}}'
+    //     }
+    // };
+    // const api = new JitsiMeetExternalAPI(domain, options);
+    // api.executeCommand('avatarUrl', '{{me.photo_url}}');
+
     // api.executeCommand('setVideoQuality', 1024);
 
 </script>
@@ -1030,7 +521,7 @@ option{
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
-<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<button onclick="topFunction()" id="upBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
 
 <div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
     <div id="google_translate_element" style="float:left;"></div>
@@ -1047,14 +538,13 @@ option{
 window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
- //   alert("Hello");
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 || document.getElementById("mlist").scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("upBtn").style.display = "block";                         // Top button display none;
         if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200){
             document.getElementById("photo").style.display = "block";
         }else document.getElementById("photo").style.display = "none";
     } else {
-        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("upBtn").style.display = "none";
         document.getElementById("photo").style.display = "none";
     }
 
@@ -1063,7 +553,6 @@ function scrollFunction() {
     } else {
         document.getElementById("photo").style.display = "none";
     }
-
 }
 
 // When the user clicks on the button, scroll to the top of the document
@@ -1097,11 +586,11 @@ function topFunction() {
     function show_panel(){
         if (flag){
             flag = false; document.getElementById("panel").style.display = "none";
-            document.getElementById("attachment-btn").src = '/static/images/ic_attachment.png';
+            document.getElementById("attachment-btn").innerHTML = '<i class="fa fa-paperclip"></i>';
             document.getElementById("audio-panel").style.display = "none";
         }else {
             flag = true; document.getElementById("panel").style.display = "block";
-            document.getElementById("attachment-btn").src = '/static/images/cancelicon.png';
+            document.getElementById("attachment-btn").innerHTML = '<i class="fa fa-times-thin fa-2x" style="margin-top:-8px;" aria-hidden="true"></i>';
             // document.body.scrollTop = 1000;
             // document.documentElement.scrollTop = 1000;
         }
@@ -2006,6 +1495,12 @@ function okay(){
    }
    else if (type == 'video'){
 
+        const fileSize = file.size / 1024 / 1024; // in MiB
+        if (fileSize > 10) {
+            showFailureAlert("Your file can not exceed 10MB. Please upload another file.");
+            return;
+        }
+
 //        var storageRef = firebase.storage().ref(file.name);
 //        storageRef.put(file);
         var progressBar = document.getElementById('gif');
@@ -2372,82 +1867,8 @@ function send_msg(sts, lat, lng, video){
             senderPhoto: sender_photo,
             time: new Date().getTime()
         });
-
-        // var params = {
-        //     'service': lat,
-        //     'name': friend_name,
-        //     'email': document.getElementById("friend_email").value,
-        //     'service_reqdate': lng,
-        //     'status': sts,
-        //     'mailid': video
-        // }
-        // post("/acchat", params);
     }
 }
-
-
-
-
-
-//  var timeStr = '';
-//
-//  var currentdate = new Date();
-//
-//  var cseconds = currentdate.getSeconds();
-//  var cminutes = currentdate.getMinutes();
-//  var chours = currentdate.getHours();
-//
-//  var cyear = currentdate.getFullYear();
-//  var cmonth = currentdate.getMonth(); // beware: January = 0; February = 1, etc.
-//  var cday = currentdate.getDate();
-//
-//  if (year == cyear && month == cmonth && day == cday && hours == chours && minutes == cminutes){
-//      timeStr = 'Just Now';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours == chours && minutes != cminutes)
-//  {
-//      timeStr = (cminute - minutes) + ' min ago';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours != chours){
-//      timeStr = (chours - hours) + ' hr ago';
-//  }
-//  else if (year == cyear && month == cmonth && ((cday - day) == 1)){
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = 'Yesterday' + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-//  else {
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-
-
-
-
-</script>
-
-<script>
-
-$(document).ready(function()
-{
-    $(window).bind("beforeunload", function() {
-        console.log('Close current page');
-
-        firebase.database().ref('status/' + friend_email + '_' + sender_email).remove();
-        firebase.database().ref('status/' + friend_email + '_' + sender_email).push().set({
-            user: sender_email,
-            time: new Date().getTime(),
-            online: 'offline'
-        });
-
-        return false;
-    });
-});
 
 </script>
 
@@ -2474,10 +1895,31 @@ function sendPush(form, message){
     xhr.send(formData);
 }
 
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
 </script>
 
 
-{% endblock %}
+</body>
+
+</html>
 
 
 

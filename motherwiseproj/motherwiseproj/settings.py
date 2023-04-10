@@ -32,8 +32,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.smtp2go.com'
 EMAIL_PORT = 2525
-EMAIL_HOST_USER = 'cayley@vacaycarpediem.com'
-EMAIL_HOST_PASSWORD = 'anh5NXo5b2NjMTAw'
+EMAIL_HOST_USER = 'cayleywetzig@gmail.com'
+EMAIL_HOST_PASSWORD = 'Godisgreat389!@#$%qwe'
 
 # Application definition
 
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'mothers.apps.MothersConfig',
     'usermobile.apps.UsermobileConfig',
     'fcm_django',
+    'django_user_agents',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
+
+USER_AGENTS_CACHE = 'default'
 
 ROOT_URLCONF = 'motherwiseproj.urls'
 
@@ -139,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Hermosillo'
 
 USE_I18N = True
 

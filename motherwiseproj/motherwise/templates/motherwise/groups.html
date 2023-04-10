@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="/static/js/radialprogress.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
   <script>
@@ -23,199 +24,44 @@
 <style>
 
 html, body{
-  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
+  background: #0066cc no-repeat center center fixed;
   background-size:cover;
 }
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 400px;
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 8px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.desc {
-    padding: 6px;
-    text-align: center;
-}
-
-.manage {
-  border-radius: 10%;
-}
-
-#myBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  right: 15px;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-#myBtn:hover {
-  background-color: orange;
-}
-
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.user-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:2px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.user-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.group-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:10px;
-  margin-bottom:2px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.group-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.contentform {
-  padding: 5px;
-}
-
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius:50px;
-  border:0;
-  width:100%;
-  height:42px;
-  /*float:left;*/
-  padding:0px 15px;
-  color:black;
-  text-align:center;
-}
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.bouton-update{
-  background-color: green;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 10px 15px;
-  border-radius: 5px;
-  height:auto;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-#manage-menu, #manage-menu2, #manage-menu3, #manage-menu4 {
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:auto;
-    background-color:black;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-.menu {
-    padding:2px 15px;
-}
-
-.menu a{
-    color:gray;
-}
-
-.menu a:hover {
-    color:white;
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
+.dropdown {position: relative;display: inline-block;}
+.dropdown-content {display: none;position: absolute;background-color: #f9f9f9;min-width: 400px;box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);z-index: 100;border-radius: 8px;}
+.dropdown:hover .dropdown-content {display: block;}
+.desc {padding: 6px;text-align: center;}
+.manage {border-radius: 10%;}
+#myBtn {display: none;position: fixed;bottom: 20%;right: 15px;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+#myBtn:hover {background-color: orange;}
+form h1 {font-size: 25px;background: #327a81 none repeat scroll 0% 0%;color: rgb(255, 255, 255);padding: 19px 22px;border-radius: 5px 5px 0px 0px;margin: auto;text-shadow: none;text-align:left}
+.user-form {max-width:100%;width:auto;margin:auto;border-radius:5px;margin-bottom:2px;background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));background-size:cover;overflow: hidden;}
+.user-form:hover {background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));background-size:cover;}
+.group-form {max-width:100%;width:auto;margin:auto;border-radius:10px;margin-bottom:2px;background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));background-size:cover;overflow: hidden;}
+.group-form:hover {background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));background-size:cover;}
+.contentform {padding: 5px;}
+p span {color: #F00;}
+p {margin: 0px;font-weight: 200;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius:5px;border:0;width:100%;height:42px;/*float:left;*/padding:0px 15px;color:black;text-align:center;}
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{background-color:#003399;color:#FFF;text-align:center;width:100%;border:0;padding:10px 15px;border-radius:5px;height:auto;cursor:pointer;font-size:14px;}
+#manage-menu, #manage-menu2, #manage-menu3, #manage-menu4 {-webkit-padding-start: 0px;-webkit-margin-before: 0px;-webkit-margin-after: 0px;margin-top: 0px;margin-right: auto;margin-bottom: 0px;margin-left: auto;
+    width:auto;background-color:black;position: relative; /* <-- Added */z-index: 100; /* <-- Added */}
+.menu {padding:2px 15px;}
+.menu a{color:gray;}
+.menu a:hover {color:white;}
+::-webkit-scrollbar {width: 0px;  /* remove scrollbar space */ background: transparent;  /* optional: just make scrollbar invisible */}
 /* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
+::-webkit-scrollbar-thumb {background: #FF0000;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+#bar {margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);z-index:99999;}
+#title0 {font-size:35px; font-weight:800; margin-bottom:30px; margin-top:70px; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;}
+#title1 {font-size:35px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%;
+    z-index:100; top:110px; display:none;}
+@media(max-width:576px) {
+    #title0 {  margin-top:90px; }
 }
 
 </style>
@@ -229,18 +75,16 @@ a {
     setTimeout(function(){ sss=true; }, 1000);
 </script>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+<div id="bar" style="display:none;"></div>
+<script>
+var bar=new RadialProgress(document.getElementById("bar"),{colorBg:"rgba(0,0,0,0)",colorFg:"#0066ff",thick:8,round:true,indeterminate:true,animationSpeed:0.5});
+</script>
 
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
-
-<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">COMMUNITIES</div>
+<div id="title1">COMMUNITIES</div>
 
 <div style="width:100%; height:auto;">
 
-    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:20px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">COMMUNITIES</div>
+    <div id="title0">COMMUNITIES</div>
 
     <div class="container-fluid">
       <div class="row">
@@ -275,11 +119,11 @@ a {
                         <form action="/manager/create_group/" method="post" enctype="multipart/form-data" style="width:90%;">
                             {% csrf_token %}
                             <div class="form-group">
-                                <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="" placeholder="Enter a community name">
+                                <input type="text" name="name" id="name" required placeholder="Enter a community name">
                         	</div>
                             <div class="form-group">
                             	<center>
-                                    <button type="submit" class="bouton-update" style="width:60%;">Create</button>
+                                    <button type="submit" class="bouton-update">Create</button>
                                 </center>
                             </div>
                         </form>
@@ -360,7 +204,7 @@ a {
 
         </div>
 
-        <div class="col-sm-2" style="text-align:center;">
+        <div class="col-sm-2" style="text-align:center;margin-bottom:30px;">
 
             <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px 3px 8px 3px; display:inline-block;">
                 <a href="javascript:void(0);" onclick="javascript:toggleRecentsForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
@@ -448,7 +292,7 @@ a {
             {% if group_members %}
 
                 <div style="width:100%; padding:10px 0px 10px 0px; display:flex; flex-direction:row;">
-                    <button type="button" class="bouton-update" style="flex-grow:1; float:left; background-color:red;" onclick="toConference(document.getElementById('selected_group_id').value);">Video Conference</button>
+                    <button type="button" class="bouton-update" style="flex-grow:1; float:left; background-color:red;" onclick="toConference(document.getElementById('selected_group_id').value);">Videos</button>
                     <button type="button" class="bouton-update" style="flex-grow:1; float:left; margin-left:0.5%; background-color:orange;" onclick="toGroupChat(document.getElementById('selected_group_id').value);">Group Chat</button>
                     <button type="button" class="bouton-update" style="flex-grow:1; float:left; margin-left:0.5%;" onclick="javascript:openMessageBox('group');">Send Message</button>
                 </div>
@@ -475,7 +319,7 @@ a {
                                     </div>
                                 </a>
                                 <a href="javascript:void(0)" style="background-color:transparent; margin-top:5px;" onclick="javascript:window.location.assign('mailto:{{member.email}}');">
-                                    <span class="far fa-comment-alt" aria-hidden="true" style="color:white; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                    <span class="fa fa-envelope" aria-hidden="true" style="color:white; font-size:18px; margin-right:5px; margin-left:10px;"></span>
                                 </a>
                                 <a href="/manager/group_private_chat?email={{member.email}}" target="_blank" style="background-color:transparent; margin-left:15px; margin-top:5px;">
                                     <span class="fa fa-comments" aria-hidden="true" style="color:white; font-size:20px;"></span>
@@ -607,12 +451,12 @@ function scrollFunction() {
  //   alert("Hello");
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
         document.getElementById("myBtn").style.display = "block";                         // Top button display none;
-        document.getElementById("navbar").style.backgroundColor = "black";
-        document.getElementById("title").style.display = "block";
+        // document.getElementById("navbar").style.backgroundColor = "black";
+        document.getElementById("title1").style.display = "block";
     } else {
         document.getElementById("myBtn").style.display = "none";
         // document.getElementById("navbar").style.backgroundColor = "transparent";
-        document.getElementById("title").style.display = "none";
+        document.getElementById("title1").style.display = "none";
     }
 }
 

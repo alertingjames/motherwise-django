@@ -183,9 +183,13 @@ starCountRef.on('child_added', function(snapshot) {
            img.style.width = "40px";
            img.style.height = "40px";
            img.style.borderRadius = '50%';
-           if(new_post.sender_photo != '') img.src = new_post.sender_photo;
+
+           if(new_post.sender_photo != '') {
+               if(isValidImage(new_post.sender_photo)) img.src = new_post.sender_photo;
+           }
            else img.src = '/static/images/manager.jpg';
            img.classList.add("cropping");
+
            var aa = document.createElement("div");
            aa.appendChild(img);
            aa.style.textAlign = 'right';
@@ -370,9 +374,16 @@ starCountRef.on('child_added', function(snapshot) {
            img.style.borderBottomLeftRadius = '10px';
            img.style.borderBottomRightRadius = '0px';
            img.style.display = 'inline-block';
-           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
-           else img.src = image;
-           img.classList.add("cropping");
+
+           if(image.length > 1500 && isValidImage("data:image/jpeg;base64,"+image)) {
+                img.src = "data:image/jpeg;base64,"+image;
+                img.classList.add("cropping");
+            }else {
+                if(isValidImage(image)) {
+                    img.src = image;
+                    img.classList.add("cropping");
+                }
+            }
 
            var li = document.createElement("div");
 
@@ -438,9 +449,13 @@ starCountRef.on('child_added', function(snapshot) {
            img.style.width = "40px";
            img.style.height = "40px";
            img.style.borderRadius = '50%';
-           if(new_post.sender_photo != '') img.src = new_post.sender_photo;
+
+           if(new_post.sender_photo != '') {
+               if(isValidImage(new_post.sender_photo)) img.src = new_post.sender_photo;
+           }
            else img.src = '/static/images/manager.jpg';
            img.classList.add("cropping");
+
            var aa = document.createElement("div");
            aa.appendChild(img);
            aa.style.textAlign = 'right';
@@ -468,9 +483,16 @@ starCountRef.on('child_added', function(snapshot) {
            img.style.borderBottomLeftRadius = '0px';
            img.style.borderBottomRightRadius = '10px';
            img.style.display = 'inline-block';
-           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
-           else img.src = image;
-           img.classList.add("cropping");
+
+           if(image.length > 1500 && isValidImage("data:image/jpeg;base64,"+image)) {
+                img.src = "data:image/jpeg;base64,"+image;
+                img.classList.add("cropping");
+            }else {
+                if(isValidImage(image)) {
+                    img.src = image;
+                    img.classList.add("cropping");
+                }
+            }
 
            var li = document.createElement("div");
 
@@ -560,7 +582,9 @@ starCountRef.on('child_added', function(snapshot) {
         slide.style.padding = '2px'
 
         var img = document.createElement("img");
-        if (sender_photo.length > 0) img.src = sender_photo;
+        if(sender_photo != '') {
+            if(isValidImage(sender_photo)) img.src = sender_photo;
+        }
         else img.src = "/static/images/manager.jpg";
         img.style.width = "50";
         img.style.height = "50";
@@ -974,6 +998,21 @@ function send_msg(sts, lat, lng, video){
 }
 
 
+
+function isValidImage(imageurl) {
+   try {
+        var img = document.createElement("img");
+        img.src = imageurl;
+    } catch(err) {
+        //
+    }
+
+    if(img.height > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 

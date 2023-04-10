@@ -27,645 +27,120 @@
 <style>
 
 html, body{
-  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
+  background: #0066cc no-repeat center center fixed;
   background-size:cover;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 400px;
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 8px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.desc {
-    padding: 6px;
-    text-align: center;
-}
-
-img {
-  height: 80px;
-  width: 80px;
-}
-
-.manage {
-  border-radius: 10%;
-}
-
-.table-users {
-  border: 1px solid #327a81;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-  max-width:500px;
-  width:auto;
-  height:auto;
-  margin: 2% auto;
-  background-color: white;
-  overflow-x:auto;
-}
-
-.table>tbody>tr>td{
-    vertical-align: middle;
-    horizontal-align: middle;
-}
-
-table td, table th {
-  color: #2b686e;
-  padding: 10px;
-  border: 1px solid white;
-  text-align: center;
-  vertical-align: middle;
-}
-table td {
-  text-align: center;
-  vertical-align: middle;
-}
-table td:last-child {
-  font-size: 0.95em;
-  line-height: 0.8;
-  text-align: center;
-}
-table th {
-  background-color: #04a2be;
-  font-weight: 520;
-  color:white;
-  text-align: center;
-  vertical-align: middle;
-}
-table tr:nth-child(2n) {
-  background-color: white;
-  border: 1px solid #327a81;
-}
-
-table tr:nth-child(2n+1) {
-  background-color: #edf7f8;
-  border: 1px solid white;
-}
-
-#manage-menu{
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:40px;
-    background-color:#000000;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-#manage-menu1{
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:40px;
-    background-color:#000000;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-#myBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  right: 15px;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-  width:45px;
-}
-
-#myBtn:hover {
-  background-color: orange;
-}
-
-#admin{
-    display:none;
-}
-
-.info p {
-  text-align:center;
-  color: #999;
-  text-transform:none;
-  font-weight:600;
-  font-size:15px;
-  margin-top:2px
-}
-
-.info i {
-  color:#F6AA93;
-}
-
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.user-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:3px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.user-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.conf-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:10px;
-  margin-bottom:2px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.conf-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.contentform {
-  padding: 5px;
-}
-
-#chat-form {
-    border-radius: 5px;
-    max-width:800px;
-    width:auto;
-    height:auto;
-    margin-top:3%;
-    margin-left:auto;
-    margin-right:auto;
-    opacity:0.9;
-    overflow: hidden;
-}
-
-.chat-contentform {
-    padding: 0px;
-    float:middle;
-    margin-top:3%;
-}
-
-.chat-formcontent {
-    width:100%;
-    float:middle;
-    margin:auto;
-    box-sizing: border-box;
-    padding: 0px;
-}
-
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 0px 5px 5px 0px;
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  width: 92%;
-  height: 42px;
-  float: left;
-  padding: 0px 15px;
-  opacity: 0.8;
-  color:blue;
-}
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.icon-case {
-  width: 8%;
-  float: left;
-  border-radius: 5px 0px 0px 5px;
-  background:green;
-  height:42px;
-  position: relative;
-  text-align: center;
-  line-height:40px;
-  padding-top:11px;
-}
-
-i {
-  color:white;
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.bouton-update{
-  background-color: green;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-
-.show {
-    z-index:1000;
-    position: absolute;
-    background-color:#ffffff;
-    border: 2px solid orange;
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
-    padding: 10px;
-    display: block;
-    font-size:20px;
-    border-radius:20px;
-    margin: 0;
-    list-style-type: none;
-    list-style: none;
-}
-
-.hide {
-    display: none;
-}
-
+.dropdown {position: relative;display: inline-block;}
+.dropdown-content {display: none;position: absolute;background-color: #f9f9f9;min-width: 400px;box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);z-index: 100;border-radius: 8px;}
+.dropdown:hover .dropdown-content {display: block;}
+.desc {padding: 6px;text-align: center;}
+img {height: 80px;width: 80px;}
+.manage {border-radius: 10%;}
+.table-users {border: 1px solid #327a81;box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);max-width:500px;width:auto;height:auto;margin: 2% auto;background-color: white;overflow-x:auto;}
+.table>tbody>tr>td{vertical-align: middle;horizontal-align: middle;}
+table td, table th {color: #2b686e;padding: 10px;border: 1px solid white;text-align: center;vertical-align: middle;}
+table td {text-align: center;vertical-align: middle;}
+table td:last-child {font-size: 0.95em;line-height: 0.8;text-align: center;}
+table th {background-color: #04a2be;font-weight: 520;color:white;text-align: center;vertical-align: middle;}
+table tr:nth-child(2n) {background-color: white;border: 1px solid #327a81;}
+table tr:nth-child(2n+1) {background-color: #edf7f8;border: 1px solid white;}
+#manage-menu{-webkit-padding-start: 0px;-webkit-margin-before: 0px;-webkit-margin-after: 0px;margin-top: 0px;margin-right: auto;margin-bottom: 0px;margin-left: auto;width:40px;background-color:#000000;
+    position: relative; /* <-- Added */z-index: 100; /* <-- Added */}
+#manage-menu1{-webkit-padding-start: 0px;-webkit-margin-before: 0px;-webkit-margin-after: 0px;margin-top: 0px;margin-right: auto;margin-bottom: 0px;margin-left: auto;width:40px;background-color:#000000;position: relative; /* <-- Added */
+    z-index: 100; /* <-- Added */}
+#myBtn {display: none;position: fixed;bottom: 20%;right: 15px;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;width:45px;}
+#myBtn:hover {background-color: orange;}
+#admin{display:none;}
+.info p {text-align:center;color: #999;text-transform:none;font-weight:600;font-size:15px;margin-top:2px}
+.info i {color:#F6AA93;}
+form h1 {font-size: 25px;background: #327a81 none repeat scroll 0% 0%;color: rgb(255, 255, 255);padding: 19px 22px;border-radius: 5px 5px 0px 0px;margin: auto;text-shadow: none;text-align:left}
+.user-form {max-width:100%;width:auto;margin:auto;border-radius:5px;margin-bottom:3px;background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));background-size:cover;overflow: hidden;}
+.user-form:hover {background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));background-size:cover;}
+.conf-form {max-width:100%;width:auto;margin:auto;border-radius:10px;margin-bottom:2px;background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));background-size:cover;overflow: hidden;}
+.conf-form:hover {background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));background-size:cover;}
+.contentform {padding: 5px;}
+#chat-form {border-radius: 5px;max-width:800px;width:auto;height:auto;margin-top:3%;margin-left:auto;margin-right:auto;opacity:0.9;overflow: hidden;}
+.chat-contentform {padding: 0px;float:middle;margin-top:3%;}
+.chat-formcontent {width:100%;float:middle;margin:auto;box-sizing: border-box;padding: 0px;}
+p span {color: #F00;}
+p {margin: 0px;font-weight: 200;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius: 0px 5px 5px 0px;border: 1px solid #eee;margin-bottom: 10px;width: 92%;height: 42px;float: left;padding: 0px 15px;opacity: 0.8;color:blue;}
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.icon-case {width: 8%;float: left;border-radius: 5px 0px 0px 5px;background:green;height:42px;position: relative;text-align: center;line-height:40px;padding-top:11px;}
+i {color:white;}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{background-color:#004080;color:#FFF;text-align:center;width:100%;border:0;padding:10px 15px;border-radius:5px;cursor:pointer;font-size:14px;}
+.show {z-index:1000;position: absolute;background-color:#ffffff;border: 2px solid orange;box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);padding: 10px;display: block;font-size:20px;border-radius:20px;margin: 0;
+    list-style-type: none;list-style: none;}
+.hide {display: none;}
 .show li{ list-style: none; }
 .show a { border: 0 !important; text-decoration: none; }
 .show a:hover { text-decoration: underline !important; }
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-label span {/* <-- style the artificial checkbox */
-  height: 15px;
-  width: 15px;
-  border: 1px solid black;
-  border-radius:50%;
-  background-color:transparent;
-  margin-right:3px;
-  display: inline-block;
-  position: relative;
-}
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  color:white;
-  position: absolute;
-  top: -5px;
-  left: 0;
-}
-
-.sidenav {
-    height: 100%;
-    width: 0px;
-    position: fixed;
-    top: 50px;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    z-index:1000;
-}
-
-.sidenav a {
-    padding: 8px 8px 8px 30px;
-    text-decoration: none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidenav a:hover {
-    color: #f1f1f1;
-}
-
-.sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 5px;
-    font-size: 36px;
-    float:right;
-}
-
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
+label input {display: none;/* <-- hide the default checkbox */}
+label span {/* <-- style the artificial checkbox */height: 15px;width: 15px;border: 1px solid black;border-radius:50%;background-color:transparent;margin-right:3px;display: inline-block;position: relative;}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */content: '\2714';color:white;position: absolute;top: -5px;left: 0;}
+.sidenav {height: 100%;width: 0px;position: fixed;top: 50px;left: 0;background-color: #111;overflow-x: hidden;transition: 0.5s;padding-top: 60px;z-index:1000;}
+.sidenav a {padding: 8px 8px 8px 30px;text-decoration: none;font-size: 20px;color: #818181;display: block;transition: 0.3s;}
+.sidenav a:hover {color: #f1f1f1;}
+.sidenav .closebtn {position: absolute;top: 0;right: 5px;font-size: 36px;float:right;}
+@media screen and (max-height: 450px) {.sidenav {padding-top: 15px;}.sidenav a {font-size: 18px;}}
+::-webkit-scrollbar {width: 0px;  /* remove scrollbar space */background: transparent;  /* optional: just make scrollbar invisible */}
 /* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-
-#chat_log {
-    border-radius: 5px;
-    border: 1px solid #EEE;
-    margin: 0;
-    width: 100%;
-    height: 600px;
-    float: middle;
-    padding: 15px;
-    color:black;
-    background:linear-gradient(0deg,rgba(250,250,250,0.8),rgba(250,250,250,0.8)),url("/static/images/chatbackground.jpg");
-    background-size:cover;
-    overflow-y:auto;
-}
-
-#chat_log::-webkit-scrollbar {
-    display: none;
-}
-
-#send-form{
-    width:100%;
-}
-
-.cropping{
-    object-fit:cover;
-}
-
-div#list {
-    width: 100%;
-    height: auto;
-}
-
-div#list > div > div {
-    width: auto;
-    height: auto;
-    padding: 8px 15px 8px 15px;
-    border-radius:5px;
-    margin-bottom: 5px;
-    color: black;
-    word-wrap: break-word;
-    white-space: pre-line;
-    /*word-break: break-all;*/
-}
-
-#photo {
-    display: none;
-    top:15%;
-}
-
-.attach-button {
-    width:33.333333333%;
-    padding:2px;
-}
-
-label.button {
-    background:green;
-    padding:10px 0px 6px 0px;
-    color:white;
-    text-align:center;
-    font-size:15px;
-    font-weight:500;
-    width:100%;
-    border: 1.5px solid #666;
-    border-color: #EEE #CCC #CCC #EEE;
-    border-radius:5px;
-}
-
-i {
-    margin-right:10px;
-}
-
+::-webkit-scrollbar-thumb {background: #FF0000;}
+#chat_log {border-radius:5px;border:1px solid #EEE;margin:0;width:100%;height:550px;float:middle;padding:15px;color:black;
+    background:linear-gradient(0deg,rgba(250,250,250,0.8),rgba(250,250,250,0.8)),url("/static/images/chatbackground.jpg");background-size:cover;overflow-y:auto;}
+#chat_log::-webkit-scrollbar {display: none;}
+#send-form{width:100%;}
+.cropping{object-fit:cover;}
+div#list {width: 100%;height: auto;}
+div#list > div > div {width: auto;height: auto;padding: 8px 15px 8px 15px;border-radius:5px;margin-bottom: 5px;color: black;word-wrap: break-word;white-space: pre-line;/*word-break: break-all;*/}
+#photo {display: none;top:15%;}
+.attach-button {width:33.333333333%;padding:2px;}
+label.button {background:green;padding:10px 0px 6px 0px;color:white;text-align:center;font-size:15px;font-weight:500;width:100%;border: 1.5px solid #666;border-color: #EEE #CCC #CCC #EEE;border-radius:5px;}
+i {margin-right:10px;}
 /* Look like a clicked/depressed button */
-label.button:active {
-    border-color: #CCC #EEE #EEE #CCC;
-}
-
+label.button:active {border-color: #CCC #EEE #EEE #CCC;}
 /* This is the part that actually hides the 'Choose file' text box for camera inputs */
-label.button input[accept*="image"] {
-    display: none;
-}
-
-::placeholder {
-    color: white;
-    opacity: 1; /* Firefox */
-}
-
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: white;
-}
-
-::-ms-input-placeholder { /* Microsoft Edge */
-    color: white;
-}
-
-
-#manage-menu {
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:auto;
-    background-color:black;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-.menu {
-    padding:2px 15px;
-}
-
-.menu a{
-    color:gray;
-}
-
-.menu a:hover {
-    color:white;
-}
-
-select {
-  background:transparent;
-  border: 1.5px solid rgba(255,255,255,0.5);
-  border-radius:3px;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:white;
-  text-align-last:center;
-}
-
-option{
-    color:black;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-
-#user-scroll-layout::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background: transparent;
-}
-
-#user-scroll-layout::-webkit-scrollbar
-{
-	height: 0px;
-	background: transparent;
-}
-
-#user-scroll-layout::-webkit-scrollbar-thumb
-{
-	background: transparent;
-}
-
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
-
+label.button input[accept*="image"] {display: none;}
+::placeholder {color: white;opacity: 1; /* Firefox */}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */color: white;}
+::-ms-input-placeholder { /* Microsoft Edge */color: white;}
+#manage-menu {-webkit-padding-start: 0px;-webkit-margin-before: 0px;-webkit-margin-after: 0px;margin-top: 0px;margin-right: auto;margin-bottom: 0px;margin-left: auto;width:auto;background-color:black;
+    position: relative; /* <-- Added */z-index: 100; /* <-- Added */}
+.menu {padding:2px 15px;}
+.menu a{color:gray;}
+.menu a:hover {color:white;}
+select {background:transparent;border: 1.5px solid rgba(255,255,255,0.5);border-radius:3px;margin-bottom: 15px;margin-right:auto;width: 100%;height: 42px;opacity:0.95;float: middle;padding: 0px 15px;color:white;
+  text-align-last:center;}
+option{color:black;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+#user-scroll-layout::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: transparent;}
+#user-scroll-layout::-webkit-scrollbar{height: 0px;background: transparent;}
+#user-scroll-layout::-webkit-scrollbar-thumb{background: transparent;}
+::-webkit-scrollbar {width: 0px;  /* remove scrollbar space */background: transparent;  /* optional: just make scrollbar invisible */}
 /* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-div#video-container > video {
-    width:45%;
-    height:150px;
-    max-width: 45%;
-    max-height: calc((100vw - 40px) / (16/9));
-    object-fit: cover;
-}
-
-div#video-main-container > video {
-    width:45%;
-    height:150px;
-    max-width: 45%;
-    max-height: calc((100vw - 40px) / (16/9));
-    object-fit: cover;
-}
-
-iframe {
-    width:100%;
-    height:650px;
-    max-width: 100%;
-    max-height: calc((100vw - 40px) / (16/9));
-}
-
-fieldset {
-    margin:0;
-    padding:0;
-    width:100%;
-}
-
-#snackbar {
-    visibility: hidden;
-    min-width: 200px;
-    margin-left: -125px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
-    padding: 12px;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    bottom: 30px;
-    font-size: 17px;
-}
-
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
+::-webkit-scrollbar-thumb {background: #FF0000;}
+div#video-container > video {width:45%;height:150px;max-width: 45%;max-height: calc((100vw - 40px) / (16/9));object-fit: cover;}
+div#video-main-container > video {width:45%;height:150px;max-width: 45%;max-height: calc((100vw - 40px) / (16/9));object-fit: cover;}
+iframe {width:100%;height:600px;max-width: 100%;max-height: calc((100vw - 40px) / (16/9));}
+fieldset {margin:0;padding:0;width:100%;text-align:center;}
+#snackbar {visibility: hidden;min-width: 200px;margin-left: -125px;background-color: #333;color: #fff;text-align: center;border-radius: 2px;padding: 12px;position: fixed;z-index: 1;left: 50%;bottom: 30px;font-size: 17px;}
+#snackbar.show {visibility: visible;-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;animation: fadein 0.5s, fadeout 0.5s 2.5s;}
+@-webkit-keyframes fadein {from {bottom: 0; opacity: 0;}to {bottom: 30px; opacity: 1;}}
+@keyframes fadein {from {bottom: 0; opacity: 0;}to {bottom: 30px; opacity: 1;}}
+@-webkit-keyframes fadeout {from {bottom: 30px; opacity: 1;}to {bottom: 0; opacity: 0;}}
+@keyframes fadeout {from {bottom: 30px; opacity: 1;}to {bottom: 0; opacity: 0;}}
+#imageFrame {text-align:center; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);position:fixed; left:50%; float:middle; background-color:white; border-radius:6px; padding: 10px;transform:translate(-50%, -50%);
+    width:auto; height:auto; z-index:200; top:350px; display:none;}
+#image_message {width:250px; height:auto; display:none;}
+#photo {height:auto; position:fixed; left:15%; top:15%; float:middle; transform:translate(-50%, -50%); width:100px; z-index:100;}
+#photo > img {width:60px; height:60px; border-radius:50%; object-fit:cover;}
+#st {color: red; font-size:16px; padding:3% 3% 3% 3%; min-width:60px; text-align:center; height:auto; border-radius:3px; margin-top:3px; background-color:white; display:none;}
+#title0 {font-size:35px; font-weight:800; margin-bottom:10px; margin-top:70px; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;}
+.ggg {color:white; font-size:18px; font-weight:500; margin-top:3px; font-family:verdana;}
 
 </style>
 
@@ -676,10 +151,8 @@ fieldset {
 <!--    window.onpopstate = function () { history.go(1); };-->
 <!--</script>-->
 
-<div id="imageFrame" style="text-align:center; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:6px; padding: 10px;
-	transform:translate(-50%, -50%); width:auto; height:auto; z-index:200; top:350px; display:none;">
-	<img src="" style="width:250px; height:auto; display:none;" id="image_message">
+<div id="imageFrame">
+	<img src="" id="image_message">
     <video id="videoresult" autobuffer  controls width="250" autoplay loop style="display:none;">
         <source src="" id="videohere"/>
     </video>
@@ -688,26 +161,22 @@ fieldset {
     <span class="fa fa-check" style="font-size:25px; margin-top:5px; color:red; margin-left:30px;" onclick="javascript:okay();"></span>
 </div>
 
-<div id="photo" style="height:auto; position:fixed; left:15%; top:15%; float:middle; transform:translate(-50%, -50%); width:100px; z-index:100;">
-    <img src="{% if friend.photo_url %}{{friend.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
-    <div id="st" style="color: red; font-size:16px; padding:3% 3% 3% 3%; min-width:60px; text-align:center; height:auto;
-        border-radius:3px; margin-top:3px; background-color:white; display:none;"></div>
+<div id="photo">
+    <img src="{% if friend.photo_url %}{{friend.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+    <div id="st"></div>
 </div>
-
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
 
 <div style="width:100%; height:auto; margin-top:10px;">
 
-    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:15px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">{{last_conf.name}}</div>
+    <div id="title0">{{last_conf.name}}</div>
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3" style="text-align:center;">
 
             <div style="margin-bottom:20px;">
-                <div style="color:white; font-size:18px; font-weight:500; margin-top:3px; font-family:verdana;">
-                    {% if group %}{{group.name}}{% elif cohort %}{{cohort}}{% else %}{% endif %}
+                <div class="ggg">
+                    {% if group is not None %}{{group.name}}{% else %}Everyone{% endif %}
                 </div>
             </div>
 
@@ -745,7 +214,7 @@ fieldset {
 
             <div style="width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
                 <a href="javascript:void(0);" onclick="javascript:toggleMyConferencesForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
-                    My Conferences
+                    My Videos
                     <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow"></span>
                 </a>
 
@@ -784,7 +253,7 @@ fieldset {
                                         <a href="/manager/open_conference?conf_id={{conf.pk}}&group_id={{conf.group_id}}&cohort={{cohort}}" style="flex-grow:1;">
                                             <div style="padding-left:8px; margin-top:15px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
                                                 {{conf.name}}
-                                                <div style="font-size:12px;">{{conf.event_time}}</div>
+                                                <div style="font-size:12px;">{{conf.created_time}}</div>
                                             </div>
                                         </a>
                                         <div style="float:right; margin:5px;">
@@ -881,8 +350,8 @@ fieldset {
                                 <input type="hidden" id="sender_id" value="{{me.pk}}">
                                 <input type="hidden" id="sender_email" value="{{me.email}}">
                                 <input type="hidden" id="sender_photo" value="{{me.photo_url}}">
-                                <input type="hidden" id="group" value="{% if group %}{{me.pk}}gr{{group.pk}}conf{{last_conf.pk}}{% elif cohort %}{{me.pk}}{{cohort}}conf{{last_conf.pk}}{% endif %}">
-                                <input type="hidden" id="groupid" value="{% if group %}{{group.pk}}{% endif %}">
+                                <input type="hidden" id="group" value="{% if group is not None %}{{me.pk}}gr{{group.pk}}conf{{last_conf.pk}}{% else %}{{me.pk}}everyoneconf{{last_conf.pk}}{% endif %}">
+                                <input type="hidden" id="groupid" value="{% if group is not None %}{{group.pk}}{% endif %}">
                                 <input type="hidden" id="chrt" value="{% if cohort %}{{cohort}}{% endif %}">
                                 <input type="hidden" id="type" value="">
                                 <input type="hidden" id="lat" value="{% if lat %}{{lat}}{% else %}{% endif %}">
@@ -1054,7 +523,7 @@ fieldset {
             </div>
 
             {% if members %}
-                <div style="width:100%; max-height:80%; padding-top:1%; padding-bottom:15%; overflow:auto;" id="form">
+                <div style="width:100%; max-height:75%; padding-top:1%; padding-bottom:15%; overflow:auto;" id="form">
                     {% for member in members %}
                     <div class="user-form">
                         <input type="hidden" id="member_email" value="{{member.email}}">
@@ -1114,7 +583,7 @@ fieldset {
     <div style="width:100%; display:inline-block;">
         <div>
             <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE TO GROUP<br>
-                    <div style="color:green; font-size:14px; font-weight:600;">{% if group %}{{group.name}}{% elif cohort %}{{cohort}}{% endif %}</div></div><br>
+                    <div style="color:green; font-size:14px; font-weight:600;">{% if group is not None %}{{group.name}}{% else %}Everyone{% endif %}</div></div><br>
             <form action="/manager/group_chat_message/" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
                 {% csrf_token %}
                 <div class="form-group">
@@ -1124,8 +593,8 @@ fieldset {
                         style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
                     <script>autosize(document.getElementById("textarea"));</script>
                 </div>
-                <input hidden id="group_id" name="group_id" value="{% if group %}{{group.pk}}{% elif cohort %}{{cohort}}{% endif %}">
-                <input hidden id="option" name="option" value="{% if group %}group{% elif cohort %}cohort{% endif %}">
+                <input hidden id="group_id" name="group_id" value="{% if group is not None %}{{group.pk}}{% else %}0{% endif %}">
+                <input hidden id="option" name="option" value="{% if group is not None %}group{% else %}all{% endif %}">
                 <center>
                     <button type="submit" class="bouton-update" style="width:60%; margin-bottom:20px;">Submit</button>
                 </center>
@@ -2352,72 +1821,8 @@ function send_msg(sts, lat, lng, video){
             message: messageText,
             time: time
         });
-
-        // var params = {
-        //     'service': lat,
-        //     'name': friend_name,
-        //     'email': document.getElementById("friend_email").value,
-        //     'service_reqdate': lng,
-        //     'status': sts,
-        //     'mailid': video
-        // }
-        // post("/acchat", params);
     }
 }
-
-
-
-
-
-//  var timeStr = '';
-//
-//  var currentdate = new Date();
-//
-//  var cseconds = currentdate.getSeconds();
-//  var cminutes = currentdate.getMinutes();
-//  var chours = currentdate.getHours();
-//
-//  var cyear = currentdate.getFullYear();
-//  var cmonth = currentdate.getMonth(); // beware: January = 0; February = 1, etc.
-//  var cday = currentdate.getDate();
-//
-//  if (year == cyear && month == cmonth && day == cday && hours == chours && minutes == cminutes){
-//      timeStr = 'Just Now';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours == chours && minutes != cminutes)
-//  {
-//      timeStr = (cminute - minutes) + ' min ago';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours != chours){
-//      timeStr = (chours - hours) + ' hr ago';
-//  }
-//  else if (year == cyear && month == cmonth && ((cday - day) == 1)){
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = 'Yesterday' + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-//  else {
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-
-</script>
-
-<script>
-
-$(document).ready(function()
-{
-    $(window).bind("beforeunload", function() {
-        console.log('Close current page');
-        firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
-        return false;
-    });
-});
 
 </script>
 

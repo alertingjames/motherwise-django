@@ -11,8 +11,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
     <link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
@@ -23,6 +24,10 @@
     <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
 
 <style>
+
+input:focus, button:focus {
+    outline:none;
+}
 
 .dropdown-menu{
     background-color: #fff;
@@ -128,6 +133,10 @@ div#list > div > div {
     object-fit:cover;
 }
 
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
 </style>
 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
@@ -137,14 +146,6 @@ div#list > div > div {
 <body>
 
 <nav id="navbar" class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:transparent; border:0;">
-
-    <div id="google_translate_element"></div>
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-          new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <div class="container-fluid">
 
@@ -161,13 +162,8 @@ div#list > div > div {
         <div class="collapse navbar-collapse navbar-ex1-collapse" style="border:0; max-height:500px; overflow:auto;">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="/manager/home">
-                        <h4 style=""><span class="fas fa-user-friends" aria-hidden="true" style="margin-right:10px;"></span>Members</h4>
-                    </a>
-                </li>
-                <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
-                        <h4><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></h4>
+                        <h4><span class="fas fa-user-friends" aria-hidden="true"></span></h4>
                     </a>
                     <ul class="dropdown-menu" role="menu" id="m1">
                         <li class="menu" style="margin-top:0px;"><h5><a href="/manager/active_members/"><span class="fa fa-user-circle" style="font-size:16px; margin-right:15px;"></span>Active members</a></h5></li>
@@ -180,7 +176,7 @@ div#list > div > div {
                     </ul>
                 </li>
 
-                <li style="margin-right:30px;">
+                <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
                         <h4><span class="fa fa-search" aria-hidden="true"></span></h4>
                     </a>
@@ -205,8 +201,14 @@ div#list > div > div {
                 </li>
 
                 <li>
-                    <a href="javascript:void(0)" onclick="javascript:openMessageBox(); hideMenuBar();">
-                        <h4 style=""><span class="fas fa-user-plus" aria-hidden="true" style="margin-right:10px;"></span>New Member</h4>
+                    <a href="/manager/openbroadcast" style="background-color:transparent;" target="_blank">
+                        <h4><span class="fas fa-broadcast-tower" aria-hidden="true"></span></h4>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="javascript:void(0)" onclick="javascript:openMessageBox(); hideMenuBar();" title="Add New Member">
+                        <h4 style=""><span class="fas fa-user-plus" aria-hidden="true"></span></h4>
                     </a>
                 </li>
 
@@ -226,7 +228,7 @@ div#list > div > div {
                 </li>
 
                 <li>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;" title="Notifications">
                         <div id="noticon" style="display:block;"><h4><span class="fa fa-bell-o" aria-hidden="true" style="margin-right:10px;" id="badge"></span></h4></div>
                     </a>
                     <ul class="dropdown-menu" role="menu" id="m4">
@@ -242,33 +244,67 @@ div#list > div > div {
                     </ul>
                 </li>
 
-                <li style="margin-right:30px;">
+                <li>
                     <a href="javascript:void(0)" onclick="javascript:openCohortBox(); hideMenuBar();">
                         <h4 style=""><span class="fa fa-sitemap" style="margin-right:10px;"></span>Groups</h4>
                     </a>
                 </li>
 
-                <li style="margin-right:30px;">
+                <li style="margin-right:10px;">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
+                        <h4><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></h4>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" id="m1">
+                        <li class="menu" style="margin-top:0px;"><h5><a href="/motherwise/cohort_names/"><span class="fa fa-list-alt" style="font-size:16px; margin-right:15px;"></span>Group Names</a></h5></li>
+                    </ul>
+                </li>
+
+                <li style="margin-right:10px;display:none;">
                     <a href="/manager/groups">
                         <h4><span class="fa fa-group" aria-hidden="true" style="margin-right:10px;"></span>Communities</h4>
                     </a>
                 </li>
 
-                <li style="margin-right:30px;">
+                <li style="margin-right:10px;">
                     <a href="/manager/to_conferences">
-                        <h4><span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Conferences</h4>
+                        <h4><span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Videos</h4>
                     </a>
                 </li>
 
-                <li style="margin-right:30px;">
+                <li>
                     <a href="/manager/posts">
                         <h4><span class="fa fa-flag" aria-hidden="true" style="margin-right:10px;"></span>Posts</h4>
                     </a>
                 </li>
 
-                <li style="margin-right:30px;">
-                    <a href="/manager/notifications">
-                        <h4 id="msg-caption"><span class="far fa-comment-alt" aria-hidden="true"></span>&nbsp; Messages</h4>
+                <li style="margin-right:10px;">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
+                        <h4><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></h4>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" id="m1">
+                        <li class="menu" style="margin-top:0px;"><h5><a href="/motherwise/post_categories/"><span class="fa fa-list-alt" style="font-size:16px; margin-right:15px;"></span>Post Categories</a></h5></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="/motherwise/comidaposts">
+                        <h4><span class="fas fa-hamburger" aria-hidden="true" style="margin-right:10px;"></span>Comida</h4>
+                    </a>
+                </li>
+
+                <li style="margin-right:10px;">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="background-color:transparent;">
+                        <h4><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></h4>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" id="m1">
+                        <li class="menu" style="margin-top:0px;"><h5><a href="/motherwise/recipes/"><span class="fas fa-pizza-slice" style="font-size:16px; margin-right:15px;"></span>Recipes</a></h5></li>
+                        <li class="menu" style="margin-top:20px;"><h5><a href="/motherwise/food_resource/"><span class="fas fa-pepper-hot" style="font-size:16px; margin-right:15px;"></span>Food Resources</a></h5></li>
+                    </ul>
+                </li>
+
+                <li style="margin-right:10px;">
+                    <a href="/manager/notifications" title="Messages">
+                        <h4 id="msg-caption"><span class="far fa-comment-alt" aria-hidden="true"></span></h4>
                     </a>
                 </li>
 
@@ -300,6 +336,13 @@ div#list > div > div {
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li class="menu">
+                            <div style="font-size:14px;">
+                                <a href="/manager/analytics/">
+                                    <span class="fas fa-analytics" style="margin-right:10px;"></span>Analytics
+                                </a>
+                            </div>
+                        </li>
+                        <li class="menu" style="margin-top:15px;">
                             <div style="font-size:14px;">
                                 <a href="/manager/account/">
                                     <span class="glyphicon glyphicon-lock" style="margin-right:10px;"></span>Change Password
@@ -368,7 +411,72 @@ div#list > div > div {
 
 </script>
 
+<script>
 
+    function showSuccessAlert(msg) {
+        swal({
+            title: "Success!",
+            text: msg,
+            icon: "success",
+            button: "OK",
+        });
+    }
+
+    function showSuccessInvitationAlert(msg) {
+        swal({
+            title: "Success!",
+            text: msg,
+            icon: "success",
+            button: "OK",
+        })
+        .then((ok) => {
+            if (ok) {
+                location.reload();
+            }
+        });
+    }
+
+    function showFailureAlert(msg) {
+        swal({
+            title: "Oops! We ran into an issue.",
+            text: msg,
+            icon: "warning",
+            button: "OK",
+            dangerMode: true,
+        });
+    }
+
+    function showConfirmMemberDeletionAlert(msg,memberid){
+        swal({
+            title: "Warning!",
+            text: msg,
+            icon: "warning",
+            buttons: ["Cancel","Yes"],
+            dangerMode: true,
+        })
+        .then((ok) => {
+            if (ok) {
+                window.location.href = "/manager/delete_member?member_id=" + memberid;
+            }
+        });
+    }
+
+
+</script>
+
+<script>
+    $( document ).ready(function() {
+        $('#google_translate_element').bind('DOMSubtreeModified', function() {
+            var val = $(this);
+            var strlang = "" + val[0].innerText + "";
+            var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+            if(toolBar !== undefined) {
+                toolBar.style.display  = 'none';
+                document.body.style.top = '0px';
+            }
+        });
+    });
+</script>
 
 
 {% block body %}

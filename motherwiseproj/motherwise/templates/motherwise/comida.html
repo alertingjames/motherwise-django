@@ -1,0 +1,1185 @@
+{% extends 'motherwise/base_comida.html' %}
+{% block title %}Comida Connections{% endblock %}
+{% block body %}
+
+<br>
+<br>
+
+{% load tag_library %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+
+<script src="/static/reactions/jquery-2.1.4.js"></script>
+<script src="/static/reactions/jquery-ui_1.12.1_.min.js"></script>
+<script src="/static/reactions/facebook-reactions.js"></script>
+<link rel="stylesheet" href="/static/reactions/stylesheet.css">
+
+<script>
+    $(document).ready(function() {
+    	$('.FB_reactions').facebookReactions({
+    		postUrl: "admin"
+    	});
+    });
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+<script>
+    WebFont.load({
+        google: {
+            families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
+    });
+</script>
+
+<style>
+
+html, body{
+  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/111.jpg') no-repeat center center fixed;
+  background-size:cover;
+}
+.body { margin-left:auto;margin-right:auto;max-width:650px; }
+.topBtn {display: none;position: fixed;bottom: 20%;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+.topBtn:hover {background-color:orange;}
+.postform {background-color:rgba(255,255,255,0.1); border-radius:10px; margin:10px 0px 10px 0px; box-shadow:0 0 30px rgba(0,0,0,0.3);}
+.postform:hover {background-color:rgba(0,0,0,0.1); box-shadow:0 0 50px rgba(0,0,0,0.8); transform: scale(1.02);transition:0.3s;}
+.contentform {padding: 10px;}
+.no-result {font-size:20px; font-weight:300; color: rgba(255,255,255,0.6); text-align:center;position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
+    transform:translate(-50%, -50%); width:auto; z-index:100; top:250px; display:none;}
+.text {overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;white-space:pre-line;color:rgba(255,255,255,0.8);/*word-break: break-all;*/
+    display:-webkit-box;-webkit-line-clamp: 50;/* number of lines to show */-webkit-box-orient:vertical;}
+.member-name {padding-left:10px;margin-top:15px;color:rgba(255,255,255,0.8);float:left;font-size:14px;text-align:left;word-wrap:break-word;}
+.member-name > div {font-size:11px;color:rgba(255,255,255,0.8);}
+.member-photo {width:40px;height:40px;border-radius:50%;object-fit:cover;}
+.action-btn {color:rgba(255,255,255,0.6);margin:10px;font-size:18px;}
+.action-btn:hover {color:rgba(255,255,255,0.8);}
+.post-title{ font-size:20px;color:rgba(255,255,255,0.8);font-weight:600; }
+.post-category{ font-size:14px;color:rgba(255,255,255,0.8); }
+.post-time { font-size:12px;color:rgba(255,255,255,0.8); }
+.post-picture { width:100%;height:auto;object-fit:contain; }
+.post-content{color:rgba(255,255,255,0.8) !important;text-decoration:none !important;text-align:left;padding:10px;}
+.post-actions {color:rgba(255,255,255,0.8);float:left;font-weight:500;font-size:18px;text-align:center;margin:0px 0px 15px 10px;display:flex;}
+.post-actions span { margin-right:5px; }
+.post-detail-btn {color:rgba(255,255,255,0.6);text-align:center;margin-left:15px;margin-right:15px;}
+.post-detail-btn > span {padding-right:0px; color:rgba(255,255,255,0.6);font-size:16px;}
+.post-detail-btn > span:hover {color:rgba(255,255,255,0.8);}
+.post-header {width:100%;padding-bottom:3px;display:flex;}
+.member-photo-section {padding:10px;float:left;position:relative;}
+.post-footer {width:100%;display:inline-block;}
+.post-detail-section {text-align:right;float:right;margin-bottom:10px;}
+#title0 { font-size:30px;font-weight:800;margin-bottom:40px;margin-top:15px;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%;text-transform:uppercase; }
+#title { font-size:25px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle; text-transform:uppercase;
+    transform:translate(-50%, -50%);width:100%;z-index:100;top:110px;display:none;}
+#gif {glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display:none;}
+#gif1 {width:30px;height:30px;margin-right:5px;}
+.logo {position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%; visibility:hidden;}
+#postcreateform {border-radius:10px; background-color:rgba(255,255,255,0.2); width: 100%; height:auto; margin-bottom:30px; display:none;}
+.contentform {padding: 10px;}
+textarea {width:100%; height:100px; min-height:100px; max-height:400px; border:1px solid #ccc; padding:15px; border-radius:5px;}
+textarea:focus { outline:0; border:2px solid rgba(0,0,0,0.8); }
+p span {color: #F00;}
+p {margin: 0px;font-weight: 200;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius: 5px;border: 1px solid #eee;width: 100%;height: 42px;float: left;padding: 0px 15px;color:black;}
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{background-color:green;color:#FFF;text-align:center;width:100%;border:0;padding:10px 15px;border-radius:5px;cursor:pointer;font-size:14px;font-weight:600;}
+select {border-radius:5px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
+select:focus { outline:0;border:1.5px solid rgba(0,0,0,0.8);}
+.post-create-close {color:white; font-size:20px; float:right; margin:10px; cursor:pointer;}
+.notify-members-section {width:100%; margin:0px 0px 10px 0px; border-radius:3px; border:2px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;}
+.notify-members-section > a {width:100%; display:flex; text-align:center; color:white; font-size:16px; font-weight:500; text-decoration: none;}
+.max-2lines {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.singleline {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
+.post-link-image {width:100%;height:100px;object-fit:cover;}
+.icon-frame {width:15px;height:15px;margin-right:3px;}
+.icon-site-link {flex-grow:1;font-size:11px;color:rgba(255,255,0,0.6);}
+.new-post-link-image {width:100px;height:80px;object-fit:cover;}
+#arrow2 {color:white}
+.top {width:25px;height:25px;margin-top:5px;}
+.postform::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: white;border-radius:10px;}
+.postform::-webkit-scrollbar{width: 8px;background: gray;border-radius:10px;}
+.postform::-webkit-scrollbar-thumb{background: gray;width: 8px;border-radius:10px;}
+#uform::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: white;border-radius:10px;}
+#uform::-webkit-scrollbar{width: 3px;background: gray;border-radius:10px;}
+#uform::-webkit-scrollbar-thumb{background: gray;width: 3px;border-radius:10px;}
+.text {overflow: hidden;text-overflow: ellipsis;word-wrap: break-word;white-space: pre-line;display: -webkit-box;-webkit-line-clamp: 50; /* number of lines to show */-webkit-box-orient: vertical;}
+label input {display: none;}
+label span {height: 25px;width: 25px;text-align:center;padding-bottom:6px;display: inline-block;position: relative;border:1px solid white;border-radius:3px;}
+[type=checkbox]:checked + span:before {content: '\2714';position: absolute;top:0;font-size:20px;left: 3px;}
+[type=checkbox]:checked + span:after {content: '\2714';position: absolute;top:0;left: 3px;font-size:20px;color:yellow;}
+#post-create-btn {position:fixed;right:0px;bottom:50px;background:#8600b3;border-radius:50px 0px 0px 50px;z-index:100;color:white;padding:10px 20px;text-decoration:none;}
+.ricon-container { width:auto;display:inline-flex;padding-left:5px;margin-right:8px; }
+.ricon { width:25px;height:25px;border-radius:50%;border:2px solid white;margin-left:-6px; }
+.FB_reactions:hover { background-color:rgba(0,0,0,0.3); }
+.FB_reactions:hover span { color:#bfbfbf; }
+.text-center { text-align:center; }
+
+.pc-section { padding-left:25px;padding-right:20px;padding-bottom:20px;text-align:left; }
+.pc-section > div { margin-bottom:6px; }
+.pc-section > div > div > img { width:25px;height:25px;object-fit:cover;border-radius:50%; }
+.pc-section > div > div > span { font-size:14px;color:white;margin-left:8px; }
+.pc-section > div > .pc-item-comment { color:white;font-size:12px;padding:8px 15px;border-radius:0px 15px 15px 15px;background-color:rgba(0,0,0,0.08);display:inline-block !important;margin-top:3px;margin-left:15px; }
+.pc-section > a { color:white;font-size:13px;margin-top:25px;text-decoration:underline;font-style:italic; }
+.pc-section > a:hover { color:#00ccff; }
+
+</style>
+
+
+<!--<script>-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); };-->
+<!--</script>-->
+
+<div id="no_result" class="no-result">
+    No post found ...
+</div>
+
+<img src="/static/images/processing.gif" id="gif">
+
+<img src="/static/images/logo.png" class="logo">
+
+<div id="title">COMIDA CONNECTIONS</div>
+
+<div style="width:100%; height:auto;">
+
+    <div id="title0">COMIDA CONNECTIONS</div>
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-3">
+
+                <div class="post-container">
+
+                    {% if list1 %}
+                        {% for post in list1 %}
+                            <div class="postform" id="{{post.id}}">
+                                <div class="contentform">
+                                    <div class="post-header">
+                                        <div class="member-photo-section">
+                                            <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
+                                                <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
+                                            </a>
+                                        </div>
+                                        <a href="#" style="flex-grow:1;">
+                                            <div class="member-name">
+                                                {{post.member.name}}
+                                                <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
+                                            </div>
+                                        </a>
+
+                                        {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
+                                        <a href="/manager/toplevelsetup?post_id={{post.post.id}}">
+                                            {% if 'top' in post.post.status %}<span class="fa fa-level-down action-btn"></span>
+                                            {% else %}<span class="fa fa-level-up action-btn"></span>
+                                            {% endif %}
+                                        </a>
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                            {% if post.member.pk == me.pk %}
+                                                <span class="fa fa-pencil action-btn"></span>
+                                            {% else %}
+                                                <span class="far fa-comment-alt action-btn"></span>
+                                            {% endif %}
+                                        </a>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                            <span class="fa fa-trash action-btn"></span>
+                                        </a>
+                                    </div>
+
+                                    <div class="form-group text-center">
+                                        <div class="text post-title">{{post.post.title}}</div>
+                                        <div class="post-category">{{post.post.category}}</div>
+                                        <div class="post-time">{{post.post.posted_time}}</div>
+                                    </div>
+
+                                    {% if post.post.picture_url %}
+                                    <div class="form-group">
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                            <img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';">
+                                        </a>
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="form-group">
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
+                                    </div>
+
+                                    {% for prev in post.prevs %}
+                                    <div class="form-group">
+                                        <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                            {% if prev.image_url %}
+                                            <div class="col-sm-4">
+                                                <img src="{{prev.image_url}}" class="post-link-image">
+                                            </div>
+                                            <div class="col-sm-8" style="text-align:left;">
+                                                <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                                {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                                <div style="display:flex;">
+                                                    {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                    <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                            <div class="col-sm-12" style="text-align:left;">
+                                                <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                                {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                                <div style="display:flex;">
+                                                    {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                    <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                    <div class="post-footer">
+                                        <div class="post-actions">
+                                            <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-5px;margin-right:10px;">
+                                                <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                            </a>
+                                            <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                                <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                                <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                                <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                                <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                                <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                                <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                            </div>
+                                            <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                            <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                        </div>
+
+                                        <div class="post-detail-section">
+                                            <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                                <span class="fas fa-arrow-right"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="pc-section">
+                                        {% for comment in post.comments %}
+                                        <div>
+                                            <div>
+                                                <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                                <span>{{comment.member.name}}</span>
+                                            </div>
+                                            <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                        </div>
+                                        {% endfor %}
+                                        {% if post.pc_cnt|to_int > 5 %}
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <br>
+                        {% endfor %}
+
+                    {% else %}
+                        <script>document.getElementById('no_result').style.display = 'block';</script>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3">
+
+                {% if list2 %}
+                    {% for post in list2 %}
+                        <div class="postform" id="{{post.id}}">
+                            <div class="contentform">
+                                <div class="post-header">
+                                    <div class="member-photo-section">
+                                        <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
+                                        </a>
+                                    </div>
+                                    <a href="#" style="flex-grow:1;">
+                                        <div class="member-name">
+                                            {{post.member.name}}
+                                            <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
+                                    <a href="/manager/toplevelsetup?post_id={{post.post.id}}">
+                                        {% if 'top' in post.post.status %}<span class="fa fa-level-down action-btn"></span>
+                                        {% else %}<span class="fa fa-level-up action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                        {% if post.member.pk == me.pk %}
+                                            <span class="fa fa-pencil action-btn"></span>
+                                        {% else %}
+                                            <span class="far fa-comment-alt action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                        <span class="fa fa-trash action-btn"></span>
+                                    </a>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
+                                </div>
+
+                                {% if post.post.picture_url %}
+                                <div class="form-group">
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                        <img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';">
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                <div class="form-group">
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
+                                </div>
+
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-5px;margin-right:10px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <br>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+
+            <div class="col-md-3">
+
+                {% if list3 %}
+                    {% for post in list3 %}
+                        <div class="postform" id="{{post.id}}">
+                            <div class="contentform">
+                                <div class="post-header">
+                                    <div class="member-photo-section">
+                                        <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
+                                        </a>
+                                    </div>
+                                    <a href="#" style="flex-grow:1;">
+                                        <div class="member-name">
+                                            {{post.member.name}}
+                                            <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
+                                    <a href="/manager/toplevelsetup?post_id={{post.post.id}}">
+                                        {% if 'top' in post.post.status %}<span class="fa fa-level-down action-btn"></span>
+                                        {% else %}<span class="fa fa-level-up action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                        {% if post.member.pk == me.pk %}
+                                            <span class="fa fa-pencil action-btn"></span>
+                                        {% else %}
+                                            <span class="far fa-comment-alt action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                        <span class="fa fa-trash action-btn"></span>
+                                    </a>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
+                                </div>
+
+                                {% if post.post.picture_url %}
+                                <div class="form-group">
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                        <img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';">
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                <div class="form-group">
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
+                                </div>
+
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-5px;margin-right:10px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <br>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+
+            <div class="col-md-3">
+
+                {% if list4 %}
+                    {% for post in list4 %}
+                        <div class="postform" id="{{post.id}}">
+                            <div class="contentform">
+                                <div class="post-header">
+                                    <div class="member-photo-section">
+                                        <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
+                                        </a>
+                                    </div>
+                                    <a href="#" style="flex-grow:1;">
+                                        <div class="member-name">
+                                            {{post.member.name}}
+                                            <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
+                                        </div>
+                                    </a>
+
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
+                                    <a href="/manager/toplevelsetup?post_id={{post.post.id}}">
+                                        {% if 'top' in post.post.status %}<span class="fa fa-level-down action-btn"></span>
+                                        {% else %}<span class="fa fa-level-up action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                        {% if post.member.pk == me.pk %}
+                                            <span class="fa fa-pencil action-btn"></span>
+                                        {% else %}
+                                            <span class="far fa-comment-alt action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                        <span class="fa fa-trash action-btn"></span>
+                                    </a>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
+                                </div>
+
+                                {% if post.post.picture_url %}
+                                <div class="form-group">
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">
+                                        <img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';">
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                <div class="form-group">
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
+                                </div>
+
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-5px;margin-right:10px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/manager/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/manager/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <br>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+<a href="javascript:void(0)" onclick="showPostCreateForm()" id="post-create-btn">
+    <i class="fa fa-plus"></i><span style="margin-left:10px;">Create Post</span>
+</a>
+
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" class="topBtn" id="topBtn" style="right:15px;"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+ //   alert("Hello");
+    if (document.body.scrollTop > 120 || document.documentElement.scrollTop > 120) {
+        document.getElementById("topBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("navbar").style.backgroundColor = "rgba(0,0,0,0.7)";
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("topBtn").style.display = "none";
+        // document.getElementById("navbar").style.backgroundColor = "transparent";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.postform #date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+   });
+});
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+       color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+var y = document.getElementsByClassName("text");
+var i;
+for (i = 0; i < y.length; i++) {
+  y[i].innerHTML = urlify(y[i].innerHTML);
+}
+
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:yellow; word-break: break-all;">' + url + '</a>';
+    });
+}
+
+
+</script>
+
+<script>
+
+{% if pst %}
+ScrollTo({{pst.pk}});
+{% endif %}
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.postform .text').each(function(i) {
+            const response = this.innerHTML
+            const decoded = response
+              .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+              .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+            this.innerHTML = decoded;
+        });
+   });
+});
+
+
+function confirmDeletion(postid) {
+    var msg = "Are you sure you want to delete this post？";
+    swal({
+        title: "Warning！",
+        text: msg,
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            window.location.href = "/manager/delpost?post_id=" + postid;
+        }
+    });
+}
+
+function checkLinks(obj){
+    var progressbar = document.getElementById("prev-progress");
+    var container = document.getElementById("post-link-frame");
+    container.innerHTML = "";
+    if(obj.value.length == 0 || !obj.value.includes("http")) {
+        container.style.display = "none";
+        return;
+    }
+    progressbar.style.display = "block";
+    var formdata = new FormData();
+    formdata.append("content", obj.value);
+    var xhr = new XMLHttpRequest(formdata);
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var data = xhr.responseText;
+            console.log('LINK RESP: ' + data);
+            let jsonData = JSON.parse(data);
+            if(jsonData['result'] == 'success') {
+                data = jsonData['data'];
+                for(var i=0; i<data.length; i++){
+                    let title = data[i].title;
+                    let description = data[i].description;
+                    let image_url = data[i].image_url;
+                    let icon_url = data[i].icon_url;
+                    let site_url = data[i].site_url;
+
+                    if(container.style.display == "none") container.style.display = "block";
+                    var formgroupbox = document.createElement("div");
+                    formgroupbox.classList.add("form-group");
+                    var row = document.createElement("div");
+                    row.style.display = "flex";
+                    row.style.cursor = "pointer";
+                    row.addEventListener('click', function(e) {
+                        window.open(site_url);
+                    });
+                    formgroupbox.append(row);
+                    if(image_url.length > 0){
+                        var imageframe = document.createElement("div");
+                        var imagebox = document.createElement("img");
+                        imagebox.classList.add("new-post-link-image");
+                        imagebox.src = image_url;
+                        imageframe.append(imagebox);
+                        row.append(imageframe);
+
+                        var bodybox = document.createElement("div");
+                        bodybox.style.flexGrow = "1";
+                        bodybox.style.paddingLeft = "5px";
+                        bodybox.style.textAlign = "left";
+
+                        var titlebox = document.createElement("label");
+                        titlebox.style.color = "white";
+                        titlebox.style.fontSize = "16px";
+                        titlebox.classList.add("max-2lines");
+                        titlebox.innerHTML = title;
+                        bodybox.append(titlebox);
+
+                        if(description.length > 0) {
+                            var descbox = document.createElement("div");
+                            descbox.classList.add("singleline");
+                            descbox.style.fontSize = "14px";
+                            descbox.style.color = "rgba(255,255,255,0.8)";
+                            descbox.innerHTML = description;
+                            bodybox.append(descbox);
+                        }
+
+                        var linkframe = document.createElement("div");
+                        linkframe.style.display = "flex";
+                        if(icon_url.length > 0) {
+                            var iconbox = document.createElement("img");
+                            iconbox.classList.add("icon-frame");
+                            iconbox.src = icon_url;
+                            linkframe.append(iconbox);
+                        }
+                        var linkbox = document.createElement("div");
+                        linkbox.classList.add("icon-site-link");
+                        linkbox.classList.add("singleline");
+                        linkbox.innerHTML = site_url;
+                        linkframe.append(linkbox);
+                        bodybox.append(linkframe);
+                        row.append(bodybox);
+                    }else {
+                        var bodybox = document.createElement("div");
+                        // bodybox.classList.add("col-sm-12");
+                        bodybox.style.textAlign = "left";
+
+                        var titlebox = document.createElement("label");
+                        titlebox.style.color = "white";
+                        titlebox.style.fontSize = "16px";
+                        titlebox.classList.add("max-2lines");
+                        titlebox.innerHTML = title;
+                        bodybox.append(titlebox);
+
+                        if(description.length > 0) {
+                            let descbox = document.createElement("div");
+                            descbox.classList.add("singleline");
+                            descbox.style.fontSize = "14px";
+                            descbox.style.color = "rgba(255,255,255,0.8)";
+                            descbox.innerHTML = description;
+                            bodybox.append(descbox);
+                        }
+
+                        var linkframe = document.createElement("div");
+                        linkframe.style.display = "flex";
+                        if(icon_url.length > 0) {
+                            var iconbox = document.createElement("img");
+                            iconbox.classList.add("icon-frame");
+                            iconbox.src = icon_url;
+                            linkframe.append(iconbox);
+                        }
+                        var linkbox = document.createElement("div");
+                        linkbox.classList.add("icon-site-link");
+                        linkbox.classList.add("singleline");
+                        linkbox.innerHTML = site_url;
+                        linkframe.append(linkbox);
+                        bodybox.append(linkframe);
+                        row.append(bodybox);
+                    }
+                    container.append(formgroupbox);
+                }
+            }
+            progressbar.style.display = "none";
+        }
+    };
+    xhr.open('POST', '/mothers/bbbbb', true);
+    xhr.send(formdata);
+
+}
+
+
+var isMobile;
+console.log(window.innerWidth)
+if(window.innerWidth <= 576) {
+    isMobile = true;
+    document.getElementById("post-create-btn").style.display = "block";
+} else {
+    isMobile = false;
+    // document.getElementById("post-create-btn").style.display = "none";
+}
+
+function checkUI(x) {
+    if (x.matches) {
+        document.getElementById("post-create-btn").style.display = "block";
+    } else {
+        // document.getElementById("post-create-btn").style.display = "none";
+    }
+}
+
+var x = window.matchMedia("(max-width: 576px)")
+// checkUI(x)
+x.addListener(checkUI)
+
+
+function showPostCreateForm(){
+    console.log(isMobile)
+    var token = generate_token(200);
+    window.sessionStorage.setItem('mw_token', token);
+    window.open("/manager/tonewpost?token=" + token + '&comida=yes') ;
+
+    // if(isMobile == true) {
+    //     document.getElementById("postcreateform").style.display="inline-block";
+    //     document.body.scrollTop = 0;
+    //     document.documentElement.scrollTop = 0;
+    // }else {
+    //     var token = generate_token(200);
+    //     window.sessionStorage.setItem('mw_token', token);
+    //     window.open("/manager/tonewpost?token=" + token) ;
+    // }
+}
+
+
+function generate_token(length){
+    //edit the token allowed characters
+    var a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".split("");
+    var b = [];
+    for (var i=0; i<length; i++) {
+        var j = (Math.random() * (a.length-1)).toFixed(0);
+        b[i] = a[j];
+    }
+    return b.join("");
+}
+
+
+const channel = new BroadcastChannel("mw_post");
+channel.addEventListener("message", e => {
+    console.log(e.data);
+    if(e.data != null) {
+        let data = JSON.parse(JSON.stringify(e.data));
+        let token = data["token"];
+        if(token.length > 0 && token == window.sessionStorage.getItem('mw_token')) {
+            location.reload();
+        }
+    }
+});
+
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+
+function updateReaction(option, postid, feeling) {
+    console.log(option + " /// " + postid + " /// " + feeling)
+    if(feeling == null) feeling = "";
+    console.log(feeling)
+    if(option == "admin") {
+	    var formData = new FormData();
+	    formData.append("post_id", postid);
+	    formData.append("feeling", feeling);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let response = xhr.response;
+                // console.log(response)
+                if(response != "error") {
+                    let resp = xhr.responseText;
+                    // console.log(resp)
+                    let data = JSON.parse(resp);
+                    let post = data["post"];
+                    let allfeelings = post["reactions"];  if(allfeelings.length == 0) allfeelings = "0";
+                    document.getElementById("feelings-" + postid).innerHTML = allfeelings;
+                    if(parseInt(allfeelings) == 0) document.getElementById("feelings-" + postid).style.display = "none";
+                    else document.getElementById("feelings-" + postid).style.display = "block";
+                    if(feeling.length == 0) document.getElementById("flbl-" + postid).innerHTML = "Like";
+                    let likes = post["likes"]; if(likes.length == 0) likes = "0";
+                    let loves = post["loves"]; if(loves.length == 0) loves = "0";
+                    let haha = post["haha"]; if(haha.length == 0) haha = "0";
+                    let wow = post["wow"]; if(wow.length == 0) wow = "0";
+                    let sad = post["sad"]; if(sad.length == 0) sad = "0";
+                    let angry = post["angry"]; if(angry.length == 0) angry = "0";
+                    if(parseInt(likes) == 0) document.getElementById("like-" + postid).style.display = "none";
+                    else document.getElementById("like-" + postid).style.display = "block";
+                    if(parseInt(loves) == 0) document.getElementById("love-" + postid).style.display = "none";
+                    else document.getElementById("love-" + postid).style.display = "block";
+                    if(parseInt(haha) == 0) document.getElementById("haha-" + postid).style.display = "none";
+                    else document.getElementById("haha-" + postid).style.display = "block";
+                    if(parseInt(wow) == 0) document.getElementById("wow-" + postid).style.display = "none";
+                    else document.getElementById("wow-" + postid).style.display = "block";
+                    if(parseInt(sad) == 0) document.getElementById("sad-" + postid).style.display = "none";
+                    else document.getElementById("sad-" + postid).style.display = "block";
+                    if(parseInt(angry) == 0) document.getElementById("angry-" + postid).style.display = "none";
+                    else document.getElementById("angry-" + postid).style.display = "block";
+                }
+            }
+        };
+        xhr.open('POST', "/motherwise/react_post", true);
+        xhr.send(formData);
+	}
+}
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

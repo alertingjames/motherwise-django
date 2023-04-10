@@ -1,0 +1,178 @@
+html, body{ background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), /*url('/static/images/111.jpg')*/ no-repeat center center fixed;background-size:cover;}
+img { border-radius: 5%; }
+#title { font-size:25px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);width:100%;
+    z-index:100; top:50px; display:none; }
+.main { width:100%;height:auto;padding-top:50px; }
+#form .aaa { padding-bottom:30px; }
+#form .aaa .bbb { width:100%; position:relative; display:inline-block; }
+#form .aaa .bbb .footer { width:100%; text-align:right; margin-bottom:12px; padding-right:20px; display:flex; }
+#form .aaa .bbb .footer .posts-btn { text-align:center; margin-left:15px; }
+#form .aaa .bbb .footer .posts-btn span { padding-right:0px; color:white; font-size:23px; }
+#form .aaa .bbb .footer .chat-btn { text-align:center; margin-left:25px; margin-right:5px; margin-top:-1px; }
+#form .aaa .bbb .footer .chat-btn span { padding-right:0px; color:white; font-size:25px; }
+.ttl { font-size:25px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%;padding-left:10px;padding-right:10px; }
+.ttl > div { font-size:14px; font-weight:500; color:white; text-shadow:none; }
+#tool_panel { position:fixed; right:20px; background-color:transparent; width:auto; min-width:250px; z-index:200; bottom:20px; display:inline-block; }
+#alert { font-size:25px;font-weight:300;color:black;text-align:center;box-shadow:0px 0px 50px rgba(0, 0, 0, 0.9);position:fixed;left:50%;float:middle;background-color:white;border-radius:3px;
+    padding:10px 15px 10px 15px;transform:translate(-50%, -50%);width:300px;z-index:100;top:260px;display:none; }
+#alert > div { color:red; font-size:16px; margin-top:20px; margin-bottom:10px; }
+#upBtn { display:none;position:fixed;bottom:20%;right: 15px;z-index:99;border:none;outline:none;background-color:rgba(0,0,0,0.3);color:white;cursor:pointer;padding:15px;border-radius:50%; }
+#upBtn:hover { background-color:orange; }
+#admin{ display:none; }
+.info p { text-align:center;color: #999;text-transform:none;font-weight:600;font-size:15px;margin-top:2px}
+.info i { color:#F6AA93; }
+#profile-body { border-radius:15px;max-width:550px;width:auto;margin:auto;background-color:rgba(255,255,255,0.1);overflow:hidden;box-shadow:10px 10px 0 rgba(0, 0, 0, 0.2);height:250px;margin-top:80px; }
+#profile-body:hover { box-shadow:10px 10px 0 rgba(0, 0, 0, 0.3);background-color:rgba(255,255,255,0.2); }
+p span { color:#F00; }
+p { margin:0px;font-weight:200;line-height:2; }
+form h1 {font-size:21px;background:#327a81 none repeat scroll 0% 0%;color:rgb(255, 255, 255);padding:19px 22px;border-radius:5px 5px 0px 0px;margin:auto;text-shadow:none;text-align:left; }
+h1 { text-align:center;color:#666;text-shadow:1px 1px 0px #FFF;margin:50px 0px 0px 0px; }
+input { border-radius:5px;border:1px solid #eee;margin-bottom:10px;width:100%;height:42px;float:left;padding:0px 15px;opacity:0.8;color:blue; }
+.form-group { overflow:hidden;width:100%; }
+.contentform { padding:10px 10px; }
+.useraddress, .useremail { color:white;}
+.useraddress:hover{ color:white; }
+.useremail:hover{ color:white; }
+label input { display: none;/* <-- hide the default checkbox */ }
+label span {/* <-- style the artificial checkbox */height:15px;width:15px;border:1px solid black;border-radius:50%;background-color:transparent;margin-right:3px;display:inline-block;position:relative; }
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content:'\2714'; color:white;position:absolute;top:-5px;left:0; }
+.centered-and-cropped { object-fit: cover }
+.cohort-panel-button{ width:55px; height:55px; float:left; padding:8px; border-radius:5px; }
+.panel-button{ width:70px; height:70px; float:left; padding:13px; border-radius:5px; box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.8); display:none; }
+#backgroundOverlay{ background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none; }
+.bouton-update{ background-color:#008CBA;color:#FFF;text-align:center;width:100%;border:0;padding:12px 18px;border-radius:50px;cursor:pointer;font-size:16px; }
+textarea { border-radius:5px;border:1px solid #EEE;width:100%;height:80px;float:left;padding:10px 15px;opacity:0.8;color:black;text-align:left; }
+#cohort-field, #group-field { border-radius:50px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;display:inline-block;overflow:hidden;opacity:0.95;float:middle; }
+#cohortBox, #groupBox { font-size:16px;font-weight:300;color:black;position:fixed;left:50%;float:middle;background-color:white;border-radius:10px;padding:8px 15px 15px 15px;transform:translate(-50%, -50%);min-width:300px;
+    max-width:600px;width:auto;z-index:200;top:320px;display:none; }
+.box-u-p { width:50px;height:50px;float:left;border-radius:50%;margin-right:10px; }
+.btn-close { font-size:20px;float:right;margin-top:5px; }
+.box-body { width:100%;display:inline-block; }
+select { width:100%;height: 42px;border:0px;outline:none;padding: 0px 15px;color:black;text-align-last:center;}
+option{ text-align-last:center; }
+label input { display: none;/* <-- hide the default checkbox */}
+label span {/* <-- style the artificial checkbox */height:25px;width:25px;text-align:center;/*padding-bottom:5px;*/display:inline-block;position:relative;border:0;border-radius:3px;}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content:'\2714';position:absolute;top:-10px;font-size:32px;left:2px; }
+[type=checkbox]:checked + span:after {/* <-- style its checked state..with a ticked icon */content:'\2714';position:absolute;top:-10px;left:2px;font-size:32px;color:yellow;}
+.button-text{ font-size:8px;font-weight:30;color:black;padding:3px 0px 0px 0px; }
+#snackbar { visibility:hidden;min-width:200px;margin-left:-125px;background-color:#333;color:#fff;text-align:center;border-radius:2px;padding:12px;position:fixed;z-index:1;left:50%;bottom:30px;
+    font-size: 17px;}
+#snackbar.show { visibility:visible;-webkit-animation:fadein 0.5s, fadeout 0.5s 2.5s;animation:fadein 0.5s, fadeout 0.5s 2.5s; }
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+#notiLayout{ background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;z-index:10000;display:none; }
+#notiForm { max-width:500px;width:auto;height:85%;margin-top:3px;margin-bottom:auto;margin-left:auto;margin-right:auto;overflow-y:auto; }
+.contentform2 { padding:0px 5px 5px 5px;float:middle; }
+.formcontent2 { width:100%;float:middle;margin:auto;box-sizing:border-box; }
+#chat_log2 {width:100%;height:auto;float:middle;color:black;overflow-y:auto; }
+div#list2 { width:100%;height:auto; }
+div#list2 > div { background:white;background-size:cover;padding:5px 10px 5px 10px;margin-top:1px; }
+div#list2 > div > div { width:auto;height:auto;color:black;word-wrap:break-word; }
+#notiForm::-webkit-scrollbar-track { border:1px solid gray;background-color: #eee;border-radius:30px;}
+#notiForm::-webkit-scrollbar { width:6px;background-color:#eee; }
+#notiForm::-webkit-scrollbar-thumb { background-color:gray;border-radius:30px; }
+.trans-section { display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%; }
+#chat_log {width:100%;height:auto;max-height:300px;float:middle;color:black;overflow-y:auto;}
+div#list {width:100%;height:auto;}
+div#list > div {background:white;background-size:cover;padding:5px 10px 5px 10px;margin-top:1px;cursor:pointer;}
+div#list > div > div {width:auto;height:auto;color:black;word-wrap:break-word;}
+div#list > button {background-color:#404040; width:100%; padding:12px 8px 12px 8px; color:#66a3ff; border:0; margin-bottom:2px;}
+div#list > button:hover {color:#3385ff;}
+#chat_log::-webkit-scrollbar-track {border:1px solid gray;background-color:#eee;border-radius:30px;}
+#chat_log::-webkit-scrollbar{width:6px;background-color:#eee;}
+#chat_log::-webkit-scrollbar-thumb{background-color:gray;border-radius:30px;}
+.cropping{ object-fit:cover; }
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
+.header { position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;
+    background:linear-gradient(0deg,rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.8),rgba(89,89,89,0.9),rgba(89,89,89,1.0)); }
+.header #back, .header #home  {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;
+    margin-left:15px;color:black;font-size:18px;cursor:pointer;}
+.header #back:hover, .header #home:hover {background-color:white;}
+.header #notif, #sear {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-right:15px;color:black;font-size:18px;cursor:pointer;}
+.header #notif:hover, #sear:hover {background-color:white;}
+
+.dropdown {position:relative;display:inline-block;}
+.sear-dropdown-content, .msg-dropdown-content {display:none;position:absolute;right:10px;top:60px;background-color:white;min-width:300px;overflow:auto;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:99;border-radius:3px;border:1px solid white; }
+.sear-dropdown-content a { color:black;padding:8px 10px 8px 12px;text-decoration:none;display:block;font-family:verdana;}
+.sear-dropdown-content a:hover {background-color:#eee;}
+.sear-dropdown-content a:first-child {background-color:#404040;}
+.sear-dropdown-content a > div {font-size:16px;font-weight:520;display:flex;}
+.sear-dropdown-content a > div > i {padding:10px 8px 10px 8px;background:rgba(0,0,0,0.1);border-radius:50%;width:35px;height:35px;text-align:center;}
+.sear-dropdown-content a > div > i:last-child {padding:10px;background:transparent;font-weight:400;}
+.sear-dropdown-content a > div > div {flex-grow:1;margin-left:15px;margin-top:7px;}
+.sear-dropdown-content a {border-bottom:1px solid #eee;padding-top:-10px;padding-bottom:10px;}
+.sear-dropdown-content a:last-child {border-bottom:0;}
+.sear-dropdown-content a form button { background-color:transparent;border:0;} .sear-dropdown-content a > form button:hover {background-color:transparent !important;border:0; }
+.sear-dropdown-content a form button > i {color:white; font-size:18px; padding:1.5px;}
+.sear-dropdown-content a form > div > input {background:transparent;color:white;border:0;border-bottom:1.5px solid white;border-radius:0px;box-shadow:none;}
+.sear-dropdown-content a form > div > input:focus {outline:none;box-shadow:none;}
+
+.top-progress {width:50px;height:50px;display:none;}
+
+@media (max-width:576px) {
+    #profile-body { height:auto; }
+    .main { padding-top:120px; }
+    #title { top:100px; }
+}
+
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

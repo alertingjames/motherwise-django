@@ -1,59 +1,77 @@
-{% extends 'mothers/base_notification.html' %}
-{% block title %}Notification History{% endblock %}
-{% block body %}
+<html lang="en">
 
-<br>
+<head>
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message History | MotherWise Nest</title>
+
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
-  <script>
-      WebFont.load({
-      google: {
-      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+<script>
+WebFont.load({
+    google: {
+        families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
     }
-    });
+});
+function isValidImage(imageurl) {
+   try {
+        var img = document.createElement("img");
+        img.src = imageurl;
+    } catch(err) {
+        //
+    }
+
+    if(img.height > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function openSearchMenu() {
+    document.getElementById("sear-dropdown-menu").classList.toggle("show");
+}
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('#sear')) {
+        var dropdowns = document.getElementsByClassName("sear-dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
 </script>
 
 <style>
 
 html, body{
-  background: url("/static/images/postbg.jpg") no-repeat center center fixed;
+  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/q.png') no-repeat center center fixed;
   background-size:cover;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 400px;
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 8px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.desc {
-    padding: 6px;
-    text-align: center;
-}
-
-.manage {
-  border-radius: 10%;
 }
 
 .topBtn {
@@ -226,6 +244,8 @@ select {
   text-align:left;
 }
 
+.postform { width:100%;height:auto;overflow:hidden; }
+
 .postform::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -312,60 +332,85 @@ select {
     to {bottom: 0; opacity: 0;}
 }
 
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;}
+.header #back, .header #home, .header #sent {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;
+    margin-left:15px;color:black;font-size:18px;cursor:pointer;}
+.header #back:hover, .header #home:hover, .header #sent:hover {background-color:white;}
+#back, #sent { font-size:15px !important;padding-top:13px !important; }
+#home { font-size:18px !important;padding-top:11px !important; }
+#messageBox { font-size:16px;font-weight:300;color:black;position:fixed;left:50%;float:middle;background-color:white;border-radius:10px;padding:8px 15px 15px 15px;transform:translate(-50%, -50%);min-width:300px;
+    max-width:600px;width:auto;z-index:200;top:320px;display:none; }
+#no_result { font-size:20px;font-weight:300;color:rgba(255,255,255,0.6);text-align:center;position:fixed;left:50%;float:middle;padding:10px 15px 10px 15px;transform:translate(-50%, -50%);
+    width:auto;z-index:100;top:250px;display:none; }
+#title { font-size:25px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);width:100%;z-index:100;
+    top:50px;display:none; }
+#title0 { font-size:30px;font-weight:800;margin-bottom:50px;padding-top:80px;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%; }
+.btn-reply { font-size:16px;text-decoration:underline;float:right;margin:0px 15px 15px 0px;color:red;margin-bottom:10%; }
+.n-date { font-size:12px;color:orange; }
+.content-section { width:100%;display:inline-block; }
+.u-p { padding:0px 5px 5px 5px;float:left;position:relative; }
+.u-n { padding-left:10px;margin-top:5px;color:black;float:left;font-size:14px;text-align:left;word-break:break-all;word-wrap:break-word; }
+.new-mes { border-radius:10px;border:0;background-color:red;color:white;font-size:16px; }
+#toggleBtn i { width:30px;border-radius:10px;background-color:#E7E7E7;color:black;font-size:16px; }
+.s-p { border-radius:50%;width:50px;height:50px;float:left;object-fit:cover; }
+#btn-close { font-size:20px;float:right;margin-top:5px; }
+.mes-body { width:100%;display:inline-block; }
+#textarea2 { width:100%;height:150px;min-height:150px;max-height:300px;border:1.5px solid #808080;padding:15px;border-radius:5px; }
+#messageboxtitle { font-size:18px;font-weight:600;color:black;text-align:center;width:100%; }
+#gif2 { width:80px;height:50px;z-index:100;display:none; }
+.btn-submit { width:60%;margin-bottom:20px; }
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
+}
+
 </style>
 
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/manager/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 1000);-->
-<!--</script>-->
+</head>
 
-<div id="no_result" style="font-size:20px; font-weight:300; color: rgba(255,255,255,0.6); text-align:center;
-	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
-	transform:translate(-50%, -50%); width:auto; z-index:100; top:250px; display:none;">
+<body>
+
+<div id="no_result">
     No message found ...
 </div>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
-
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
-
-<div id="title" style="font-size:25px; font-weight:800; font-family:verdana; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">MESSAGE HISTORY</div>
+<div id="title">MESSAGE HISTORY</div>
 
 <div style="width:100%; height:auto;">
 
-    <div style="font-size:25px; font-weight:800; font-family:verdana; margin-bottom:30px; margin-top:20px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">MESSAGE HISTORY</div>
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }" title="Back"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';" title="Home"></i>
+        <i id="sent" class="far fa-comment-alt" onclick="window.location.href='/mothers/sentnotis/';" title="Sent Messages"></i>
+    </div>
+
+    <div id="title0">MESSAGE HISTORY</div>
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3" style="text-align:center;">
-
-
 
         </div>
 
         <div class="col-sm-6" style="text-align:center;">
 
             {% if list %}
-                <form style="width:100%; height:auto; overflow:hidden;" class="postform">
+                <div class="postform">
                     {% for noti in list %}
                         <div class="user-form" id="{{noti.noti.pk}}">
                             <div class="contentform">
-                                <div style="width:100%; display:inline-block;" >
-                                    <div style="font-size:12px; color:orange;">{{noti.date}}</div>
-                                    <div style="padding:0px 5px 5px 5px; float:left; position:relative;">
+                                <div class="content-section" >
+                                    <div class="n-date">{{noti.date}}</div>
+                                    <div class="u-p">
                                         <a href="{% if noti.sender.photo_url %}{{noti.sender.photo_url}}{% endif %}">
                                             <img src="{% if noti.sender.photo_url %}{{noti.sender.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
                                     <a href="#">
-                                        <div style="padding-left:10px; margin-top:5px; color: black; float:left; font-size:14px; text-align:left; word-break: break-all; word-wrap: break-word;">
+                                        <div class="u-n">
                                             {% if noti.sender.pk == me.pk %}
                                                 Me
                                             {% else %}
@@ -377,7 +422,7 @@ select {
 
                                     {% if noti.sender.pk != me.pk and noti.noti.status == '' %}
                                     <div style="float:right; margin-top:5px; margin-right:15px;">
-                                        <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;"  id="statusBtn{{noti.noti.pk}}"
+                                        <button type="button" class="new-mes" id="statusBtn{{noti.noti.pk}}"
                                             onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>
                                     </div>
                                     {% endif %}
@@ -388,12 +433,12 @@ select {
                                         {% if noti.noti.pk == notid|to_int %}
                                         <a href="javascript:void(0);" onclick="javascript:toggle(this);" style="text-decoration:none;">
                                             <div style="text-align:left;" class="text" id="msgBox">{{noti.noti.message}}</div>
-                                            <div style="text-align:center;" id="toggleBtn"><i class="fas fa-ellipsis-h" style="width:30px; border-radius:10px; background-color:#E7E7E7; color:black; font-size:16px;"></i></div>
+                                            <div style="text-align:center;" id="toggleBtn"><i class="fas fa-ellipsis-h"></i></div>
                                         </a>
                                         {% else %}
                                         <a href="javascript:void(0);" onclick="javascript:toggle(this);" style="text-decoration:none;">
                                             <div style="text-align:left;" class="text0" id="msgBox">{{noti.noti.message}}</div>
-                                            <div style="text-align:center;" id="toggleBtn"><i class="fas fa-ellipsis-h" style="width:30px; border-radius:10px; background-color:#E7E7E7; color:black; font-size:16px;"></i></div>
+                                            <div style="text-align:center;" id="toggleBtn"><i class="fas fa-ellipsis-h"></i></div>
                                         </a>
                                         {% endif %}
                                         <script>
@@ -424,10 +469,10 @@ select {
 
                     {% endfor %}
 
-                </form>
+                </div>
 
                 <a href="javascript:void(0)"  onclick="javascript:openMessageBox();">
-                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px; color:red; margin-bottom:10%;">Reply</div>
+                    <div class="btn-reply">Reply</div>
                 </a>
 
             {% endif %}
@@ -448,14 +493,12 @@ select {
 
 <input type="hidden" id="me_email" value="{{me.email}}">
 
-<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
-	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
-    <img style="border-radius:50%; width:50px; height:50px; float:left; object-fit:cover;" src="{% if sender %}{{sender.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
-    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
-    <div style="width:100%; display:inline-block;">
+<div id="messageBox">
+    <img class="s-p" src="{% if sender %}{{sender.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+    <span class="fa fa-close" id="btn-close" onclick="javascript:dismissLayouts();"></span>
+    <div class="mes-body">
         <div>
-            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND REPLY MESSAGE</div><br>
+            <div id="messageboxtitle">SEND REPLY MESSAGE</div><br>
             <form action="/mothers/send_reply_message" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
                 {% csrf_token %}
                 <div class="form-group">
@@ -463,20 +506,19 @@ select {
                     <input type="hidden" name="noti_id" id="noti_id" value="{{notid}}">
                     <input style="height:5px; opacity:0;">
                     <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
-                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."
-                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."></textarea>
                     <script>autosize(document.getElementById("textarea2"));</script>
                 </div>
-                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; z-index:100; display: none;" id="gif2"></center>
+                <center><img src="/static/images/progressbar.gif" id="gif2"></center>
                 <center>
-                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;" onclick="javascript:sendReplyMessage();">Submit</button>
+                    <button type="button" class="bouton-update btn-submit" onclick="javascript:sendReplyMessage();">Submit</button>
                 </center>
                 <script>
                     function sendReplyMessage(){
                         var member_id = document.getElementById('member_id').value;
                         var message = document.getElementById('textarea2').value;
                         if(message.length == 0){
-                            alert('Please write something in message box.');
+                            showFailureAlert('Please write something in message box.');
                             return;
                         }
                         document.getElementById('gif2').style.display = "block";
@@ -679,10 +721,33 @@ function processNewMessage(noti_id, obj){
 }
 
 
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+
+
 </script>
 
 
-{% endblock %}
+</body>
+
+</html>
 
 
 

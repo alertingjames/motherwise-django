@@ -13,7 +13,7 @@ const initUI = () => {
 
   nameMessage.innerHTML = `You are logged in as ${name}`;
   joinButton.disabled = false;
-  joinButton.style.display = "block";
+//   joinButton.style.display = "block";
 
   joinButton.onclick = () => {
       let conferenceAlias = conferenceAliasInput.value;

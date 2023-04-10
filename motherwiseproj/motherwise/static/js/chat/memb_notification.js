@@ -19,8 +19,10 @@ starCountRef.on('child_added', function(snapshot) {
     li.style.textAlign = 'left';
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
-    if (key2.senderPhoto.length > 0) img.src = key2.senderPhoto;
+
+    if (key2.senderPhoto.length > 0 && isValidImage(key2.senderPhoto)) img.src = key2.senderPhoto;
     else img.src = "/static/images/manager.jpg";
+
     img.style.width = "40";
     img.style.height = "40";
     img.style.borderRadius = "50%";
@@ -34,7 +36,7 @@ starCountRef.on('child_added', function(snapshot) {
             'member_email': key2.sender
        }
        post('/mothers/to_chat/', context);
-       console.log('/mothers/to_chat/');
+    //   console.log('/mothers/to_chat/');
     });
     ul.appendChild(ul2);
   }
@@ -60,7 +62,7 @@ function getChildObj (obj) {
 }
 
 function getCookie(name) {
-    console.log('getCookie');
+    // console.log('getCookie');
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
             var cookies = document.cookie.split(';');
@@ -73,7 +75,7 @@ function getCookie(name) {
                     }
             }
     }
-    console.log('cookie:' + cookieValue);
+    // console.log('cookie:' + cookieValue);
     return cookieValue;
 }
 
@@ -136,14 +138,27 @@ function timeConverter(UNIX_timestamp){
     // if(oneMinuteMilliseconds <= now - UNIX_timestamp && now - UNIX_timestamp < oneHourMilliseconds) time = String(parseInt((now - UNIX_timestamp)/(60000))) + "m ago";
     // if(oneHourMilliseconds <= now - UNIX_timestamp && now - UNIX_timestamp < oneDayMilliseconds) time = String(parseInt((now - UNIX_timestamp)/(3600000))) + "h ago";
     // if(oneDayMilliseconds <= now - UNIX_timestamp && now - UNIX_timestamp < oneMonthMilliseconds) time = String(parseInt((now - UNIX_timestamp)/(24*3600000))) + "d ago";
-    console.log(time);
+    // console.log(time);
 
   return time;
 }
 
 
 
+function isValidImage(imageurl) {
+   try {
+        var img = document.createElement("img");
+        img.src = imageurl;
+    } catch(err) {
+        //
+    }
 
+    if(img.height > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 

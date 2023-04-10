@@ -1,0 +1,565 @@
+{% extends 'motherwise/base.html' %}
+{% block title %}Broadcast | MotherWise Admin{% endblock %}
+{% block body %}
+
+<style>
+
+html, body{background:linear-gradient(0deg,rgba(0,51,77,0.9),rgba(0,51,77,0.7),rgba(0,51,77,0.3),rgba(0,51,77,0.1)), url("https://cdn.vox-cdn.com/thumbor/AgrtzgQ8iG56_m6rYbczCvCB9RU=/0x0:2000x1333/1200x900/filters:focal(840x507:1160x827)/cdn.vox-cdn.com/uploads/chorus_image/image/56328223/190219_10_19_04_5DSR5554.12.jpg") no-repeat center center fixed; background-size:cover;}
+#form {border-radius: 5px;max-width:800px;width:auto;height:auto;margin-top:2%;margin-bottom:2% auto;margin-left:auto;margin-right:auto;overflow:hidden;background-size:cover;}
+.ttl {color:white;font-size:35px;font-weight:800;}
+p span {color: #F00;}
+p {margin: 0px;font-weight: 600;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+.form-group {overflow: hidden;width:100%;}
+.contentform {padding:30px;float:middle;margin:auto;}
+.formcontent {width:100%;float:middle;margin:auto;box-sizing: border-box;padding: 0px;}
+#progressbar, #progressbar2 {width:30px; height:30px; display:none;}
+#message {width:100%; height:200px; max-height:500px; border:1.5px solid white; padding:15px; border-radius:5px; font-size:18px;}
+#message:focus {outline:0;border:1.5px solid red;}
+.bouton-update{background-color:#0066cc;color:#FFF;text-align:center;width:100%;height:45px;border:0;padding:12px 18px;border-radius:50px;cursor:pointer;font-size:18px;}
+/* The container */
+.container {display:block;position:relative;padding-left:35px;margin-bottom:12px;cursor:pointer;font-size:18px;color:white;-webkit-user-select:none;
+    -moz-user-select:none;-ms-user-select:none;user-select:none;}
+/* Hide the browser's default checkbox */
+.container input {position:absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}
+/* Create a custom checkbox */
+.checkmark {position: absolute;top: 0;left: 0;height: 25px;width: 25px;background-color: #eee;}
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {background-color: #ccc;}
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {background-color: #2196F3;}
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {content: "";position: absolute;display: none;}
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {display: block;}
+/* Style the checkmark/indicator */
+.container .checkmark:after {left: 9px;top: 5px;width: 5px;height: 10px;border: solid white;border-width: 0 3px 3px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}
+#exclude-emails {position:fixed; float:right; z-index:1000000000; right:0; top:0; width:400px; height:100%; display:none; background:#4976d0;transform: translateX(100%);-webkit-transform: translateX(100%);}
+.slide-rin {animation: slide-rin 0.5s forwards;-webkit-animation: slide-rin 0.5s forwards;}
+.slide-rout {animation: slide-rout 0.5s forwards;webkit-animation: slide-rout 0.5s forwards;}
+@keyframes slide-rin {100% { transform: translateX(0%); }}
+@-webkit-keyframes slide-rin {100% { -webkit-transform: translateX(0%); }}
+@keyframes slide-rout {0% { transform: translateX(0%); }100% { transform: translateX(100%); }}
+@-webkit-keyframes slide-rout {0% { -webkit-transform: translateX(0%); }100% { -webkit-transform: translateX(100%); }}
+.btn-exclude {position:fixed;right:-45px;top:30px;padding:15px 50px 15px 20px;background-color:rgba(102, 0, 204, 0.8);color:white;border:0;border-radius:50px 0 0 5px;text-align:left;font-size:14px;}
+.btn-exclude:hover {background-color:#cc0052;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+#search {float:left; margin-left:10px; background:transparent; border:0; padding:3px 6px; font-size:16px; color:white; width:300px; height:auto; text-align:left;}
+#search:focus { outline:0;}
+#search::placeholder {color:white;opacity:0.7;}
+#search:-ms-input-placeholder { color: white;opacity: 0.7;}
+#search::-ms-input-placeholder { color: white;opacity: 0.7;}
+.user-form {max-width:100%;width:auto;margin:auto;margin-bottom:2px;overflow:hidden;background:#4976d0;cursor:pointer;}
+.user-form:hover {background:#2f5cb6;}
+.ulist {width:100%;max-height:70%; padding-top:5px; padding-bottom:10px; overflow:auto;}
+.ulist::-webkit-scrollbar {width:6px;}
+.ulist::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3);border-radius:10px;}
+.ulist::-webkit-scrollbar-thumb {border-radius:10px;-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.8);}
+.u-img {border-radius:50%; height:35px; width:35px; object-fit:cover;}
+.checkbox {display:none;}
+.check-span {height:25px;width:25px;text-align:center;padding-bottom:6px;display:inline-block;position:relative;border:2px solid white;}
+.checkbox:checked + span:before {content:'\272D';position:absolute;top:0;font-size:16px;left:3px;}
+.checkbox:checked + span:after {content:'\272D';position:absolute;top:0;left:3px;font-size:16px;color:red;}
+#excluded {color:yellow;font-size:14px;}
+#output-image {width:auto; height:40px; float:left; border-radius:5px; border:1.5px solid white; display:none;}
+#image-container { float:left; margin-left:25px; font-size:16px; color:white; }
+#image-container > i { font-size:25px; color:white; margin-right:5px; }
+.selall {flex-grow:1;text-align:right;color:yellow;margin-right:10px;font-size:12px;font-family:verdana;margin-top:3px;}
+
+</style>
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<button type="button" class="btn-exclude" onclick="javascript:showEmailBox();">Please DO NOT send <br> to these users</button>
+
+<form id="form" action="/manager/broadcast" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+    <div class="contentform">
+		<div class="formcontent">
+            <center><label class="ttl">Send Broadcast Message</label></center>
+            <br>
+            <br>
+			<div class="form-group">
+			    <label class="container" for="users">To All Network Members
+                    <input type="checkbox" id="users" checked disabled>
+                    <span class="checkmark"></span>
+                </label>
+			</div>
+			<div class="form-group" style="margin-top:20px;">
+				<script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                <textarea name="message" id="message" placeholder="Write your message here ..." style="overflow: hidden; overflow-wrap: break-word; resize: horizontal; height: 200px;"></textarea>
+                <script>autosize(document.getElementById("message"));</script>
+			</div>
+			<div class="form-group">
+	            <img id="output-image">
+	            <label id="image-container"><i class="fa fa-paperclip"></i> Please load the image (maximum size: 5MB)
+                    <input type="file" name="file" style="display:none;" id="file" accept="image/*">
+                </label>
+                <script>
+                    function readFile() {
+                        if (this.files) {
+                            var file = this.files[0];
+                            var picReader = new FileReader();
+                            picReader.addEventListener("load",function(event){
+                                document.getElementById("output-image").src = event.target.result;
+                                document.getElementById("output-image").style.display = "block";
+                            });
+                            //Read the image
+                            picReader.readAsDataURL(file);
+                            const fileSize = file.size / 1024 / 1024; // in MiB
+                            if (fileSize > 5) {
+                                showFailureAlert("The file size is over 5MiB. You may not be able to send it.");
+                            }
+                        }
+                    }
+                    document.getElementById("file").addEventListener("change", readFile);
+                </script>
+            </div>
+			<center><img src="/static/images/progressbar.gif" id="progressbar"></center>
+			<br>
+            <center>
+                <button type="button" class="bouton-update" onclick="sendMessage()">Send</button>
+            </center>
+	    </div>
+	</div>
+</form>
+
+
+
+<div id="exclude-emails">
+    <div style="padding:20px;color:white;">
+        <img src="/static/images/cancelicon.png" style="width:25px; height:25px; float:right;" onclick="javascript:dismissEmailBox();">
+        <div style="width:100%;">
+            <center>
+                <h5>Please DO NOT send to these users</h5>
+                <a href="javascript:void(0)" onclick="viewExcludedEmails()" id="excluded">Selected：</a>
+            </center>
+            <center><img src="/static/images/progressbar.gif" id="progressbar2"></center>
+            <br>
+            <div style="text-align:center; display:inline-block;">
+                <div style="display:inline-block;">
+                    <div>
+                        <i class="fa fa-search" style="font-size:20px; float:left; color:white;"></i>
+                        <input type="text" placeholder="Search..." autocomplete="off" id="search" onkeyup="filter()" onchange="clear()">
+                    </div><br>
+                    <div style="background:white; height:1px; margin-top:8px;"></div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div style="display:flex;">
+                <div style="flex-grow:1;"></div>
+                <div style="display:flex;margin-right:3px;background-color:#0066cc;border-radius:25px;padding:8px 14px 8px 14px;">
+                    <div class="selall">Select All</div>
+                    <label style="">
+                        <input type="checkbox" class="checkbox" id="allcheckbox" onchange="selectallusers(this)"></span>
+                        <span class="check-span"></span>
+                    </label>
+                </div>
+            </div>
+            <form action="/manager/bexcludedemailsave" method="post" id="user-list">
+                {% csrf_token %}
+                {% if users or admins %}
+                <div class="ulist">
+                    <div id="uform">
+                        {% for user in users %}
+                        <div class="user-form" style="{% if user.notice_excluded == 'yes' %}background-color:#2f5cb6;{% endif %}" onclick="highlight(this)">
+                            <div style="padding:10px;">
+                                <div style="padding-bottom:3px; display:flex;">
+                                    <div style="float:left; position:relative;">
+                                        <img src="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" class="u-img">
+                                    </div>
+                                    <div style="flex-grow:1;">
+                                        <div style="padding-left:15px;color:white;float:left;">
+                                            <div style="font-weight:600;font-size:16px;text-align:left; word-wrap:break-word;text-overflow:ellipsis;">{{user.name}}</div>
+                                            <div style="font-size:14px;float:left;margin-right:10px;word-break:break-all;">{{user.email}}</div>
+                                        </div>
+                                    </div>
+                                    <div style="background-color:transparent;">
+                                        <label style="">
+                                            <input type="checkbox" class="checkbox" name="exusers[]" value="{{user.id}}" {% if user.notice_excluded == 'yes' %}checked{% endif %}>
+                                            <span class="check-span"></span>
+                                        </label>
+                                    </div>
+                                    <input hidden id="uname" value="{{user.name}}">
+                                    <input hidden id="uemail" value="{{user.email}}">
+                                    <input hidden id="uexcluded" value="{{user.notice_excluded}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div style="text-align:center;width:100%;margin-top:15px;position:absolute;bottom:15px;">
+                    <button type="button" class="bouton-update" id="save-btn" style="width:60%;background:#cc3300;visibility:visible;" onclick="saveExcludedEmails()">Save</button>
+                </div>
+                {%else %}
+                <div style="width:100%; height:200px; text-align:center;">
+                    <h5 style="color:rgba(255,255,255,0.7); margin: 15px;">No member found ...</h5>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="backgroundOverlay" onclick="dismissEmailBox();"></div>
+
+
+<script>
+
+var ulist = document.getElementById("uform");
+var ulis = ulist.querySelectorAll( "#uform > div" );
+var uobjs = [];
+var uobjs2 = [];
+for(var i=0; i<ulis.length; i++){
+    uobjs.push(ulis[i]);
+    uobjs2.push(ulis[i]);
+}
+
+function filter() {
+    if(document.getElementById("uform").style.display != "none"){
+        ufilter();
+    }
+}
+
+
+function ufilter(){
+    var keyword = document.getElementById("search").value;
+    if(keyword.length > 0){
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs.length; i++){
+            var member_name = uobjs[i].querySelector("input[id='uname']");
+            if(member_name.value.toLowerCase().includes(keyword.toLowerCase())){
+                ulist.appendChild(uobjs[i]);
+            }
+            else {
+                var member_email = uobjs[i].querySelector("input[id='uemail']");
+                if(member_email.value.toLowerCase().includes(keyword.toLowerCase())){
+                    ulist.appendChild(uobjs[i]);
+                }
+            }
+        }
+    }else{
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs2.length; i++){
+            ulist.appendChild(uobjs2[i]);
+        }
+    }
+}
+
+
+
+function clear(){
+    var keyword = document.getElementById("search").value;
+    if(keyword.length == 0){
+        // alert('clear?');
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs2.length; i++){
+            ulist.appendChild(uobjs2[i]);
+        }
+    }
+}
+
+
+var viewOption = "all";
+
+function viewExcludedEmails() {
+    if(viewOption == "excluded") {
+        viewOption = "all";
+        showExCounts();
+    }else {
+        viewOption = "excluded";
+        document.getElementById("excluded").innerHTML = "Show all";
+    }
+    uexcludedemails(viewOption);
+}
+
+
+function uexcludedemails(option){
+    if(option == "excluded"){
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs.length; i++){
+            var checkbox = uobjs[i].querySelector("input[type='checkbox']");
+            if(checkbox.checked){
+                ulist.appendChild(uobjs[i]);
+            }
+        }
+    }else{
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs2.length; i++){
+            ulist.appendChild(uobjs2[i]);
+        }
+    }
+}
+
+
+</script>
+
+
+<script>
+
+var exadmins_count = 0;
+var exusers_count = 0;
+
+function showEmailBox(){
+    var excludedbox = document.getElementById("excluded");
+    var usercheckbox = document.getElementById("users");
+    if(usercheckbox.checked){
+        excludedbox.innerHTML = "Selected： " + String(exusers_count);
+    }
+
+    document.getElementById("backgroundOverlay").style.display = "block";
+    setTimeout(function(){
+        document.getElementById("exclude-emails").style.display = "block";
+        document.getElementById("exclude-emails").setAttribute('class', 'slide-rin');
+    }, 30);
+}
+
+function dismissEmailBox(){
+    document.getElementById("exclude-emails").setAttribute('class', 'slide-rout');
+    setTimeout(function() {
+        document.getElementById("exclude-emails").style.display="none";
+        document.getElementById("backgroundOverlay").style.display = "none";
+    }, 400);
+}
+
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+function highlight(obj){
+    var checkbox = obj.querySelector("input[type='checkbox']");
+    checkbox.checked = !checkbox.checked;
+    if(checkbox.checked){
+        obj.style.backgroundColor = "#2f5cb6";
+    }else {
+        obj.style.backgroundColor = "#4976d0";
+    }
+    var excludedbox = document.getElementById("excluded");
+    var selected = 0;
+    let elems = document.getElementsByName("exusers[]");
+    for(var i=0; i<elems.length; i++){
+        let elem = elems[i];
+        if(elem.checked) selected++;
+    }
+    excludedbox.innerHTML = "Selected： " + String(selected);
+    document.getElementById("save-btn").style.visibility = "visible";
+}
+
+{% for user in users %}
+{% if user.notice_excluded == 'yes' %}
+exusers_count++;
+{% endif %}
+{% endfor %}
+
+
+function saveExcludedEmails() {
+    var progressbar = document.getElementById("progressbar2");
+    progressbar.style.display = "block";
+    var form = document.getElementById("user-list");
+    var xhr = new XMLHttpRequest();
+    var formData = new FormData(form);
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            progressbar.style.display = "none";
+            if(xhr.responseText.length > 0){
+                let jsonData = JSON.parse(xhr.responseText);
+                let result = jsonData["result"];
+                if(result == "success") {
+                    let exusersc = jsonData["exusers"];
+                    exusers_count = parseInt(exusersc);
+                    showExCounts();
+                }
+            }else {
+                showFailureAlert("Failed to save the job.");
+            }
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+var progressbar = document.getElementById("progressbar");
+
+function sendMessage() {
+    if(progressbar.style.display == "block")return;
+    var usercheckbox = document.getElementById("users");
+    var messagebox = document.getElementById("message");
+    if(!usercheckbox.checked){
+        showFailureAlert("Select the option above.");
+        return;
+    }
+    if(messagebox.value.length == 0){
+        showFailureAlert("Please enter a message.");
+        return;
+    }
+    progressbar.style.display = "block";
+    var form = document.getElementById("form");
+    var xhr = new XMLHttpRequest();
+    var formData = new FormData(form);
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            progressbar.style.display = "none";
+            if(xhr.response == "success"){
+                showSuccessAlert("Message has been sent!");
+                messagebox.value = "";
+            }
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    })
+    .then((ok) => {
+        if (ok) {
+            location.reload();
+        }
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+
+function showExCounts() {
+    var excludedbox = document.getElementById("excluded");
+    var selected = 0;
+    let elems = document.getElementsByName("exusers[]");
+    for(var i=0; i<elems.length; i++){
+        let elem = elems[i];
+        if(elem.checked) selected++;
+    }
+    excludedbox.innerHTML = "Selected： " + String(selected);
+}
+
+
+function selectallusers(obj) {
+    let items = document.getElementsByClassName("user-form");
+    for(var i=0; i<items.length; i++) {
+        toggleCheck(items[i], obj.checked);
+    }
+    if(obj.checked) document.getElementById("save-btn").style.visibility = "hidden";
+    else document.getElementById("save-btn").style.visibility = "visible";
+}
+
+function toggleCheck(obj, check) {
+    var checkbox = obj.querySelector("input[type='checkbox']");
+    checkbox.checked = check;
+    if(checkbox.checked){
+        obj.style.backgroundColor = "#2f5cb6";
+    }else {
+        obj.style.backgroundColor = "#4976d0";
+    }
+    var excludedbox = document.getElementById("excluded");
+    var selected = 0;
+    let elems = document.getElementsByName("exusers[]");
+    for(var i=0; i<elems.length; i++){
+        let elem = elems[i];
+        if(elem.checked) selected++;
+    }
+    excludedbox.innerHTML = "Selected： " + String(selected);
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

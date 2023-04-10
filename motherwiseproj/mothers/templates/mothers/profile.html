@@ -1,222 +1,145 @@
-{% extends 'mothers/base_profile.html' %}
-{% block title %}My Profile{% endblock %}
-{% block body %}
+<html>
 
-<br>
+<head>
+
+<title>Motherwise Nest | My Profile</title>
+{% load static %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+
+<!-- add styles -->
+<link href="/static/css/main.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/jquery.Jcrop.min.css" rel="stylesheet" type="text/css" />
+
+<!-- add scripts -->
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/jquery.Jcrop.min.js"></script>
 
 <style>
 
-html, body{
-  background: linear-gradient(45deg,rgba(0,0,0,0.0),rgba(0,0,0,0.0),rgba(0,51,102,0.2),rgba(0,51,102,0.2),rgba(0,0,0,0.0),rgba(0,0,0,0.0)), url("/static/images/mother4.jpeg") no-repeat center center fixed;
-  background-size:cover;
-}
-
-form h1 {
-  font-size: 22px;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:middle;
-  font-family: verdana;
-}
-
-#form {
-  border-radius: 5px;
-  max-width:1000;
-  height:auto;
-  margin-top: 0%;
-  margin-bottom: 2% auto;
-  margin-left:auto;
-  margin-right:auto;
-  padding:5%;
-  overflow: hidden;
-  background:transparent;
-}
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 600;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:20px 0px 0px 0px
-}
-
-.field {
-  margin-bottom: 5px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  color:white;
-  text-align:left;
-  background-color:transparent;
-}
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.icon-case {
-  width: 8%;
-  float: left;
-  border-radius: 50px 0px 0px 50px;
-  border:0;
-  background:white;
-  height:42px;
-  position: relative;
-  text-align: center;
-  line-height:40px;
-  padding-top:11px;
-}
-
-i {
-  color:gray;
-}
-
-.contentform {
-  padding: 30px 8px 0px 8px;
-  float:middle;
-  margin:auto;
-}
-
-.bouton-update{
-  background-color: #0077b3;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 12px 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.formcontent {
-  width:100%;
-  float:middle;
-  margin:auto;
-  box-sizing: border-box;
-  padding: 0px;
-}
-
-.validation {
-  display:none;
-  margin: 0 0 10px;
-  font-weight:400;
-  font-size:13px;
-  color: #DE5959;
-}
-
+html, body { background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/p.png') no-repeat center center fixed; background-size:cover;}
+#form {border-radius: 5px;max-width:1000;height:auto;margin-top: 0%;margin-bottom: 2% auto;margin-left:auto;margin-right:auto;padding:5%;overflow: hidden;background:transparent;}
+p span {color: #F00;}
+p {margin: 0px;font-weight: 600;line-height: 2;color:#fff;}
+.field {margin-bottom:5px;margin-right:auto;width:100%;min-height:42px;color:white;text-align:left;background-color:transparent;font-size:20px;font-weight:500;}
+.name { font-size:25px;font-weight:600; }
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.icon-case {width: 8%;float: left;border-radius: 50px 0px 0px 50px;border:0;background:white;height:42px;position: relative;text-align: center;line-height:40px;padding-top:11px;}
+i {color:gray;}
+.contentform {padding: 30px 8px 0px 8px;float:middle;margin:auto;}
+.bouton-update{background-color: #0077b3;color: #FFF;text-align: center;width: 100%;border:0;padding: 12px 18px;border-radius: 50px;cursor: pointer;font-size: 16px;}
+.formcontent {width:100%;float:middle;margin:auto;box-sizing: border-box;padding: 0px;}
+.validation {display:none;margin: 0 0 10px;font-weight:400;font-size:13px;color: #DE5959;}
 .centered-and-cropped { object-fit:cover; }
-
-.pan {
-  max-width:450px;
-  width:auto;
-  height:auto;
-  margin-bottom: auto;
-  margin-left:auto;
-  margin-right:0;
-  overflow: hidden;
-}
-
-.pan2 {
-  max-width:450px;
-  width:auto;
-  height:auto;
-  margin-bottom: auto;
-  margin-left:0;
-  margin-right:auto;
-  overflow: hidden;
-}
-
+.pan {max-width:450px;width:auto;height:auto;margin-bottom: auto;margin-left:auto;margin-right:0;overflow: hidden;}
+.pan2 {max-width:450px;width:auto;height:auto;margin-bottom: auto;margin-left:0;margin-right:auto;overflow: hidden;}
 /* Look like a clicked/depressed button */
-label.cameraButton:active {
-  border-color: #CCC #EEE #EEE #CCC;
-}
-
+label.cameraButton:active {border-color: #CCC #EEE #EEE #CCC;}
 /* This is the part that actually hides the 'Choose file' text box for camera inputs */
-label.cameraButton input[accept*="image"] {
-  display: none;
-}
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-
-label span {/* <-- style the artificial checkbox */
-  height: 25px;
-  width: 25px;
-  border:2px solid white;
-  margin-right:20px;
-  display: inline-block;
-  position: relative;
-}
-
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top: 0px;
-  left: 5px;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.3);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
+label.cameraButton input[accept*="image"] {display: none;}
+label input {display: none;/* <-- hide the default checkbox */}
+label span {/* <-- style the artificial checkbox */height: 25px;width: 25px;border:2px solid white;margin-right:20px;display: inline-block;position: relative;}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */content: '\2714';position: absolute;top: 0px;left: 5px;}
+.blur {backdrop-filter:blur(15px);position:fixed;top:0;left:0;right:0;bottom:0;}
+.logotitle-frame {position:relative;margin-top:50px;margin-bottom:50px;}
+.logotitle {width:250px;height:auto;border-radius:0;border:0;}
+.pic-frame {display:inline-block; position:relative; width:100%;}
+#picture {width:200px; height:200px; margin-top:10px; margin-bottom:10px; border-radius:50%; object-fit:cover;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.3);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+#gif {position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);width:80px;z-index:2000;top:120px;display:none;}
+#translang {display:inline-block; width:auto; border-radius:30px; z-index:9999; bottom:15px; left:1%; position:fixed;}
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;}
+.header #back, .header #home, .header #posts {width:40px;height:40px;text-align:center;padding:12px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;
+    margin-left:15px;color:black;font-size:18px;cursor:pointer;}
+.header #reset-pw, .header #logout {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-right:15px;color:black;font-size:18px;cursor:pointer;}
+.header #back:hover, .header #home:hover, .header #posts:hover, .header #reset-pw:hover, .header #logout:hover {background-color:white;}
+.edit-btn { width:40px;height:40px;text-align:center;padding:12px;background-color:rgba(255,255,255,0.7);border-radius:50%;color:black;font-size:18px;cursor:pointer;position:absolute;top:0;right:10%; }
+.edit-btn:hover { background-color:white; }
+.singleline {width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.priv { color:#ff6600;font-size:16px;font-style:italic; }
+.priv i { color:#ff6600;margin-right:5px; }
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
 }
 
 </style>
 
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/mothers/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 1000);-->
-<!--</script>-->
+<script>
+    window.onload = function() {
+    	window.moveTo(0, 0);
+    	window.resizeTo(screen.availWidth, screen.availHeight);
+    }
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
 
-<script type="text/javascript">
-window.onload = function() {
-	window.moveTo(0, 0);
-	window.resizeTo(screen.availWidth, screen.availHeight);
-}
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function openGroupBox(){
+        {% if groups %}
+        document.getElementById('backgroundOverlay').style.display='block';
+        document.getElementById('groupBox').style.display='block';
+        {% else %}
+        alert('You don\'t have any group allowed yet.');
+        {% endif %}
+    }
 </script>
 
-<meta charset="UTF-8">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="../lib/w3.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; z-index:2000; top:120px; display: none;" id="gif">
+<body>
+
+<div class="blur" style="display:none;"></div>
+
+<img src="/static/images/processing.gif" id="gif">
 
 <form id="form">
-	  {% csrf_token %}
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }" title="Back"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';" title="Home"></i>
+        <i id="posts" class="fa fa-flag" onclick="window.location.href='/mothers/mineppppp/';" title="My Posts"></i>
+        <div style="flex-grow:1;"></div>
+        <i id="reset-pw" class="fa fa-lock" onclick="window.location.href='/mothers/passwordreset/';" title="Reset Password"></i>
+        <i id="logout" class="fa fa-sign-out" onclick="window.location.href='/mothers/logout/';" title="Log Out"></i>
+    </div>
     <center>
-        <img src="/static/images/logotitle.png" style="width:250px; height:auto; border-radius:0; border:0; margin-top:50px; margin-bottom:20px;"><br>
-        <!--<img src="/static/images/logo.png" style="width:90px;">-->
+        <div class="logotitle-frame">
+            <img src="/static/images/logotitle.png" class="logotitle"><br>
+        </div>
     </center>
     <div class="container-fluid">
         <div class="row">
@@ -224,19 +147,17 @@ window.onload = function() {
                 <div class="pan">
                     <div class="contentform">
     		            <div class="formcontent">
-
     		                <div class="form-group" style="margin-bottom:20px;">
                 				<center>
-                				    <div style="display:inline-block; position:relative; width:100%;">
+                				    <div class="pic-frame">
                 				        <a href="{% if member.photo_url %}{{member.photo_url}}{% endif %}">
-                    				        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}"
-                    				            style="width:200px; height:200px; margin-top:10px; margin-bottom:10px; border-radius:50%; object-fit:cover;" id="picture">
+                    				        <img src="{% if member.photo_url %}{{member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" id="picture">
                     				    </a>
                 				    </div>
                 				 </center>
                             </div>
 
-                            {% if member.status != '' %}<center><div style="color:white; font-size:14px;">(Private)</div></center>{% endif %}
+                            {% if member.status != '' %}<center><div class="priv"><i class="fa fa-lock"></i>Private</div></center>{% endif %}
 
                         </div>
 
@@ -244,7 +165,7 @@ window.onload = function() {
 
                 </div>
 
-                <a href="/mothers/edit_profile"><span class="fas fa-edit" style="color:white; font-size:40px; position:absolute; top:0; right:10%;"></span></a>
+                <a href="/mothers/edit_profile"><span class="fa fa-pencil edit-btn" title="Edit Profile"></span></a>
 
             </div>
             <div class="col-sm-6">
@@ -252,20 +173,20 @@ window.onload = function() {
                     <div class="contentform">
     		            <div class="formcontent">
     		                <div class="form-group">
-                                    <div class="field" style="font-size:25px; font-weight:600;">{{member.name}}</div>
+                                    <div class="field name">{{member.name}}</div>
                         		</div>
     		                <div class="form-group">
-                    			<div class="field" style="font-size:20px; font-weight:500;">{{member.email}}</div>
+                    			<div class="field singleline">{{member.email}}</div>
                     		</div>
                 			<div class="form-group">
-                    			<div class="field" style="font-size:20px; font-weight:500;">{{member.phone_number}}</div>
+                    			<div class="field">{{member.phone_number}}</div>
                     		</div>
                             <div class="form-group">
-                                <div class="field" style="font-size:20px; font-weight:500;">{{member.cohort}}</div>
+                                <div class="field">{{member.cohort}}</div>
                 			</div>
                 			<div class="form-group">
                                 <a href="https://www.google.com/maps/search/?api=1&query={{member.address}}">
-                                    <div class="field" style="font-size:20px; font-weight:500; height:auto;">{{member.address}}</div>
+                                    <div class="field">{{member.address}}</div>
                                 </a>
                     		</div>
 
@@ -277,19 +198,37 @@ window.onload = function() {
     </div>
 </form>
 
-
-<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
-    <div id="google_translate_element" style="float:left;"></div>
+<div id="translang">
+    <div id="google_translate_element"></div>
 </div>
 <script type="text/javascript">
     function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            autoDisplay: false,
+            includedLanguages:''
+        }, 'google_translate_element');
     }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+<script>
+$( document ).ready(function() {
+    $('#google_translate_element').bind('DOMSubtreeModified', function() {
+        var val = $(this);
+        var strlang = "" + val[0].innerText + "";
+        var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+        if(toolBar !== undefined) {
+            toolBar.style.display  = 'none';
+            document.body.style.top = '0px';
+        }
+    });
+});
+</script>
 
-{% endblock %}
+</body>
+
+</html>
 
 
 

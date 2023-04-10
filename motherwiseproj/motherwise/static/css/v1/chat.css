@@ -1,0 +1,175 @@
+html, body{
+  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), /*url('/static/images/111.jpg')*/ no-repeat center center fixed;
+  background-size:cover;
+}
+.main {width:100%;}
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;
+    background:linear-gradient(0deg,rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.0),rgba(89,89,89,0.8),rgba(89,89,89,0.9),rgba(89,89,89,1.0));}
+.header #back, .header #home {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-left:15px;color:black;font-size:18px;
+    cursor:pointer;}
+.header #back:hover, .header #home:hover {background-color:white;}
+.main-body { padding-top:5%; }
+img { height:80px;width:80px; }
+#upBtn { display:none;position:fixed;bottom:20%;right:15px;z-index:99;border:none;outline:none;background-color:rgba(0,0,0,0.3);color:white;cursor:pointer;padding:15px;
+    border-radius:50%;width:45px;height:45px; }
+#upBtn:hover { background-color:orange; }
+#admin{ display:none; }
+form h1 { font-size:25px;background:#327a81 none repeat scroll 0% 0%;color:rgb(255, 255, 255);padding:19px 22px;border-radius:5px 5px 0px 0px;margin:auto;text-shadow:none;text-align:left; }
+.user-form { max-width:100%;width:auto;margin:auto;border-radius:5px;margin-bottom:3px;background-color:rgba(0,0,0,0.1);overflow:hidden; }
+.user-form:hover { background:rgba(0,0,0,0.3); }
+.contact-form { max-width:100%;width:auto;margin:auto;border-radius:5px;margin-top:2px;background-color:rgba(0,0,0,0.1);overflow:hidden; }
+.contact-form:hover { background:rgba(0,0,0,0.3); }
+.contentform { padding:10px; }
+.contactors-section { width:100%; margin:10px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:10px; display:inline-block; }
+.contactors-section > a { color:white;font-size:16px;font-weight:500;text-decoration:none; }
+#chat-form { border-radius:5px;max-width:800px;width:auto;height:auto;margin-top:3%;margin-left:auto;margin-right:auto;opacity:0.9;overflow:hidden; }
+.chat-contentform { padding:0px;float:middle;margin-top:3%; }
+.chat-formcontent { width:100%;float:middle;margin:auto;box-sizing:border-box;padding:0px; }
+p span { color:#F00; }
+p { margin:0px;font-weight:200;line-height:2;color:#fff; }
+h1 { text-align:center;color:#666;text-shadow:1px 1px 0px #FFF;margin:50px 0px 0px 0px; }
+input { border-radius:0px 5px 5px 0px;border:1px solid #eee;margin-bottom:10px;width:92%;height:42px;float:left;padding:0px 15px;opacity:0.8;color:blue; }
+a { text-decoration:inherit; }
+.form-group { overflow:hidden;width:100%; }
+.icon-case { width:8%;float:left;border-radius:5px 0px 0px 5px;background:green;height:42px;position:relative;text-align:center;line-height:40px;padding-top:11px; }
+i { color:white; }
+.bouton-update { background-color:#845801;color:#FFF;text-align:center;width:100%;border:0;padding:17px 25px;border-radius:0px 0px 5px 5px;cursor:pointer;margin-top:40px;font-size:18px; }
+.show { z-index:1000;position:absolute;background-color:#ffffff;border:2px solid orange;box-shadow:5px 5px 0 rgba(0, 0, 0, 0.25);padding:10px;display:block;font-size:20px;
+    border-radius:20px;margin:0;list-style-type:none;list-style:none; }
+.hide { display: none; }
+.show li{ list-style: none; }
+.show a { border: 0 !important; text-decoration: none; }
+.show a:hover { text-decoration: underline !important; }
+label input { display: none;/* <-- hide the default checkbox */ }
+label span {/* <-- style the artificial checkbox */height:15px;width:15px;border:1px solid black;border-radius:50%;background-color:transparent;margin-right:3px;display:inline-block;
+    position:relative;}
+[type=checkbox]:checked + span:before { content:'\2714';color:white;position: absolute;top:-5px;left:0; }
+.sidenav { height:100%;width:0px;position:fixed;top: 50px;left:0;background-color:#111;overflow-x:hidden;transition:0.5s;padding-top:60px;z-index:1000; }
+.sidenav a { padding:8px 8px 8px 30px;text-decoration:none;font-size: 20px;color:#818181;display: block;transition:0.3s; }
+.sidenav a:hover { color:#f1f1f1; }
+.sidenav .closebtn { position:absolute;top:0;right:5px;font-size:36px;float:right; }
+@media screen and (max-height: 450px) { .sidenav {padding-top: 15px;} .sidenav a {font-size: 18px;} }
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+#chat_log { border-radius:5px;border:1px solid #EEE;margin:0;width: 100%;height:500px;float: middle;padding:15px;color:black;
+    background:linear-gradient(0deg,rgba(250,250,250,0.8),rgba(250,250,250,0.8)),url("/static/images/chatbackground.jpg");background-size:cover;overflow-y:auto; }
+#chat_log::-webkit-scrollbar { display:none; }
+#send-form{ width:100%; }
+.cropping{ object-fit:cover; }
+div#list { width:100%;height:auto; }
+div#list > div > div { width:auto;height:auto;padding:8px 15px 8px 15px;border-radius:5px;margin-bottom:5px;color:black;word-wrap:break-word;white-space:pre-line;/*word-break: break-all;*/ }
+#photo { display:none;top:15%; }
+.attach-button { width:33.333333333%;margin:2px;background-color:#333333; }
+label.button { background:green;padding:10px 0px 6px 0px;color:white;text-align:center;font-size:22px;font-weight:500;width:100%;border:1.5px solid #666;border-color:#EEE #CCC #CCC #EEE;
+    border-radius:5px; }
+i { margin-right:10px; }
+/* Look like a clicked/depressed button */
+label.button:active { border-color: #CCC #EEE #EEE #CCC; }
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.button input[accept*="image"] { display:none; }
+::placeholder { color:white;opacity:1; /* Firefox */ }
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: white;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: white;
+}
+.menu { padding:2px 15px; }
+.menu a{ color:gray; }
+.menu a:hover { color:white; }
+select { background:transparent;border:1.5px solid rgba(255,255,255,0.5);border-radius:3px;margin-bottom:15px;margin-right:auto;width: 100%;height:42px;opacity:0.95;float: middle;padding:0px 15px;
+    color:white;text-align-last:center; }
+option { color:black; }
+#backgroundOverlay{ background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none; }
+#mlist { width:100%; max-height:80%; padding-top:1%; padding-bottom:15%; overflow:auto; }
+.name-section { padding-left:8px;margin-top:12px;color:white;float:left;font-size:14px;text-align:left;word-wrap:break-word; }
+input#message { flex-grow:1;height:42px;border:0;padding:0px 10px;color:white;background-color:transparent;font-size:18px;border-bottom:1.5px solid white;outline:0;border-radius:0; }
+#cohort_chat_button { width:60px;height:43px;padding:12px;border-radius:4px;font-weight:600;font-size:16px;color:white;margin-left:5px;background:green; }
+.chat-btn { height:42px;width:42px;margin-left:5px;padding:5px;color:#FFF;text-align:center;font-size:22px;background-color:transparent;border:0; }
+#submitBtn { font-size:19px;display:none; }
+.chat-footer { width:100%;display:flex; }
+.vmeet { text-align:center;margin-left:30px;float:left;display:none; }
+.vmeet span { padding:8px;color:red;font-size:25px;background-color:white;border-radius:50%; }
+td{ border:1px solid #808080; }
+#imageFrame { text-align:center;box-shadow:4px 5px 0 rgba(0, 0, 0, 0.3);position:fixed;left:50%;float:middle;background-color:white;border-radius:6px;padding:10px;
+	transform:translate(-50%, -50%);width:auto;height:auto;z-index:200;top:350px;display:none; }
+#imageFrame > #image_message { width:250px;height:auto;display:none; }
+#imageFrame > span { font-size:25px;margin-top:5px; }
+#photo { height:auto; position:fixed;left:15%; top:15%;float:middle;transform:translate(-50%, -50%);width:100px;z-index:100; }
+#photo > img { width:50px;height:50px;border-radius:50%;object-fit:cover; }
+#photo > #st { color:red;font-size:16px;padding:3% 3% 3% 3%;min-width:60px;text-align:center;height:auto;border-radius:3px;margin-top:3px;background-color:white;display:none; }
+#gif { position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);width:80px;height:auto;z-index:100;top:120px;display:none; }
+.logo { position:relative;width:60px;height:60px;z-index:9;left:10px;top:40px;display:none; }
+#title { font-size:22px;font-weight:800;color: #F7D479;text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);
+    width:350px;z-index:100;top:35px;display:none; }
+#title i { margin-right:10px;font-size:25px;color:#F7D479; }
+.fa-times-thin:before { content:'\00d7'; }
+
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
+@media(max-width:576px) {
+    .main-body { padding-top:20%; }
+}
+
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

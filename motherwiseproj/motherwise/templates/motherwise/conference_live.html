@@ -2349,72 +2349,8 @@ function send_msg(sts, lat, lng, video){
             message: messageText,
             time: time
         });
-
-        // var params = {
-        //     'service': lat,
-        //     'name': friend_name,
-        //     'email': document.getElementById("friend_email").value,
-        //     'service_reqdate': lng,
-        //     'status': sts,
-        //     'mailid': video
-        // }
-        // post("/acchat", params);
     }
 }
-
-
-
-
-
-//  var timeStr = '';
-//
-//  var currentdate = new Date();
-//
-//  var cseconds = currentdate.getSeconds();
-//  var cminutes = currentdate.getMinutes();
-//  var chours = currentdate.getHours();
-//
-//  var cyear = currentdate.getFullYear();
-//  var cmonth = currentdate.getMonth(); // beware: January = 0; February = 1, etc.
-//  var cday = currentdate.getDate();
-//
-//  if (year == cyear && month == cmonth && day == cday && hours == chours && minutes == cminutes){
-//      timeStr = 'Just Now';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours == chours && minutes != cminutes)
-//  {
-//      timeStr = (cminute - minutes) + ' min ago';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours != chours){
-//      timeStr = (chours - hours) + ' hr ago';
-//  }
-//  else if (year == cyear && month == cmonth && ((cday - day) == 1)){
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = 'Yesterday' + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-//  else {
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-
-</script>
-
-<script>
-
-$(document).ready(function()
-{
-    $(window).bind("beforeunload", function() {
-        console.log('Close current page');
-        firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
-        return false;
-    });
-});
 
 </script>
 

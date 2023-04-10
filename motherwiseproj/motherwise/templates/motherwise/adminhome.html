@@ -2,495 +2,7 @@
 {% block title %}Motherwise Manager Home{% endblock %}
 {% block body %}
 
-<style>
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.desc {
-    padding: 15px;
-    text-align: center;
-}
-
-.header {
-  background-image: linear-gradient(0deg,rgba(0,0,0,0.8),rgba(0,0,0,0.8));
-  background-size: 100%, 100%;
-  text-align:center;
-  height:100px;
-}
-
-.header1 {
-  background-image: linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url("/static/images/222.jpg");
-  background-size: 100%, 100%;
-  background-color: #fff;
-  text-align:center;
-  height:300px;
-}
-
-.manage {
-  border-radius: 10%;
-}
-
-.table-owner {
-  /*box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);*/
-  width: 100%;
-  background-color: white;
-  overflow-x:auto;
-}
-
-.table-owner1 {
-  width: 100%;
-  background-color: white;
-  overflow-x:auto;
-  position: relative;
-  margin-top:0px;
-  display:none;
-}
-
-.table>tbody>tr>td{
-    vertical-align: middle;
-    text-align: middle;
-}
-
-table td, table th {
-  color: #2b686e;
-  padding: 10px;
-  border: 1px solid white;
-  text-align: center;
-  vertical-align: middle;
-}
-
-table td {
-  text-align: center;
-  vertical-align: middle;
-}
-
-table td:last-child {
-  font-size: 0.95em;
-  line-height: 1.4;
-  text-align: center;
-}
-
-table th {
-  background-color: #04a2be;
-  font-weight: 520;
-  color:white;
-  text-align: center;
-  vertical-align: middle;
-}
-
-table tr:nth-child(2n) {
-  background-color: white;
-  border: 1px solid #327a81;
-}
-
-table tr:nth-child(2n+1) {
-  background-color: #edf7f8;
-  border: 1px solid white;
-}
-
-#myBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  right: 15px;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-#myBtn:hover {
-  background-color: orange;
-}
-
-
-.owneraddress{
-    color:black;
-}
-.owneraddress:hover{
-    color:blue;
-}
-
-.hyperlink{
-    color:black;
-    font-size:25px;
-}
-
-.hint0{
-    color:blue;
-    font-size:12px;
-    display:block;
-}
-
-.hint{
-    color:blue;
-    font-size:12px;
-    display:none;
-}
-
-.hyperlink:hover .hint0 {
-    display:none;
-}
-
-.hyperlink:hover .hint {
-    display:inline-block;
-}
-
-.subscription {
-    color:black;
-    white-space: pre-wrap;      /* CSS3 */
-    white-space: -moz-pre-wrap; /* Firefox */
-    white-space: -pre-wrap;     /* Opera <7 */
-    white-space: -o-pre-wrap;   /* Opera 7 */
-    word-wrap: break-word;      /* IE */
-}
-
-.btn-subscr {
-    color:black;
-    text-decoration: underline;
-    font-size:12px;
-}
-
-.btn-subscr:hover {
-    color:red;
-}
-
-.centered-and-cropped { object-fit:cover }
-
-.show {
-    z-index:1000;
-    position: absolute;
-    background-color:#ffffff;
-    border: 2px solid orange;
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
-    padding:10px;
-    border-radius:20px;
-    display: block;
-    font-size:20px;
-    margin: 0;
-    list-style-type: none;
-    list-style: none;
-}
-
-.hide {
-    display: none;
-}
-
-.show li{ list-style: none; }
-.show a { border: 0 !important; text-decoration: none; }
-.show a:hover { text-decoration: underline !important; }
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-
-label span {/* <-- style the artificial checkbox */
-  height: 15px;
-  width: 15px;
-  border-radius:50%;
-  border: 1px solid black;
-  background-color:transparent;
-  margin-right:3px;
-  display: inline-block;
-  position: relative;
-}
-
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  color:white;
-  position: absolute;
-  top: -5px;
-  left: 0;
-}
-
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-.bouton-update{
-  background-color: #008CBA;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 12px 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-textarea {
-  border-radius: 5px;
-  border: 1px solid #EEE;
-  width: 100%;
-  height: 80px;
-  float: left;
-  padding: 10px 15px;
-  opacity: 0.8;
-  color:black;
-  text-align:left;
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-label.cameraButton {
-  display: inline-block;
-  font-size:14px;
-  font-weight:300;
-  color: black;
-  width:100%;
-  height:auto;
-  text-align:center;
-  text-decoration:underline;
-}
-
-/* Look like a clicked/depressed button */
-label.cameraButton:active {
-  border-color: #CCC #EEE #EEE #CCC;
-}
-
-/* This is the part that actually hides the 'Choose file' text box for camera inputs */
-label.cameraButton input[accept*="image"] {
-  display: none;
-}
-
-input {
-  border-radius: 50px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:black;
-  text-align:left;
-}
-
-#cohortSelBox {
-  border-radius: 50px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  display:inline-block;
-  overflow:hidden;
-  opacity:0.95;
-  float: middle;
-}
-
-select {
-  width: 100%;
-  height: 42px;
-  border-radius: 50px;
-  border: 1px solid #eee;
-  padding: 0px 15px;
-  color:black;
-  text-align-last:center;
-}
-
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-label span {/* <-- style the artificial checkbox */
-  height: 25px;
-  width: 25px;
-  text-align:center;
-  padding-bottom:5px;
-  display: inline-block;
-  position: relative;
-  border:0;
-  border-radius:3px;
-}
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top:0;
-  font-size:20px;
-  left: 3px;
-}
-
-[type=checkbox]:checked + span:after {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top:0;
-  left: 3px;
-  font-size:20px;
-  color:red;
-}
-
-.panel-button{
-    width:70px; height:70px; float:left; padding:13px; border-radius:5px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7); display:none;
-}
-
-.cohort-panel-button{
-    width:55px; height:55px; float:left; padding:8px; border-radius:5px;
-}
-
-.button-text{
-    font-size:8px;
-    font-weight:30;
-    color:black;
-    padding:3px 0px 0px 0px;
-}
-
-.cropping{
-    object-fit:cover;
-}
-
-#snackbar {
-    visibility: hidden;
-    min-width: 200px;
-    margin-left: -125px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
-    padding: 12px;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    bottom: 30px;
-    font-size: 17px;
-}
-
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-#notiLayout{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:10031;
-    display:none;
-}
-
-#notiForm {
-    max-width:500px;
-    width:auto;
-    height:85%;
-    margin-top: 3px;
-    margin-bottom: auto;
-    margin-left:auto;
-    margin-right:auto;
-    overflow-y: auto;
-}
-.contentform2 {
-    padding: 0px 5px 5px 5px;
-    float:middle;
-}
-.formcontent2 {
-    width:100%;
-    float:middle;
-    margin:auto;
-    box-sizing: border-box;
-}
-
-#chat_log2 {
-    width: 100%;
-    height: auto;
-    float: middle;
-    color:black;
-    overflow-y:auto;
-}
-
-div#list2 {
-    width: 100%;
-    height: auto;
-}
-
-div#list2 > div {
-    background:white;
-    background-size:cover;
-    padding:5px 10px 5px 10px;
-    margin-top: 1px;
-}
-
-div#list2 > div > div {
-    width: auto;
-    height: auto;
-    color: black;
-    word-wrap: break-word;
-}
-
-#notiForm::-webkit-scrollbar-track
-{
-	border: 1px solid gray;
-	background-color: #eee;
-	border-radius:30px;
-}
-
-#notiForm::-webkit-scrollbar
-{
-	width: 6px;
-	background-color: #eee;
-}
-
-#notiForm::-webkit-scrollbar-thumb
-{
-	background-color: gray;
-	border-radius:30px;
-}
-
-</style>
+<link rel="stylesheet" type="text/css" href="/static/css/admin_home.css"/>
 
 <script>
 	history.pushState(null, null, location.href);
@@ -500,12 +12,11 @@ div#list2 > div > div {
 </script>
 
 {% if notify == 'message_sent' %}
-    <script>alert('Your message sent to them successfully.')</script>
+    <script>showSuccessAlert('Your message sent to them successfully.');</script>
 {% endif %}
 
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div id="no_result" style="font-size:16px; font-weight:300; color: black; text-align:center;
@@ -556,14 +67,14 @@ div#list2 > div > div {
         <tr>
             <th style="width:3%;">id</th>
             <th style="width:4%;">Picture</th>
-            <th style="width:10.5%;">Name & Email</th>
+            <th style="width:10%;">Name & Email</th>
             <th style="width:6%;">Phone Number</th>
-            <th style="width:12%;">Address</th>
+            <th style="width:9%;">Address</th>
             <th style="width:6%;">Member Since</th>
-            <th style="width:5%;">Group</th>
+            <th style="width:10%;">Group</th>
             <th style="width:5%;">Share Video</th>
             <th style="width:5%;">Contact</th>
-            <th style="width:5%;">Remove</th>
+            <th style="width:3%;">Remove</th>
         </tr>
     </table>
 </div>
@@ -577,6 +88,13 @@ div#list2 > div > div {
         <img src="/static/images/logo.png" style="width:100px; height:auto; left:20px; border-radius:50%; position:absolute; bottom:-15px;"/>
         <div id="title0" style="font-size:16px; font-weight:500; color:white; left:130px; position:absolute; bottom:10px; font-style: italic;">{{title}}</div>
         <div style="font-size:30px; font-weight:600; font-family:cursive; color:#ffcc00; right:10%; position:absolute; bottom:10px; font-style: italic;" id="sel_cohort">{{cohort}}</div>
+        <div id="google_translate_element"></div>
+        <script type="text/javascript">
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+            }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
         {% if cohort %}
         <div style="width:auto; display:inline-block; right:1%; bottom:10px; position:absolute;">
@@ -593,6 +111,8 @@ div#list2 > div > div {
 
 <script type = "text/javascript">
     var header1 = document.getElementById("header1");
+    header1.style.backgroundImage = "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/222.jpg')";
+
     var currentPos = 0;
     // var images = ["/static/images/bg.jpg", "/static/images/bg2.jpg", "/static/images/bg3.jpg"]
     var images = [
@@ -624,7 +144,7 @@ div#list2 > div > div {
                 console.log(xhr.response);
                 var new_msg_count = xhr.response;
                 if(parseInt(new_msg_count) > 0) {
-                    $("#msg-caption").html("<span class='far fa-comment-alt' aria-hidden='true'></span>&nbsp; Messages" + " (" + new_msg_count + ")");
+                    $("#msg-caption").html("<span class='far fa-comment-alt' aria-hidden='true'></span> (" + new_msg_count + ")");
                 }
             }
         };
@@ -639,14 +159,14 @@ div#list2 > div > div {
         <tr>
             <th style="width:3%;">id</th>
             <th style="width:4%;">Picture</th>
-            <th style="width:7%;">Name & Email</th>
+            <th style="width:10%;">Name & Email</th>
             <th style="width:6%;">Phone Number</th>
-            <th style="width:12%;">Address</th>
+            <th style="width:9%;">Address</th>
             <th style="width:6%;">Member Since</th>
-            <th style="width:5%;">Group</th>
+            <th style="width:10%;">Group</th>
             <th style="width:5%;">Share Video</th>
             <th style="width:5%;">Contact</th>
-            <th style="width:5%;">Remove</th>
+            <th style="width:3%;">Remove</th>
         </tr>
         {% if users %}
             {% for user in users %}
@@ -654,31 +174,54 @@ div#list2 > div > div {
                 <td><label>{{forloop.counter}}</label></td>
                 <td>
                     <a href="{% if user.photo_url %}{{user.photo_url}}{% endif %}" target="_blank">
-                        <img src="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" alt="" style="border-radius:50%; height:60px; width:60px; object-fit:cover;"/>
+                        <img src="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="border-radius:50%; height:60px; width:60px; object-fit:cover;"/>
                     </a>
                 </td>
-                <td style="position:relative;"><div style="text-align:left;">{{user.name}}<br>{{user.email}}</div>
+                <td style="position:relative;">
+                    <div style="text-align:left;">{{user.name}}<br><span class="email">{{user.email}}</span></div>
                     <div style="color:orange; font-size:12px; position:absolute; top:5px; right:5px; font-style:italic;">{% if user.status %}{{user.status}}{% endif %}</div>
                 </td>
                 <td><a href="tel:{{user.phone_number}}">{{user.phone_number}}</a></td>
                 <td>
                     <div style="width:100%;">
-                        <a href="https://www.google.com/maps/search/?api=1&query={{user.address}}" target="_blank">
-                            {% if user.address %}<div class="owneraddress"><div style="text-align:left;"><i class="fa fa-map-marker" style="color:red; font-size:16px; margin-right:5px;"></i>{{user.address}}</div></div>{% else %}---{% endif %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{user.city}}" target="_blank">
+                            {% if user.city %}<div class="owneraddress"><div style="text-align:left;"><i class="fa fa-map-marker" style="color:red; font-size:16px; margin-right:5px;"></i>{{user.city}}</div></div>{% else %}---{% endif %}
                         </a>
                     </div>
                 </td>
                 <td>
                     {% if user.registered_time != '' %}<div style="color:black; font-size:14px;">{{user.registered_time}}</div>{% else %}---{% endif %}
                 </td>
-                <td><div style="color:black; font-size:14px;"><div style="color:#008CBA; font-size:14px;">{% if user.cohort %}{{user.cohort}}{% else %}---{% endif %}</div></div></td>
+                <td>
+                    <div class="cohort_frame">
+                        <div style="position:relative;">
+                            <label style="color:#008CBA; font-size:14px;">{% if user.cohort %}{{user.cohort}}{% else %}---{% endif %}</label>
+                            <i class="fa fa-pencil cohort_edit" onclick="openCohortSelBox(this)"></i>
+                            <input hidden id="cimg" value="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                            <input hidden id="cuid" value="{{user.id}}">
+                        </div>
+                    </div>
+                    <script>
+                        var selectedObj = null;
+                        function openCohortSelBox(obj) {
+                            document.getElementById("cohortEditBox").style.display = "block";
+                            document.getElementById("backgroundOverlay").style.display = "block";
+                            let parent = findParentBySelector(obj, '.cohort_frame');
+                            document.getElementById("uimg").src = parent.querySelector("input#cimg").value;
+                            document.getElementById("ucohort").value = parent.querySelector("label").innerHTML;
+                            if(selectedObj != null) selectedObj.style.border = "0";
+                            parent.style.border = "2px solid red";
+                            selectedObj = parent;
+                        }
+                    </script>
+                </td>
                 <td>
                     {% if user.registered_time %}
                     <div>
-                        <a href="javascript:void(0)" style="display:inline-block; border-radius:50px; background-color:#e6f2ff;">
-                            <label style="margin-left:10px; color: #04a2be;">
-                                <input type="checkbox" name="users[]" value="{{user.id}}" class="chx" id="selusers" style="width:10px; height:10px;" onchange="highlight(this)">
-                                <span></span><i class="fa fa-user-plus" style="color: gray; font-size:18px; margin-right:10px;"></i>
+                        <a href="javascript:void(0)" class="user-sel-check">
+                            <label style="margin-left:10px; color:#04a2be;">
+                                <input type="checkbox" name="users[]" value="{{user.id}}" class="chx" id="selusers" style="width:10px;height:10px;" onchange="highlight(this)">
+                                <span></span><i class="fa fa-user-plus" style="color:gray;font-size:18px;margin-right:10px;"></i>
                             </label>
                         </a>
                     </div>
@@ -687,17 +230,24 @@ div#list2 > div > div {
                 <td>
                     {% if user.registered_time %}
                     <div>
-                        <a href="javascript:void(0)" style="display:inline-block; border-radius:50px; background-color:#e6f2ff;">
+                        <a href="javascript:void(0)" class="user-sel-check">
                             <label style="margin-left:10px; color: #04a2be;">
                                 <input type="checkbox" name="users2[]" value="{{user.id}}" class="chx" id="selusers2" style="width:10px; height:10px;" onchange="highlight2(this)">
                                 <span></span><i class="fa fa-user-plus" style="color: gray; font-size:18px; margin-right:10px;"></i>
                             </label>
                         </a>
                     </div>
+                    {% else %}
+                    <div class="reinv-parent">
+                        <center>
+                            <img src="/static/images/progressbar.gif" style="width:30px;height:30px;display:none;" id="progressbar">
+                            <button type="button" class="reinv" onclick="resendInvitation(this)" id="inv-{{user.id}}">Resend invitation</button>
+                        </center>
+                    </div>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/manager/delete_member?member_id={{user.id}}" role="button" onclick="return confirm('Are you sure you want to delete this member?')">
+                    <a href="javascript:void(0)" role="button" onclick="showConfirmMemberDeletionAlert('Are you sure you want to delete this member?','{{user.id}}')">
                         <img src="/static/images/canceliconblack.png" style="width:35px; height:35px; padding:5px;">
                     </a>
                 </td>
@@ -715,7 +265,8 @@ div#list2 > div > div {
 
         {% if users %}
         <ul class="pager" style="float:right; margin-right:20px;">
-            <li><a href="/to_previous?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">&laquo; Previous</a></li>
+            <li title="First"><a href="/to_page?index=1&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-double-left"></i></a></li>
+            <li title="Previous"><a href="/to_previous?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-left"></i></a></li>
             {% for i in range %}
                 {% if i >= 1 %}
                     {% load tag_library %}
@@ -726,12 +277,64 @@ div#list2 > div > div {
                     {% endif %}
                 {% endif %}
             {% endfor %}
-            <li><a href="/to_next?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">Next &raquo;</a></li>
+            {% if current|add:3 < last_page|to_int %}
+            {% if current|add:4 != last_page|to_int %}...{% endif %}
+            <li><a href="/to_page?index={{last_page}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">{{last_page}}</a></li>
+            {% endif %}
+            <li title="Next"><a href="/to_next?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-right"></i></a></li>
+            <li title="Last"><a href="/to_page?index={{last_page}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-double-right"></i></a></li>
         </ul>
         {% endif %}
 
     </form>
 </div>
+
+
+<script>
+
+    function resendInvitation(obj) {
+        let member_id = String(obj.id).replace('inv-','');
+        let parent = findParentBySelector(obj, '.reinv-parent');
+        let progressbar = parent.querySelector('#progressbar');
+        progressbar.style.display = 'block';
+        obj.style.display = 'none';
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                progressbar.style.display = 'none';
+                obj.style.display = 'block';
+                var resp = xhr.response;
+                if(resp == 'success') {
+                    showSuccessAlert('Successfully resent another invitation.');
+                }else if(resp == 'no_admin_auth') {
+                    window.location.href = '/manager/logout';
+                }else if(resp == 'no_auth') {
+                    showFailureAlert('Error! This member does not exist.');
+                }
+            }
+        };
+        xhr.open('GET', '/manager/reinv?member_id=' + member_id, true);
+        xhr.send('');
+    }
+
+    function collectionHas(a, b) { //helper function (see below)
+        for(var i = 0, len = a.length; i < len; i ++) {
+            if(a[i] == b) return true;
+        }
+        return false;
+    }
+
+    function findParentBySelector(elm, selector) {
+        var all = document.querySelectorAll(selector);
+        var cur = elm.parentNode;
+        while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+            cur = cur.parentNode; //go up
+        }
+        return cur; //will return null if not found
+    }
+
+</script>
+
 
 <div id="messageBox" style="font-size:16px; font-weight:300; color: black;
 	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
@@ -759,45 +362,16 @@ div#list2 > div > div {
     			<div class="form-group" style="margin-top:20px;">
     				<select name="cohort" id="cohort" style="width:100%; color:black;">
     				    <option value="">Please choose a group</option>
-                        <option value="E81">E81</option>
-                        <option value="E83">E83</option>
-                        <option value="E84">E84</option>
-                        <option value="E86">E86</option>
-                        <option value="E87">E87</option>
-                        <option value="S82">S82</option>
-                        <option value="S85">S85</option>
-                        <option value="S88">S88</option>
-                        <option value="E(v)89">E(v)89</option>
-                        <option value="E(v)90">E(v)90</option>
-                        <option value="S(v)91">S(v)91</option>
-                        <option value="E(v)92">E(v)92</option>
-                        <option value="E(v)93">E(v)93</option>
-                        <option value="E(v)94">E(v)94</option>
-                        <option value="S(v)95">S(v)95</option>
-                        <option value="E(v)96">E(v)96</option>
-                        <option value="E(v)97">E(v)97</option>
-                        <option value="S(v)98">S(v)98</option>
-                        <option value="E(v)99">E(v)99</option>
-                        <option value="E(v)100">E(v)100</option>
-                        <option value="S(v)101">S(v)101</option>
-                        <option value="E(v)102">E(v)102</option>
-                        <option value="E(v)103">E(v)103</option>
-                        <option value="S(v)104">S(v)104</option>
-                        <option value="E(v)105">E(v)105</option>
-                        <option value="E(v)106">E(v)106</option>
-                        <option value="S(v)107">S(v)107</option>
-                        <option value="E(v)108">E(v)108</option>
-                        <option value="E(v)109">E(v)109</option>
-                        <option value="S(v)110">S(v)110</option>
-                        <option value="MotherWise Alumni">MotherWise Alumni</option>
-                        <option value="MotherWise Team">MotherWise Team</option>
+    				    {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
                     </select>
     			</div>
-    			<center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif4"></center>
                 <div class="form-group" style="margin-top:30px;">
         			<center>
+        			    <img src="/static/images/progressbar.gif" style="width:30px;height:30px;display:none;margin-bottom:15px;" id="gif4">
                         <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
-                            onclick="javascript:if(document.getElementById('name').value == ''){alert('Enter name.'); return;}if(document.getElementById('email').value == ''){alert('Enter email.'); return;}formSubmit(document.getElementById('inviteForm'), document.getElementById('gif4'), 'Invitation message sent.');">Submit</button>
+                            onclick="javascript:if(document.getElementById('name').value == ''){showFailureAlert('Enter name.'); return;}if(document.getElementById('email').value == ''){showFailureAlert('Enter email.'); return;}formSubmit(document.getElementById('inviteForm'), document.getElementById('gif4'), 'Invitation message sent.');">Submit</button>
                     </center>
                 </div>
             </form>
@@ -854,7 +428,7 @@ div#list2 > div > div {
                 <center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif3"></center>
                 <center>
                     <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
-                        onclick="javascript:if(document.getElementById('textarea2').value == ''){alert('Enter your message.'); return;}formSubmit(document.getElementById('cohortMsgForm'), document.getElementById('gif3'), 'Message sent.');">Submit</button>
+                        onclick="javascript:if(document.getElementById('textarea2').value == ''){showFailureAlert('Enter your message.'); return;}formSubmit(document.getElementById('cohortMsgForm'), document.getElementById('gif3'), 'Message sent.');">Submit</button>
                 </center>
             </form>
         </div>
@@ -863,10 +437,10 @@ div#list2 > div > div {
 
 
 <div id="cohortBox" style="font-size:16px; font-weight:300; color: black; z-index:999;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
+	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 20px;
 	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; top:320px; display:none;">
     <img style="width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;" class="centered-and-cropped" src="/static/images/ic_profile.png">
-    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;"
+    <span class="fa fa-close" style="font-size:20px; float:right;"
         onclick="javascript:dismissLayouts(); document.getElementById('cohortBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
     <div style="width:100%; display:inline-block;">
         <div>
@@ -874,46 +448,17 @@ div#list2 > div > div {
             <form action="/manager/do_cohort/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortform">
                 {% csrf_token %}
                 <div class="form-group" id="cohortSelBox">
-                    <select name="cohort" required id="cohort2" style="width:100%; color:black;">
+                    <select name="cohort" required id="cohort2" style="color:black;">
                         <option value="">Please choose a group</option>
-                        <option value="E81">E81</option>
-                        <option value="E83">E83</option>
-                        <option value="E84">E84</option>
-                        <option value="E86">E86</option>
-                        <option value="E87">E87</option>
-                        <option value="S82">S82</option>
-                        <option value="S85">S85</option>
-                        <option value="S88">S88</option>
-                        <option value="E(v)89">E(v)89</option>
-                        <option value="E(v)90">E(v)90</option>
-                        <option value="S(v)91">S(v)91</option>
-                        <option value="E(v)92">E(v)92</option>
-                        <option value="E(v)93">E(v)93</option>
-                        <option value="E(v)94">E(v)94</option>
-                        <option value="S(v)95">S(v)95</option>
-                        <option value="E(v)96">E(v)96</option>
-                        <option value="E(v)97">E(v)97</option>
-                        <option value="S(v)98">S(v)98</option>
-                        <option value="E(v)99">E(v)99</option>
-                        <option value="E(v)100">E(v)100</option>
-                        <option value="S(v)101">S(v)101</option>
-                        <option value="E(v)102">E(v)102</option>
-                        <option value="E(v)103">E(v)103</option>
-                        <option value="S(v)104">S(v)104</option>
-                        <option value="E(v)105">E(v)105</option>
-                        <option value="E(v)106">E(v)106</option>
-                        <option value="S(v)107">S(v)107</option>
-                        <option value="E(v)108">E(v)108</option>
-                        <option value="E(v)109">E(v)109</option>
-                        <option value="S(v)110">S(v)110</option>
-                        <option value="MotherWise Alumni">MotherWise Alumni</option>
-                        <option value="MotherWise Team">MotherWise Team</option>
+                        {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
                     </select>
     			</div>
 
     			<input hidden id="cohort_option" name="option" value="">
 
-                <div class="form-group" style="margin-top:10px; text-align:center;">
+                <div class="form-group" style="margin-top:30px; text-align:center;">
 
                     <div style="width:auto; display:inline-block;">
                         <a href="javascript:void(0)" onclick="javascript:doCohort('members');">
@@ -922,7 +467,7 @@ div#list2 > div > div {
                                 <label class="button-text">Members</label>
                             </div>
                         </a>
-                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');">
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');" style="display:none;">
                             <div style="display:inline-block; text-align:center;">
                                 <img class="cohort-panel-button" src="/static/images/ic_video.png" style="margin-left:10px; background-color:red;"><br>
                                 <label class="button-text" style="margin-left:5px;">Video</label>
@@ -934,25 +479,9 @@ div#list2 > div > div {
                                 <label class="button-text" style="margin-left:4px;">Group Chat</label>
                             </div>
                         </a>
-                    </div>
-
-                    <script>
-                        function toCohortGroupChat(){
-                            var cht = document.getElementById('cohort2').value;
-                            if(cht.length == 0){
-                                alert('Please choose a group.');
-                                return;
-                            }
-                            window.location.href = "/manager/group_cohort_chat?cohort=" + cht;
-                        }
-                    </script>
-
-                    <br>
-
-                    <div style="width:auto; display:inline-block; margin-top:10px;">
                         <a href="javascript:void(0)" onclick="javascript:doCohort('group_chat');">
                             <div style="display:inline-block; text-align:center;">
-                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:#008080;"><br>
+                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="margin-left:10px; background-color:#008080;"><br>
                                 <label class="button-text">Communs</label>
                             </div>
                         </a>
@@ -970,12 +499,114 @@ div#list2 > div > div {
                         </a>
                     </div>
 
+                    <script>
+                        function toCohortGroupChat(){
+                            var cht = document.getElementById('cohort2').value;
+                            if(cht.length == 0){
+                                showFailureAlert('Please choose a group.');
+                                return;
+                            }
+                            window.location.href = "/manager/group_cohort_chat?cohort=" + cht;
+                        }
+                    </script>
+
+                    <!--<br>-->
+
+                    <!--<div style="width:auto; display:inline-block; margin-top:10px;">-->
+                    <!--    <a href="javascript:void(0)" onclick="javascript:doCohort('group_chat');">-->
+                    <!--        <div style="display:inline-block; text-align:center;">-->
+                    <!--            <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:#008080;"><br>-->
+                    <!--            <label class="button-text">Communs</label>-->
+                    <!--        </div>-->
+                    <!--    </a>-->
+                    <!--    <a href="javascript:void(0)" onclick="javascript:doCohort('private_chat');">-->
+                    <!--        <div style="display:inline-block; text-align:center;">-->
+                    <!--            <img class="cohort-panel-button" src="/static/images/ic_chat.png" style="margin-left:10px; background-color:green;"><br>-->
+                    <!--            <label class="button-text" style="margin-left:5px;">Priv Chat</label>-->
+                    <!--        </div>-->
+                    <!--    </a>-->
+                    <!--    <a href="javascript:void(0)" onclick="javascript:openCohortMessageBox(document.getElementById('cohort2').value);">-->
+                    <!--        <div style="display:inline-block; text-align:center;">-->
+                    <!--            <img class="cohort-panel-button" src="/static/images/ic_message.png" style="margin-left:10px; background-color:brown;"><br>-->
+                    <!--            <label class="button-text" style="margin-left:5px;">Message</label>-->
+                    <!--        </div>-->
+                    <!--    </a>-->
+                    <!--</div>-->
+
                 </div>
 
             </form>
         </div>
     </div>
 </div>
+
+
+<div id="cohortEditBox">
+    <img id="uimg" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right;"
+        onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">CHANGE GROUP NAME</div><br>
+            <div style="width:100%;" id="cohortform">
+                <div class="form-group" id="cohortSelBox">
+                    <select id="ucohort" style="color:black;" onchange="changeCohort()">
+                        <option value="">Please choose a group</option>
+                        {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
+                    </select>
+    			</div>
+    			<center><img id="ucprog" src="/static/images/progressbar.gif" style="width:30px; height:30px; display:none;"></center>
+                <div class="form-group" style="margin-top:30px; text-align:center;">
+                    <button id="chtsavebutton" class="bouton-update" type="button" style="width:80px;opacity:0.3;" onclick="SaveCohort()">Save</button>
+                    <script>
+                        function changeCohort() {
+                            if(document.getElementById("ucohort").value != selectedObj.querySelector("label").innerHTML) {
+                                document.getElementById("chtsavebutton").style.opacity = "1";
+                            }else {
+                                document.getElementById("chtsavebutton").style.opacity = "0.3";
+                            }
+                        }
+                        function SaveCohort(){
+                            if(document.getElementById("chtsavebutton").style.opacity == "0.3") return;
+                            var cht = document.getElementById('ucohort').value;
+                            if(cht.length == 0){
+                                showFailureAlert('Please choose a group.');
+                                return;
+                            }
+                            let progressbar = document.getElementById("ucprog");
+                            let uid = selectedObj.querySelector("#cuid").value;
+                            progressbar.style.display = "block";
+                            var formData = new FormData();
+                            formData.append("member_id", uid);
+                            formData.append("new_cohort", cht);
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function() {
+                                if (this.readyState == 4 && this.status == 200) {
+                                    progressbar.style.display = "none";
+                                    let result = xhr.response;
+                                    if(result == "success") {
+                                        dismissLayouts();
+                                        selectedObj.querySelector("label").innerHTML = cht;
+                                    }else {
+                                        showFailureAlert("Failed to change the group name.");
+                                    }
+                                }
+                            };
+                            xhr.open('POST', '/motherwise/membercohortchange', true);
+                            xhr.send(formData);
+                        }
+                    </script>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <input type="hidden" id="me_email" value="{{me.email}}">
 <input type="hidden" id="me_id" value="{{me.pk}}">
@@ -1116,7 +747,7 @@ ref.on('child_added', function(snapshot) {
 	if(keys.length == 1){
 // 		createjs.Sound.play("x");
 		document.getElementById("noticon").style.display = 'block';
-		document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:10px;'></span>New!</h4>";
+		document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:5px;'></span>New!</h4>";
 		if (navigator.vibrate) {
 			// vibration API supported
 			navigator.vibrate(500);
@@ -1180,7 +811,7 @@ notiref.on('child_added', function(snapshot) {
 	if(keys2.length == 1){
 // 		createjs.Sound.play("x");
 		document.getElementById("noticon").style.display = 'block';
-		document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:10px;'></span>New!</h4>";
+		document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:5px;'></span>New!</h4>";
 		if (navigator.vibrate) {
 			// vibration API supported
 			navigator.vibrate(500);
@@ -1238,7 +869,7 @@ function highlight(obj){
    if(obj.checked) {
       $(obj).parent().parent().css("background","#ccccff");
       m++;
-   }else{ $(obj).parent().parent().css("background","#e6f2ff"); if(m>0)m--;}
+   }else{ $(obj).parent().parent().css("background","#cce4ff"); if(m>0)m--;}
    if(m > 0){
        document.getElementById('video').style.display = 'block';
    }else document.getElementById('video').style.display = 'none';
@@ -1248,7 +879,7 @@ function highlight2(obj){
    if(obj.checked) {
       $(obj).parent().parent().css("background","#ccccff");
       m2++;
-   }else{ $(obj).parent().parent().css("background","#e6f2ff");if(m2>0)m2--;}
+   }else{ $(obj).parent().parent().css("background","#cce4ff");if(m2>0)m2--;}
    if(m2 > 0){
        document.getElementById('message').style.display = 'block';
        document.getElementById('chat').style.display = 'block';
@@ -1271,13 +902,14 @@ function highlight2(obj){
         document.getElementById('messageBox2').style.display='none';
         document.getElementById('messageBox3').style.display='none';
         document.getElementById('cohortBox').style.display='none';
+        document.getElementById('cohortEditBox').style.display='none';
         document.getElementById('backgroundOverlay').style.display='none';
         document.getElementById('notiLayout').style.display='none';
     }
 
     function openCohortMessageBox(selected_cohort){
         if(selected_cohort.length == 0){
-            alert('Please select a group.');
+            showFailureAlert('Please select a group.');
             return;
         }
         dismissLayouts();
@@ -1289,7 +921,7 @@ function highlight2(obj){
 
     function doCohort(option){
         if(document.getElementById('cohort2').value == ''){
-            alert('Please choose a group.');
+            showFailureAlert('Please choose a group.');
             return;
         }
         document.getElementById('cohort_option').value = option;
@@ -1363,7 +995,7 @@ function sendMessageToSelectedMembers(){
 
     var message = document.getElementById('textarea');
     if(message.value.length == 0){
-        alert("Please enter your message ...");
+        showFailureAlert("Please enter your message ...");
         return;
     }
 
@@ -1414,9 +1046,13 @@ function formSubmit(form, gif, text){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            showToast(text);
             gif.style.display = "none";
             dismissLayouts();
+            if(text == 'Invitation message sent.') {
+                showSuccessInvitationAlert(text);
+            }else{
+                showSuccessAlert(text);
+            }
         }
     };
     xhr.open('POST', form.getAttribute('action'), true);
@@ -1465,7 +1101,7 @@ gref.on('child_added', function(snapshot) {
     if({{me.pk}} != parseInt(key2.sender_id)){
         ul.appendChild(ul2);
         document.getElementById("noticon").style.display = 'block';
-        document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:10px;'></span>New!</h4>";
+        document.getElementById("noticon").innerHTML = "<h4 style='color:red; font-size:14px; display:inline-block; text-decoration:underline; background-color:white; border-radius:50px; padding:0px 10px 5px 5px;'><span class='fa fa-bell' aria-hidden='true' style='color:red; font-size:20px; margin-right:5px;'></span>New!</h4>";
     }
   }else {
       var lii = document.createElement("div");

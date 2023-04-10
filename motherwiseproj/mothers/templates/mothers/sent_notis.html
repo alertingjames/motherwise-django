@@ -1,357 +1,261 @@
-{% extends 'mothers/base_notification.html' %}
-{% block title %}Network Notifications{% endblock %}
-{% block body %}
+<html lang="en">
 
-<br>
+<head>
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sent Messages | MotherWise Nest</title>
+
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
-  <script>
-      WebFont.load({
-      google: {
-      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+<script>
+WebFont.load({
+    google: {
+        families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
     }
-    });
+});
+function isValidImage(imageurl) {
+   try {
+        var img = document.createElement("img");
+        img.src = imageurl;
+    } catch(err) {
+        //
+    }
+
+    if(img.height > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function openSearchMenu() {
+    document.getElementById("sear-dropdown-menu").classList.toggle("show");
+}
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('#sear')) {
+        var dropdowns = document.getElementsByClassName("sear-dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
 </script>
 
 <style>
 
 html, body{
-  background: url("/static/images/postbg.jpg") no-repeat center center fixed;
+  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/q.png') no-repeat center center fixed;
   background-size:cover;
 }
-
-.dropdown {
-    position: relative;
-    display: inline-block;
+@font-face {
+   font-family: lemon;
+   src: url('/static/fonts/lemon.ttf');
 }
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 400px;
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 8px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.desc {
-    padding: 6px;
-    text-align: center;
-}
-
-.manage {
-  border-radius: 10%;
-}
-
-.topBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-.topBtn:hover {
-  background-color: orange;
-}
-
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.user-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:2px;
-  background:#f2f2f2;
-  background-size:cover;
-  overflow: hidden;
-}
-
-.user-form:hover {
-  background:#fff;
-  background-size:cover;
-}
-
-.group-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:10px;
-  margin-bottom:2px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.group-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.contentform {
-  padding: 10px;
-}
-
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  width: 100%;
-  height: 42px;
-  float: left;
-  padding: 0px 15px;
-  color:black;
-}
-
-a {
-  text-decoration:inherit
-  cursor:pointer;
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.bouton-update{
-  background-color: green;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-#manage-menu {
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:auto;
-    background-color:white;
-    color:black;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-.menu {
-    padding:2px 15px;
-    cursor:pointer;
-}
-
-.menu a{
-    color:gray;
-}
-
-.menu a:hover {
-    color:black;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-.slide {
-    display: inline-block;
-}
-
-select {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:black;
-  text-align:left;
-}
-
-.postform::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background: white;
-	border-radius:10px;
-}
-
-.postform::-webkit-scrollbar
-{
-	width: 8px;
-	background: gray;
-	border-radius:10px;
-}
-
-.postform::-webkit-scrollbar-thumb
-{
-	background: gray;
-	width: 8px;
-	border-radius:10px;
-}
-
-
-.text {
-   overflow: hidden;
-   text-overflow: ellipsis;
-   word-wrap: break-word;
-   white-space: pre-line;
-   /*word-break: break-all;*/
-   display: -webkit-box;
-   -webkit-line-clamp: 10; /* number of lines to show */
-   -webkit-box-orient: vertical;
-}
-
-#snackbar {
-    visibility: hidden;
-    min-width: 200px;
-    margin-left: -125px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
-    padding: 12px;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    bottom: 30px;
-    font-size: 17px;
-}
-
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
+.main { width:100%;height:auto; }
+.topBtn {display: none;position: fixed;bottom: 20%;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+.topBtn:hover {background-color:orange;}
+form h1 { font-size:25px;background:#327a81 none repeat scroll 0% 0%;color:rgb(255, 255, 255);padding:19px 22px;border-radius:5px 5px 0px 0px;margin:auto;text-shadow:none;text-align:left; }
+.mes-form { width:100%;width:auto;margin:auto;border-radius:5px;margin-bottom:15px;background:#f2f2f2;background-size:cover;overflow:hidden; }
+.mes-form:hover { background:#fff;background-size:cover; }
+.group-form {max-width:100%;width:auto;margin:auto;border-radius:10px;margin-bottom:2px;background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));background-size:cover;overflow: hidden;}
+.group-form:hover {background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));background-size:cover;}
+.contentform {padding:10px;}
+p span {color:#F00;}
+p {margin:0px;font-weight:200;line-height:2;color:#fff;}
+h1 {text-align:center;color:#666;text-shadow:1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius:5px;border:1px solid #eee;width:100%;height:42px;float:left;padding:0px 15px;color:black;}
+a {text-decoration:inheritcursor:pointer;}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{background-color:green;color:#FFF;text-align:center;width:100%;border:0;padding:10px 15px;border-radius:5px;cursor:pointer;font-size:14px;}
+.menu {padding:2px 15px;cursor:pointer;}
+.menu a{color:gray;}
+.menu a:hover {color:black;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+.slide {display: inline-block;}
+select {border-radius:5px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
+.postform { width:100%;height:auto;overflow:hidden; }
+.postform::-webkit-scrollbar-track {-webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);background:white;border-radius:10px;}
+.postform::-webkit-scrollbar{width:8px;background:gray;border-radius:10px;}
+.postform::-webkit-scrollbar-thumb{background:gray;width:8px;border-radius:10px;}
+.text {overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;white-space:pre-line;/*word-break:break-all;*/display: -webkit-box;-webkit-line-clamp:10; /* number of lines to show */-webkit-box-orient:vertical;}
+#snackbar {visibility:hidden;min-width:200px;margin-left:-125px;background-color:#333;color:#fff;text-align:center;border-radius:2px;padding:12px;position:fixed;z-index:1;left:50%;bottom:30px;font-size:17px;}
+#snackbar.show {visibility:visible;-webkit-animation:fadein 0.5s, fadeout 0.5s 2.5s;animation:fadein 0.5s, fadeout 0.5s 2.5s;}
 @-webkit-keyframes fadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 30px; opacity: 1;}
 }
-
 @keyframes fadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 30px; opacity: 1;}
 }
-
 @-webkit-keyframes fadeout {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
-
 @keyframes fadeout {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;}
+.header #back, .header #home, .header #sent {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;
+    margin-left:15px;color:black;font-size:18px;cursor:pointer;}
+.header #sear {width:40px;height:40px;text-align:center;padding:12px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-right:15px;color:black;font-size:18px;cursor:pointer;}
+.header #back:hover, .header #home:hover, .header #sent:hover, .header #sear:hover {background-color:white;}
+#no_result { font-size:20px;font-weight:300;color:rgba(255,255,255,0.7);text-align:center;position:fixed;left:50%;float:middle;padding:10px 15px 10px 15px;transform:translate(-50%, -50%);width:auto;
+    z-index:100;top:250px;display:none; }
+#gif {position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);width:80px;height:auto;z-index:100;top:120px;display:none;}
+#title0 { font-size:25px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);width:100%;
+    z-index:100;top:50px;text-transform:uppercase;display:none; }
+#xxx0 { font-size:14px;font-weight:500;color:#F7D479;text-shadow:none;display:none; }
+#title { font-size:30px;font-weight:800;margin-bottom:50px;padding-top:50px;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%;text-transform:uppercase; }
+#xxx { font-size:14px;font-weight:500;color:#F7D479;text-shadow:none;display:none; }
+.content-section { width:100%;padding-bottom:3px;display:inline-block; }
+.u-p { padding:10px;float:left;position:relative; }
+.u-n { padding-left:10px;margin-top:15px;color:black;float:left;font-size:14px;text-align:left;word-break:break-all;word-wrap:break-word; }
+.btn-email { color:gray;font-size:18px;margin-right:5px;margin-left:10px; }
+.btn-message { color:gray;font-size:20px;margin-right:10px;margin-left:0px; }
+.btn-delete { color:gray;font-size:18px;margin-right:10px;margin-left:5px; }
+.new-mes { border-radius:10px;border:0;background-color:red;color:white;font-size:16px; }
+.btn-reply { font-size:16px;text-decoration:underline;float:right;margin:0px 8px 15px 0px; }
+.replied { font-size:14px;margin-right:15px;color:orange; }
+.btn-history { font-size:16px;text-decoration:underline;float:right;margin:0px 15px 15px 0px; }
+#messageBox { font-size:16px;font-weight:300;color:black;position:fixed;left:50%;float:middle;background-color:white;border-radius:10px;padding:8px 15px 15px 15px;transform:translate(-50%, -50%);
+    min-width:300px;max-width:600px;width:auto;z-index:200;top:320px;display:none; }
+#seluser { border-radius:50%;width:50px;height:50px;float:left;object-fit:cover; }
+#btn-close { font-size:20px;float:right;margin-top:5px; }
+.mes-body { width:100%;display:inline-block; }
+#messageboxtitle { font-size:18px;font-weight:600;color:black;text-align:center;width:100%; }
+#textarea2 { width:100%;height:150px;min-height:150px;max-height:300px;border:1.5px solid #808080;padding:15px;border-radius:5px; }
+#gif2 { width:30px;height:30px;display:none; }
+.btn-submit { width:60%;margin-bottom:20px; }
+.dropdown {position:relative;display:inline-block;}
+.sear-dropdown-content, .msg-dropdown-content {display:none;position:absolute;right:10px;top:60px;background-color:white;min-width:300px;overflow:auto;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:99;border-radius:3px;border:1px solid white;}
+.sear-dropdown-content a {color:black;padding:8px 10px 8px 12px;text-decoration:none;display:block;font-family:verdana;}
+.sear-dropdown-content a:hover {background-color:#eee;}
+.sear-dropdown-content a:first-child {background-color:#404040;}
+.sear-dropdown-content a > div {font-size:16px;font-weight:520;display:flex;}
+.sear-dropdown-content a > div > i {padding:10px 8px 10px 8px;background:rgba(0,0,0,0.1);border-radius:50%;width:35px;height:35px;text-align:center;}
+.sear-dropdown-content a > div > i:last-child {padding:10px;background:transparent;font-weight:400;}
+.sear-dropdown-content a > div > div {flex-grow:1;margin-left:15px;margin-top:7px;}
+.sear-dropdown-content a {border-bottom:1px solid #eee;padding-top:-10px;padding-bottom:10px;}
+.sear-dropdown-content a:last-child {border-bottom:0;}
+.sear-dropdown-content a > form button {background-color:transparent;border:0;} .sear-dropdown-content a > form button:hover {background-color:transparent !important;border:0;}
+.sear-dropdown-content a > form button > i {color:white; font-size:18px; padding:1.5px;}
+.sear-dropdown-content a > form > div > input {background:transparent;color:white;border:0;border-bottom:1.5px solid white;border-radius:0px;box-shadow:none;}
+.sear-dropdown-content a > form > div > input:focus {outline:none;box-shadow:none;}
+#back, #sent { font-size:15px !important;padding-top:13px !important; }
+#home { font-size:18px !important;padding-top:11px !important; }
+#sear { font-size:16px !important;padding-top:11px !important; }
+.top-progress {width:50px;height:50px;display:none;}
+.ppp { width:100%;height:auto;overflow:auto; }
+@media(max-width:576px) { #title { padding-top:80px; } }
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
+}
 
 </style>
 
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/mothers/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 1000);-->
-<!--</script>-->
+</head>
 
-<div id="no_result" style="font-size:20px; font-weight:300; color: rgba(255,255,255,0.6); text-align:center;
-	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
-	transform:translate(-50%, -50%); width:auto; z-index:100; top:250px; display:none;">
+<body>
+
+<div id="no_result">
     No message found ...
 </div>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+<img src="/static/images/processing.gif" id="gif">
 
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+<div id="title0">
+    {% if search %}{{search}}{% else %}SENT{% endif %} MESSAGES
+</div>
 
-<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">{% if search %}{{search}}{% else %}SENT{% endif %} MESSAGES</div>
+<div class="main">
 
-<div style="width:100%; height:auto;">
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }" title="Back"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';" title="Home"></i>
+        <i id="sent" class="far fa-comment-alt" onclick="window.location.href='/mothers/notifications/';" title="Received Messages"></i>
+        <div style="flex-grow:1;"></div>
+        <div class="dropdown">
+            <i id="sear" class="fa fa-search" onclick="openSearchMenu()" title="Search"></i>
+            <div id="sear-dropdown-menu" class="sear-dropdown-content">
+                <a href="javascript:void(0)">
+                    <form id="s-form" method="post" action="/mothers/noti_search/" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" value="" placeholder="Type a keyword...">
+                            <input hidden name="opt" value="{{opt}}">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" onclick="searchMessage()"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </a>
+                {% if search %}
+                <a href="/mothers/sentnotis/">
+                    <div><i class="fa fa-chevron-left" aria-hidden="true"></i><div>Back to View All</div><i class="fa fa-angle-right" aria-hidden="true" style="visibility:hidden;"></i></div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
-    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:20px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">{% if search %}{{search}}{% else %}SENT{% endif %} MESSAGES</div>
+    <div id="title">
+        {% if search %}{{search}}{% else %}SENT{% endif %} MESSAGES
+    </div>
+
+    <center><img src="/static/images/progressbar.gif" class="top-progress"></center>
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3" style="text-align:center;">
 
-            <div style="width:100%; height:auto; padding-bottom:10%; overflow:auto;">
+            <div class="ppp">
 
                 {% if list1 %}
-                    <div style="width:100%;" class="postform">
+                    <div class="postform">
                         {% for noti in list1 %}
-                        <div class="user-form" id="{{noti.noti.pk}}">
+                        <div class="mes-form" id="{{noti.noti.pk}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="content-section" >
+                                    <div class="u-p">
                                         <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
                                             <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
                                     <a href="#">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-break: break-all; word-wrap: break-word;">
+                                        <div class="u-n">
                                             {{noti.receiver.name}}
                                             <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
                                         </div>
@@ -359,21 +263,21 @@ select {
 
                                     <div style="float:right; margin-top:5px;">
 
-                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
-                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        <a href="javascript:void(0)" style="background-color:transparent;display:none;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o btn-email" aria-hidden="true"></span>
                                         </a>
                                         <a href="/mothers/to_private_chat?member_id={{noti.receiver.pk}}" target="_blank" style="background-color:transparent; margin-left:15px;">
-                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                            <span class="fa fa-comments btn-message" aria-hidden="true"></span>
                                         </a>
-                                        <a href="/mothers/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
-                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{noti.noti.id}}')">
+                                            <span class="fa fa-trash btn-delete"></span>
                                         </a>
 
                                     </div>
 
                                     <!--{% if noti.noti.status == '' %}-->
                                     <!--<div style="margin-top:5px; margin-right:15px;">-->
-                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--    <button type="button" class="new-mes" id="statusBtn{{noti.noti.pk}}"-->
                                     <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
                                     <!--</div>-->
                                     <!--{% endif %}-->
@@ -381,7 +285,7 @@ select {
 
                                 <div class="form-group">
                                     <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
-                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                    {% if 'reply' in noti.noti.message %}<div class="replied">Replied</div>{% endif %}
                                 </div>
 
                                 <div class="form-group">
@@ -391,11 +295,11 @@ select {
                                 <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
                                     <input id="notireceiverphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
                                     <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                    <div class="btn-reply">Message</div>
                                 </a>
 
                                 <a href="/mothers/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                    <div class="btn-history">History</div>
                                 </a>
 
                             </div>
@@ -418,18 +322,18 @@ select {
         <div class="col-sm-3" style="text-align:center;">
 
             {% if list2 %}
-                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+                <div class="postform">
                     {% for noti in list2 %}
-                        <div class="user-form" id="{{noti.noti.pk}}">
+                        <div class="mes-form" id="{{noti.noti.pk}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="content-section">
+                                    <div class="u-p">
                                         <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
                                             <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
                                     <a href="#">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="u-n">
                                             {{noti.receiver.name}}
                                             <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
                                         </div>
@@ -437,21 +341,21 @@ select {
 
                                     <div style="float:right; margin-top:5px;">
 
-                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
-                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        <a href="javascript:void(0)" style="background-color:transparent;display:none;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o btn-email" aria-hidden="true"></span>
                                         </a>
                                         <a href="/mothers/to_private_chat?member_id={{noti.receiver.pk}}" target="_blank" style="background-color:transparent; margin-left:15px;">
-                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                            <span class="fa fa-comments btn-message" aria-hidden="true"></span>
                                         </a>
-                                        <a href="/mothers/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
-                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{noti.noti.id}}')">
+                                            <span class="fa fa-trash btn-delete"></span>
                                         </a>
 
                                     </div>
 
                                     <!--{% if noti.noti.status == '' %}-->
                                     <!--<div style="float:right; margin-top:5px; margin-right:15px;">-->
-                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--    <button type="button" class="new-mes" id="statusBtn{{noti.noti.pk}}"-->
                                     <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
                                     <!--</div>-->
                                     <!--{% endif %}-->
@@ -460,7 +364,7 @@ select {
 
                                 <div class="form-group">
                                     <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
-                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                    {% if 'reply' in noti.noti.message %}<div class="replied">Replied</div>{% endif %}
                                 </div>
 
                                 <div class="form-group">
@@ -470,11 +374,11 @@ select {
                                 <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
                                     <input id="notireceiverphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
                                     <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                    <div class="btn-reply">Message</div>
                                 </a>
 
                                 <a href="/mothers/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                    <div class="btn-history">History</div>
                                 </a>
 
                             </div>
@@ -483,7 +387,7 @@ select {
 
                     {% endfor %}
 
-                </form>
+                </div>
 
             {% endif %}
 
@@ -492,18 +396,18 @@ select {
         <div class="col-sm-3" style="text-align:center;">
 
             {% if list3 %}
-                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+                <div class="postform">
                     {% for noti in list3 %}
-                        <div class="user-form" id="{{noti.noti.pk}}">
+                        <div class="mes-form" id="{{noti.noti.pk}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="content-section">
+                                    <div class="u-p">
                                         <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
                                             <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
                                     <a href="#">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="u-n">
                                             {{noti.receiver.name}}
                                             <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
                                         </div>
@@ -511,21 +415,21 @@ select {
 
                                     <div style="float:right; margin-top:5px;">
 
-                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
-                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        <a href="javascript:void(0)" style="background-color:transparent;display:none;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o btn-email" aria-hidden="true"></span>
                                         </a>
                                         <a href="/mothers/to_private_chat?member_id={{noti.receiver.pk}}" target="_blank" style="background-color:transparent; margin-left:15px;">
-                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                            <span class="fa fa-comments btn-message" aria-hidden="true"></span>
                                         </a>
-                                        <a href="/mothers/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
-                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{noti.noti.id}}')">
+                                            <span class="fa fa-trash btn-delete"></span>
                                         </a>
 
                                     </div>
 
                                     <!--{% if noti.noti.status == '' %}-->
                                     <!--<div style="float:right; margin-top:5px; margin-right:15px;">-->
-                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--    <button type="button" class="new-mes" id="statusBtn{{noti.noti.pk}}"-->
                                     <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
                                     <!--</div>-->
                                     <!--{% endif %}-->
@@ -534,7 +438,7 @@ select {
 
                                 <div class="form-group">
                                     <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
-                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                    {% if 'reply' in noti.noti.message %}<div class="replied">Replied</div>{% endif %}
                                 </div>
 
                                 <div class="form-group">
@@ -544,11 +448,11 @@ select {
                                 <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
                                     <input id="notireceiverphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
                                     <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                    <div class="btn-reply">Message</div>
                                 </a>
 
                                 <a href="/mothers/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                    <div class="btn-history">History</div>
                                 </a>
 
                             </div>
@@ -557,7 +461,7 @@ select {
 
                     {% endfor %}
 
-                </form>
+                </div>
 
             {% endif %}
 
@@ -566,18 +470,18 @@ select {
         <div class="col-sm-3" id="postlist2" style="text-align:center;">
 
             {% if list4 %}
-                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+                <div class="postform">
                     {% for noti in list4 %}
-                        <div class="user-form" id="{{noti.noti.pk}}">
+                        <div class="mes-form" id="{{noti.noti.pk}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:inline-block;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="content-section">
+                                    <div class="u-p">
                                         <a href="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% endif %}">
                                             <img src="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
                                     <a href="#">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="u-n">
                                             {{noti.receiver.name}}
                                             <div style="font-size:11px;">{% if noti.receiver.cohort == 'admin' %}Manager{% else %}{{noti.receiver.cohort}}{% endif %}</div>
                                         </div>
@@ -585,21 +489,21 @@ select {
 
                                     <div style="float:right; margin-top:5px;">
 
-                                        <a href="javascript:void(0)" style="background-color:transparent;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
-                                            <span class="fa fa-envelope-o" aria-hidden="true" style="color:gray; font-size:18px; margin-right:5px; margin-left:10px;"></span>
+                                        <a href="javascript:void(0)" style="background-color:transparent;display:none;" onclick="javascript:window.location.assign('mailto:{{noti.receiver.email}}');">
+                                            <span class="fa fa-envelope-o btn-email" aria-hidden="true"></span>
                                         </a>
                                         <a href="/mothers/to_private_chat?member_id={{noti.receiver.pk}}" target="_blank" style="background-color:transparent; margin-left:15px;">
-                                            <span class="fa fa-comments" aria-hidden="true" style="color:gray; font-size:20px; margin-right:10px; margin-left:0px;"></span>
+                                            <span class="fa fa-comments btn-message" aria-hidden="true"></span>
                                         </a>
-                                        <a href="/mothers/delnoti?noti_id={{noti.noti.id}}&opt={{opt}}" onclick="return confirm('Are you sure you want to remove this message?')">
-                                            <span class="fa fa-trash" style="color:gray; font-size:18px; margin-right:10px; margin-left:5px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{noti.noti.id}}')">
+                                            <span class="fa fa-trash btn-delete"></span>
                                         </a>
 
                                     </div>
 
                                     <!--{% if noti.noti.status == '' %}-->
                                     <!--<div style="float:right; margin-top:5px; margin-right:15px;">-->
-                                    <!--    <button type="button" style="border-radius:10px; border:0; background-color:red; color:white; font-size:16px;" id="statusBtn{{noti.noti.pk}}"-->
+                                    <!--    <button type="button" class="new-mes" id="statusBtn{{noti.noti.pk}}"-->
                                     <!--        onclick="javascript:processNewMessage({{noti.noti.pk}}, this);">New</button>-->
                                     <!--</div>-->
                                     <!--{% endif %}-->
@@ -608,7 +512,7 @@ select {
 
                                 <div class="form-group">
                                     <div style="font-size:12px;">{{noti.noti.notified_time}}</div>
-                                    {% if 'reply' in noti.noti.message %}<div style="font-size:14px; margin-right:15px; color:orange;">Replied</div>{% endif %}
+                                    {% if 'reply' in noti.noti.message %}<div class="replied">Replied</div>{% endif %}
                                 </div>
 
                                 <div class="form-group">
@@ -618,11 +522,11 @@ select {
                                 <a href="javascript:void(0)"  onclick="javascript:openMessageBox(this);" id="{{noti.receiver.pk}}">
                                     <input id="notireceiverphoto" type="hidden" value="{% if noti.receiver.photo_url %}{{noti.receiver.photo_url}}{% elif noti.receiver.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}">
                                     <input id="notifid" type="hidden" value="{{noti.noti.pk}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 8px 15px 0px;">Message</div>
+                                    <div class="btn-reply">Message</div>
                                 </a>
 
                                 <a href="/mothers/noti_detail?noti_id={{noti.noti.pk}}&opt={{opt}}">
-                                    <div style="font-size:16px; text-decoration:underline; float:right; margin:0px 15px 15px 0px;">History</div>
+                                    <div class="btn-history">History</div>
                                 </a>
 
                             </div>
@@ -631,7 +535,7 @@ select {
 
                     {% endfor %}
 
-                </form>
+                </div>
 
             {% endif %}
 
@@ -645,34 +549,31 @@ select {
 
 <input type="hidden" id="me_email" value="{{me.email}}">
 
-<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
-	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
-    <img style="border-radius:50%; width:50px; height:50px; float:left; object-fit:cover;" id="seluser">
-    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
-    <div style="width:100%; display:inline-block;">
+<div id="messageBox">
+    <img id="seluser">
+    <span class="fa fa-close" id="btn-close" onclick="javascript:dismissLayouts();"></span>
+    <div class="mes-body">
         <div>
-            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE</div><br>
+            <div id="messageboxtitle">SEND MESSAGE</div><br>
             <form action="/mothers/send_member_message" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
                 {% csrf_token %}
                 <div class="form-group">
                     <input type="hidden" name="member_id" id="member_id" value="">
                     <input style="height:5px; opacity:0;">
                     <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
-                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."
-                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."></textarea>
                     <script>autosize(document.getElementById("textarea2"));</script>
                 </div>
-                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; z-index:100; display: none;" id="gif2"></center>
+                <center><img src="/static/images/progressbar.gif" id="gif2"></center>
                 <center>
-                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;" onclick="javascript:sendMessage();">Submit</button>
+                    <button type="button" class="bouton-update btn-submit" onclick="javascript:sendMessage();">Submit</button>
                 </center>
                 <script>
                     function sendMessage(){
                         var member_id = document.getElementById('member_id').value;
                         var message = document.getElementById('textarea2').value;
                         if(message.length == 0){
-                            alert('Please write something in message box.');
+                            showFailureAlert('Please write something in message box.');
                             return;
                         }
                         document.getElementById('gif2').style.display = "block";
@@ -729,15 +630,12 @@ select {
 window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
- //   alert("Hello");
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("topBtn").style.display = "block";                         // Top button display none;
-        document.getElementById("navbar").style.backgroundColor = "rgba(0,0,0,0.7)";
-        document.getElementById("title").style.display = "block";
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        document.getElementById("topBtn").style.display = "block";
+        document.getElementById("title0").style.display = "block";
     } else {
         document.getElementById("topBtn").style.display = "none";
-        // document.getElementById("navbar").style.backgroundColor = "transparent";
-        document.getElementById("title").style.display = "none";
+        document.getElementById("title0").style.display = "none";
     }
 }
 
@@ -830,27 +728,29 @@ function getDate(ms){
 
 <script>
 
-ScrollTo({{notid}});
+{% if notid %}ScrollTo("{{notid}}");{% endif %}
 
 function ScrollTo(name) {
-  //init thread
-  ScrollToResolver(document.getElementById(name));
+    //init thread
+    ScrollToResolver(document.getElementById(name));
 }
 
 function ScrollToResolver(elem) {
-  elem.style.backgroundColor = "#e6f7ff";
-  var jump = parseInt(elem.getBoundingClientRect().top * .2);
-  document.body.scrollTop += jump - 50;
-  document.documentElement.scrollTop += jump - 50;
-  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
-  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
-    elem.lastjump = Math.abs(jump);
-    setTimeout(function() {
-      ScrollToResolver(elem);
-    }, "100");
-  } else {
-    elem.lastjump = null;
-  }
+    try {
+        elem.style.backgroundColor = "#e6f7ff";
+        var jump = parseInt(elem.getBoundingClientRect().top * .2);
+        document.body.scrollTop += jump - 50;
+        document.documentElement.scrollTop += jump - 50;
+        //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+        if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+            elem.lastjump = Math.abs(jump);
+            setTimeout(function() {
+              ScrollToResolver(elem);
+            }, "100");
+        } else {
+            elem.lastjump = null;
+        }
+    } catch(err) {}
 }
 
 
@@ -871,10 +771,67 @@ function processNewMessage(noti_id, obj){
 }
 
 
+document.getElementById("s-form").querySelector("input[name='q']").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("s-form").querySelector("button").click();
+  }
+});
+
+function searchMessage() {
+    let q = document.getElementsByName("q")[0];
+    if(q.value.length == 0) {
+        showFailureAlert("Please enter a keyword.");
+        return;
+    }
+    let form = document.getElementById("s-form");
+    let topProg = document.getElementsByClassName("top-progress")[0];
+    topProg.style.display = "block";
+    form.submit();
+}
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+function confirmDeletion(notid) {
+    var msg = "Are you sure you want to delete this message？";
+    swal({
+        title: "Warning！",
+        text: msg,
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            window.location.href = "/mothers/delnoti?noti_id=" + notid + "&opt={{opt}}";
+        }
+    });
+}
+
+
 </script>
 
 
-{% endblock %}
+</body>
+
+</html>
 
 
 

@@ -1,114 +1,44 @@
-{% extends 'motherwise/base.html' %}
-{% block title %}Motherwise Member Site{% endblock %}
+{% extends 'mothers/base.html' %}
+{% block title %}MotherWise Nest | Login{% endblock %}
 {% block body %}
 
 <style>
 
 html, body{
-  background: linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.1)), url("/static/images/vacayusermain.jpg") no-repeat center center fixed;
+  background: linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.1)), url("/static/images/main.jpg") no-repeat center center fixed;
   background-size:cover;
 }
 
-#form {
-  border-radius: 5px;
-  max-width:400px;
-  width:auto;
-  height:auto;
-  margin-top: 4%;
-  margin-bottom: 2% auto;
-  margin-left:auto;
-  margin-right:auto;
-  overflow: hidden;
-  /*background:linear-gradient(0deg,rgba(20,150,250,0.2),rgba(0,100,250,0.2));*/
-  /*background:linear-gradient(0deg,rgba(200,250,250,0.3),rgba(200,200,250,0.3));*/
+/*https://www.umwomenshealth.org/sites/default/files/styles/full_size_image/public/mother-baby_02.jpg?itok=25qoGK40*/
+
+#form {border-radius:30px;max-width:400px;width:auto;height:auto;margin-top:2%;margin-bottom:2%;margin-left:auto;margin-right:auto;overflow: hidden;position:relative;
+  background:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.1));
   background-size:cover;
 }
 
-#form:hover {
+@media (min-width:350px) and (max-width:750px) { #form {margin-bottom:10%;} }
 
-}
+p span {color: #F00;}
 
-p span {
-  color: #F00;
-}
+p {margin: 0px;font-weight: 600;line-height: 2;color:#fff;}
 
-p {
-  margin: 0px;
-  font-weight: 600;
-  line-height: 2;
-  color:#fff;
-}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
 
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
+input {border-radius:50px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
 
-input {
-  border-radius: 50px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:black;
-  text-align:left;
-}
+.icon-case {width:10%;float:left;border-radius:50px 0px 0px 50px;background:green; height:42px;position:relative;text-align:center;line-height:40px;padding-top:11px;}
 
-.icon-case {
-  width: 10%;
-  float: left;
-  border-radius: 50px 0px 0px 50px;
-  background:green;
-  height:42px;
-  position: relative;
-  text-align: center;
-  line-height:40px;
-  padding-top:11px;
-}
+i {color:yellow;}
 
-i {
-  color:yellow;
-}
+.form-group {overflow: hidden;width:100%;}
 
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
+.contentform {padding:30px;float:middle;margin:auto;position:relative;z-index:999;}
 
-.contentform {
-  padding: 30px;
-  float:middle;
-  margin:auto;
-}
+.formcontent {width:100%;float:middle;margin:auto;box-sizing:border-box;padding:0px;}
 
+.bouton-update{background-color:#0077b3;color:#FFF;text-align:center;width:100%;border:0;opacity:0.95;padding:12px 18px;border-radius:50px 50px 50px 50px;cursor:pointer;font-size:16px;}
 
-.formcontent {
-  width:100%;
-  float:middle;
-  margin:auto;
-  <!--border-right: 1px dotted #CCC;-->
-  box-sizing: border-box;
-  padding: 0px;
-}
-
-.bouton-update{
-  background-color: #0077b3;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  opacity:0.95;
-  padding: 12px 18px;
-  border-radius: 50px 50px 50px 50px;
-  cursor: pointer;
-  font-size: 16px;
-}
+.blur {backdrop-filter:blur(15px);position:absolute;top:0;left:0;right:0;bottom:0;}
 
 </style>
 
@@ -154,44 +84,137 @@ i {
 <img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle; border-radius: 1px;
 	transform:translate(-50%, -50%); width:80px; z-index:100; top:120px; display: none;" id="gif">
 
-<img src="/static/images/logo.png" style="width:90px; left:1%; top:30px; position:absolute; z-index:100;">
+<img src="/static/images/logo.png" style="width:80px; left:10px; top:5px; position:relative; z-index:9;">
 
-<form id="form" action="/mothers/login/" method="post" enctype="multipart/form-data">
-	{% csrf_token %}
-    <div class="contentform">
-		<div class="formcontent">
-            <center>
-                <img src="/static/images/logotitle.png" style="width:60%; height:auto; border-radius:0; border:0; margin-top:20px; margin-bottom:60px;">
-            </center>
-			<div class="form-group">
-				<!--<p>E-mail <span>*</span></p>-->
-				<!--<span class="icon-case"><i class="fa fa-envelope-o"></i></span>-->
-                <input type="email" name="email" id="email" data-rule="required" data-msg="" required value="" placeholder="E-mail">
-                <div class="validation"></div>
-			</div>
-			<div class="form-group" style="margin-top:20px;">
-				<!--<p>Password <span>*</span></p>-->
-				<!--<span class="icon-case"><i class="fa fa-lock"></i></span>-->
-				<input type="password" name="password" id="password" data-rule="required" data-msg="" required value="" autocomplete="new-password" placeholder="Password">
-                <div class="validation"></div>
-			</div>
-
-			<input hidden name="playerID" id="playerID">
-
-			<br>
-
-			<div class="form-group">
-				<button type="submit" class="bouton-update">LOG IN</button>
+<div style="overflow:hidden;padding-top:5%;">
+    <div class="row">
+        <div class="col-sm-6">
+            <div id="exp-text">
+                <div style="padding:30px;color:white;font-size:30px;font-weight:600;max-width:600px;">
+                    MOTHERWISE IS OFFERING ALL SERVICES REMOTELY AND WELCOMES NEW REFERRALS AND PARTICIPANTS
+                </div>
+                <div style="padding:30px;color:white;font-size:18px;max-width:600px;">
+                    Join a community of women who are pregnant or have new babies.
+                    Workshops at MotherWise focus on communicating, solving family problems, and proven information on caring for and connecting with a newborn.
+                    You'll also receive one-on-one coaching to navigate work, life, family, and your new baby.
+                </div>
             </div>
+        </div>
+        <div class="col-sm-6">
 
-            <a href="/mothers/torequestpwd" style="width:100%; text-align:center;">
-                <div style="margin-bottom:5%; margin-top:5%; margin-left:auto; font-size:16px; color:#fff;
-                            padding:10px 20px 10px 10px;">Forgot Password</div>
-            </a>
+            <form id="form" action="/mothers/login/" method="post" enctype="multipart/form-data">
+            	{% csrf_token %}
+            	<div class="blur"></div>
+                <div class="contentform">
+            		<div class="formcontent">
+                        <center>
+                            <img src="/static/images/logotitle.png" style="width:60%; height:auto; border-radius:0; border:0; margin-top:20px; margin-bottom:60px;">
+                        </center>
+            			<div class="form-group">
+            				<!--<p>E-mail <span>*</span></p>-->
+            				<!--<span class="icon-case"><i class="fa fa-envelope-o"></i></span>-->
+                            <input type="email" name="email" id="email" placeholder="E-mail">
+                            <div class="validation"></div>
+            			</div>
+            			<div class="form-group" style="margin-top:20px;">
+            				<!--<p>Password <span>*</span></p>-->
+            				<!--<span class="icon-case"><i class="fa fa-lock"></i></span>-->
+            				<input type="password" name="password" id="password" autocomplete="new-password" placeholder="Password">
+                            <div class="validation"></div>
+            			</div>
 
-	    </div>
-	</div>
-</form>
+            			<input hidden name="playerID" id="playerID">
+
+            			<br>
+
+            			<div class="form-group">
+            				<button type="button" id="login-btn" class="bouton-update" onclick="login()">LOG IN</button>
+                        </div>
+
+                        <a href="/mothers/torequestpwd" style="width:100%; text-align:center;">
+                            <div style="margin-bottom:5%; margin-top:5%; margin-left:auto; font-size:16px; color:#fff;
+                                        padding:10px 20px 10px 10px;">Forgot Password</div>
+                        </a>
+
+            	    </div>
+            	</div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.getElementById("email").addEventListener("keypress", function(event) {
+      // If the user presses the "Enter" key on the keyboard
+      if (event.key === "Enter") {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("login-btn").click();
+      }
+    });
+
+    document.getElementById("password").addEventListener("keypress", function(event) {
+      // If the user presses the "Enter" key on the keyboard
+      if (event.key === "Enter") {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("login-btn").click();
+      }
+    });
+
+    function login() {
+        var form = document.getElementById("form");
+        var emailbox = document.getElementById("email");
+        var passwordbox = document.getElementById("password");
+
+        if(emailbox.value.length == 0){
+            showFailureAlert("Please enter your email.");
+            return;
+        }
+        if(!validateEmail(emailbox.value)) {
+            showFailureAlert("Please enter a valid email.");
+            return;
+        }
+        if(passwordbox.value.length == 0){
+            showFailureAlert("Please enter your password.");
+            return;
+        }
+        form.submit();
+    }
+
+    function showSuccessAlert(msg) {
+        swal({
+            title: "Success!",
+            text: msg,
+            icon: "success",
+            button: "OK",
+        });
+    }
+
+    function showFailureAlert(msg) {
+        swal({
+            title: "Oops! We ran into an issue.",
+            text: msg,
+            icon: "warning",
+            button: "OK",
+            dangerMode: true,
+        });
+    }
+
+    function validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    {% if notice %}
+    showFailureAlert("{{notice}}");
+    {% endif %}
+
+</script>
 
 
 <div class="form-group" style="text-align:center; display:none;">
@@ -319,8 +342,8 @@ function post(path, params, method) {
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $( function() {
-        $( "#form" ).draggable();
-      } );
+        // $( "#form" ).draggable();
+    } );
 </script>
 
 {% endblock %}

@@ -1,0 +1,1637 @@
+<html>
+
+<head>
+
+<title>Comida Connection | MotherWise</title>
+
+{% load static %}
+{% load tag_library %}
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="/static/reactions/jquery-2.1.4.js"></script>
+<script src="/static/reactions/jquery-ui_1.12.1_.min.js"></script>
+<script src="/static/reactions/facebook-reactions.js"></script>
+<link rel="stylesheet" href="/static/reactions/stylesheet.css">
+<link rel="stylesheet" href="/static/css/v1/comida.css">
+
+</head>
+
+
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+<script>
+
+WebFont.load({
+    google: {
+        families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+    }
+});
+
+$(document).ready(function() {
+	$('.FB_reactions').facebookReactions({
+		postUrl: "mother"
+	});
+});
+
+</script>
+
+
+<div id="no_result" class="no-result">
+    No post found...<br>
+    <center>
+        <div class="res-cont" onclick="toPostCreateForm()">Upload A Post</div>
+    </center>
+</div>
+
+<img src="/static/images/processing.gif" id="gif">
+
+<div class="main">
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }" title="Back"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';" title="Home"></i>
+        <i id="add" class="fa fa-pencil" onclick="toPostCreateForm()" title="Add New Post"></i>
+        <div class="dropdown">
+            <i id="main-menu" class="fas fa-pizza-slice" title="Recipes"></i>
+            <div id="main-dropdown-menu" class="main-dropdown-content">
+                <a href="javascript:void(0)">
+                    <div onclick="getRecipesForCategory('meat')">
+                        <img src="/static/images/meat.jpg"><div>Meat</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </a>
+                <a href="javascript:void(0)">
+                    <div onclick="getRecipesForCategory('vegetarian')">
+                        <img src="/static/images/vegetable.jpg"><div>Vegeterian</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </a>
+                <a href="javascript:void(0)">
+                    <div onclick="getRecipesForCategory('light_bites')">
+                        <img src="/static/images/lightbites.jpg"><div>Light Bites</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </a>
+                <a href="javascript:void(0)">
+                    <div onclick="getRecipesForCategory('sweet_tooth')">
+                        <img src="/static/images/sweettooth.jpg"><div>Sweet Tooth</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div style="flex-grow:1;"></div>
+        <i id="res" class="fa fa-pepper-hot" onclick="document.getElementById('resourceSection').style.display='block';" title="Food Resources"></i>
+        <div class="dropdown">
+            <i id="sear" class="fa fa-search" onclick="openSearchMenu()"></i>
+            <div id="sear-dropdown-menu" class="sear-dropdown-content">
+                <a href="#">
+                    <form id="s-form" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" value="" placeholder="Type a keyword...">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" onclick="searchHome()"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </a>
+                <a href="javascript:void(0)" onclick="location.reload();">
+                    <div><i class="fa fa-refresh" aria-hidden="true"></i><div>Refresh Posts</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <i id="notif" class="fa fa-bell" onclick="openNotifMenu()"></i>
+            <div id="msg-dropdown-menu" class="msg-dropdown-content">
+                <div id="chat_log">
+                    <div id="list">
+                        <button onclick="if(document.getElementById('list2').innerHTML == ''){alert('No history browsing'); return;}
+                                document.getElementById('notiLayout').style.display='block';">Click here to browse history...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function openNotifMenu() {
+                document.getElementById("msg-dropdown-menu").classList.toggle("show");
+            }
+            function openMainMenu() {
+                document.getElementById("main-dropdown-menu").classList.toggle("show");
+            }
+            function openSearchMenu() {
+                document.getElementById("sear-dropdown-menu").classList.toggle("show");
+            }
+
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.matches('#notif')) {
+                    var dropdowns = document.getElementsByClassName("msg-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+                if (!event.target.matches('#main-menu')) {
+                    var dropdowns = document.getElementsByClassName("main-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+                if (!event.target.matches('#sear')) {
+                    var dropdowns = document.getElementsByClassName("sear-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            }
+
+        </script>
+    </div>
+
+    <div class="w-100 text-center pl-2 pr-2">
+        <div class="welcome-text">Comida Connection</div>
+    </div>
+
+    <center><img src="/static/images/progressbar.gif" class="top-progress"></center>
+
+    <div class="body">
+        <div>
+            <div id="post-container">
+                {% if list %}
+                {% for post in list %}
+                <div class="postform" id="{{post.id}}">
+                    <div class="contentform">
+                        <div class="post-header" >
+                            <div class="member-photo-section">
+                                <a href="javascript:void(0)" onclick="showPosterProfile(this)">
+                                    <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
+                                </a>
+                            </div>
+                            <a href="javascript:void(0)" onclick="showPosterProfile(this)" style="flex-grow:1;">
+                                <div class="member-name">
+                                    {{post.member.name}}
+                                    <div>{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
+                                </div>
+                            </a>
+
+                            <input hidden id="u-id" value="{{post.member.id}}">
+                            <input hidden id="u-name" value="{{post.member.name}}">
+                            <input hidden id="u-cohort" value="{{post.member.cohort}}">
+                            <input hidden id="u-city" value="{{post.member.city}}">
+                            <input hidden id="u-photo" value="{{post.member.photo_url}}">
+                            <input hidden id="u-admin" value="{{post.member.admin_id}}">
+                            <input hidden id="u-registered" value="{{post.member.registered_time}}">
+
+                            {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
+                            <a href="/mothers/add_post_comment?post_id={{post.post.id}}">
+                                {% if post.member.pk == me.pk %}
+                                    <span class="fa fa-pencil action-btn" title="Edit Post"></span>
+                                {% else %}
+                                    <span class="far fa-comment-alt action-btn" title="Add Comment"></span>
+                                {% endif %}
+                            </a>
+
+                            {% if post.member.pk == me.pk %}
+                                <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                    <span class="fa fa-trash action-btn" title="Delete Post"></span>
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="form-group text-center cursor-pointer" onclick="window.location.href='/mothers/add_post_comment?post_id={{post.post.id}}';">
+                            <div class="text post-title">{{post.post.title}}</div>
+                            <div class="post-category">{{post.post.category}}</div>
+                            <div class="post-time">{{post.post.posted_time}}</div>
+                        </div>
+
+                        {% if post.post.picture_url %}
+                        <div class="form-group">
+                            <a href="/mothers/add_post_comment?post_id={{post.post.id}}">
+                                <div class="post-picture-frame">
+                                    <img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';">
+                                    {% if post.pp_cnt|to_int > 0 %}<label class="pp-cnt">+{{post.pp_cnt}}</label>{% endif %}
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
+                        </div>
+
+                        {% for prev in post.prevs %}
+                        <div class="form-group prev">
+                            <div onclick="window.open('{{prev.site_url}}');">
+                                {% if prev.image_url %}
+                                <img src="{{prev.image_url}}" onerror="this.style.display='none';">
+                                <div>
+                                    <label class="max-2lines">{{prev.title}}</label>
+                                    {% if prev.description %}<div class="singleline">{{prev.description}}</div>{% endif %}
+                                    <div class="prev-link d-flex">
+                                        {% if prev.icon_url %}<img src="{{prev.icon_url}}">{% endif %}
+                                        <div class="max-2lines">{{prev.site_url}}</div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div>
+                                    <label class="max-2lines">{{prev.title}}</label>
+                                    {% if prev.description %}<div class="singleline">{{prev.description}}</div>{% endif %}
+                                    <div class="prev-link d-flex">
+                                        {% if prev.icon_url %}<img src="{{prev.icon_url}}">{% endif %}
+                                        <div class="max-2lines">{{prev.site_url}}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="post-footer">
+                            <div class="post-actions">
+                                <a class="FB_reactions" data-reactions-type="horizontal" data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                    <span id="flbl-{{post.post.pk}}">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                </a>
+                                <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                    <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                    <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                    <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                    <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                    <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                    <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                </div>
+                                <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                            </div>
+
+                            <div class="post-detail-section">
+                                <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                    <span class="fas fa-arrow-right"></span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="pc-section">
+                            {% for comment in post.comments %}
+                            <div>
+                                <div>
+                                    <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                    <span>{{comment.member.name}}</span>
+                                </div>
+                                <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                            </div>
+                            {% endfor %}
+                            {% if post.pc_cnt|to_int > 5 %}
+                            <a href="/mothers/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <br>
+
+                {% endfor %}
+
+                {% else %}
+
+                <script>document.getElementById('no_result').style.display = 'block';</script>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <div class="left-menu">
+        <fieldset>
+            <legend><label>Recipes</label></legend>
+            <div onclick="getRecipesForCategory('meat')">
+                <img src="/static/images/meat.jpg"><div>Meat</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+            </div>
+            <div onclick="getRecipesForCategory('vegetarian')">
+                <img src="/static/images/vegetable.jpg"><div>Vegeterian</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+            </div>
+            <div onclick="getRecipesForCategory('light_bites')">
+                <img src="/static/images/lightbites.jpg"><div>Light Bites</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+            </div>
+            <div onclick="getRecipesForCategory('sweet_tooth')">
+                <img src="/static/images/sweettooth.jpg"><div>Sweet Tooth</div><i class="fa fa-angle-right" aria-hidden="true"></i>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="right-resources">
+        <div>Resources In the Community</div>
+        <div>
+            {% if resources %}
+            {% for res in resources %}
+            <div class="item-res">
+                <div onclick="openFoodResourceDetailBox(this)">
+                    <img src="{% if res.image_url %}{{res.image_url}}{% else %}/static/images/frlogo.png{% endif %}">
+                    <div>{{res.title}}</div>
+                </div>
+                <input hidden id="fr-title" value="{{res.title}}">
+                <input hidden id="fr-category" value="{{res.category}}">
+                <input hidden id="fr-group" value="{{res.group}}">
+                <input hidden id="fr-location" value="{{res.location}}">
+                <input hidden id="fr-daily-meal" value="{{res.daily_meal}}">
+                <input hidden id="fr-link" value="{{res.link}}">
+                <input hidden id="fr-lat" value="{{res.lat}}">
+                <input hidden id="fr-lng" value="{{res.lng}}">
+                <input hidden id="fr-image" value="{{res.image_url}}">
+                <input hidden id="fr-desc" value="{{res.content}}">
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="no-cont">No resource found...</div>
+            <center><div class="res-cont" style="display:none;" onclick="window.location.href='';">Upload A Resource</div></center>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+<div class="footer">
+    <a href="mailto:madelineweinkauf@thrivingfamiliescolorado.org" class="navigator-contact-btn">
+        <i class="fa fa-envelope"></i><span style="margin-left:10px;">Get in touch with a navigator!</span>
+    </a>
+</div>
+
+
+<img src="/static/images/progressbar.gif" class="bottom-progress">
+
+
+<div id="cohortBox">
+    <img class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close btn-close" onclick="javascript:document.getElementById('cohortBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div class="box-body">
+        <div>
+            <div class="grouptitle">CONNECT WITH YOUR GROUP</div><br>
+            <form action="/mothers/do_cohort/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortform">
+                {% csrf_token %}
+                <div class="form-group">
+                    <select name="cohort" required id="cohort2" style="width:100%; color:black; appearance:none; text-align-last:center;">
+                        {% for c in cohorts %}
+                        {% if c == me.cohort %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+    			</div>
+
+    			<input hidden id="cohort_option" name="option" value="">
+    			<input hidden id="cohort_conf_code" name="code" value="">
+
+                <div class="form-group" style="margin-top:20px; text-align:center;">
+
+                    <div style="width:auto; display:inline-block;">
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('members');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:orange;"><br>
+                                <label class="button-text">Members</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');" style="visibility:hidden;">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_video.png" style="margin-left:10px; background-color:red;"><br>
+                                <label class="button-text" style="margin-left:5px;">Video</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('group_chat');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group_chat.png" style="margin-left:10px; background-color:#0066cc;"><br>
+                                <label class="button-text" style="margin-left:9px;">Group Chat</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('private_chat');" style="display:none;">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_chat.png" style="margin-left:10px; background-color:green;"><br>
+                                <label class="button-text" style="margin-left:5px;">Priv Chat</label>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="foodResourceDetailBox">
+    <img class="centered-and-cropped fr-img" src="/static/images/frlogo.png">
+    <span class="fa fa-close btn-close" onclick="javascript:document.getElementById('foodResourceDetailBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div class="box-body">
+        <div>
+            <div class="grouptitle">FOOD BANK</div><br>
+            <ul>
+                <li id="li-g">
+                    <div class="fr-g"></div>
+                </li>
+                <li id="li-l">
+                    <div class="fr-l"></div>
+                </li>
+                <li id="li-dm">
+                    <div class="fr-dm"></div>
+                </li>
+            </ul>
+            <div class="fr-d"></div>
+        </div>
+        <div class="fr-footer">
+            <div class="flex-grow-1"></div>
+            <a><i class="fa fa-globe"></i></a>
+            <a><i class="fa fa-map-marker"></i></a>
+        </div>
+    </div>
+</div>
+
+
+<div id="resourceSection">
+    <span class="fa fa-close btn-close" onclick="javascript:document.getElementById('resourceSection').style.display='none';"></span>
+    <div class="r-ttl">Resources In the Community</div>
+    <div class="r-body">
+        {% if resources %}
+        {% for res in resources %}
+        <div class="item-res">
+            <div onclick="openFoodResourceDetailBox(this)">
+                <img src="{% if res.image_url %}{{res.image_url}}{% else %}/static/images/frlogo.png{% endif %}">
+                <div>{{res.title}}</div>
+            </div>
+            <input hidden id="fr-title" value="{{res.title}}">
+            <input hidden id="fr-category" value="{{res.category}}">
+            <input hidden id="fr-group" value="{{res.group}}">
+            <input hidden id="fr-location" value="{{res.location}}">
+            <input hidden id="fr-daily-meal" value="{{res.daily_meal}}">
+            <input hidden id="fr-link" value="{{res.link}}">
+            <input hidden id="fr-lat" value="{{res.lat}}">
+            <input hidden id="fr-lng" value="{{res.lng}}">
+            <input hidden id="fr-image" value="{{res.image_url}}">
+            <input hidden id="fr-desc" value="{{res.content}}">
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-cont">No resource found...</div>
+        <center><div class="res-cont" style="display:none;" onclick="window.location.href='';">Upload A Resource</div></center>
+        {% endif %}
+    </div>
+</div>
+
+
+<div id="recipe-section">
+    <span class="fa fa-close btn-close" onclick="javascript:document.getElementById('recipe-section').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div class="list-ttl">
+        {% if category == 'meat' %}MEAT RECIPES
+        {% elif category == 'vegetarian' %}VEGETARIAN RECIPES
+        {% elif category == 'light_bites' %}LIGHT BITES RECIPES
+        {% elif category == 'sweet_tooth' %}SWEET TOOTH RECIPES
+        {% endif %}
+    </div>
+    {% if recipes %}
+    <div class="r-container">
+        {% for r in recipes %}
+            {% if r.title %}
+            <div class="r-item" id="{{r.id}}">
+                <div class="form-group r-prev">
+                    <div onclick="window.open('{{r.site_url}}');">
+                        {% if r.image_url %}
+                        <img src="{{r.image_url}}" onerror="this.style.display='none';">
+                        <div>
+                            <label class="max-2lines">{{r.title}}</label>
+                            {% if r.description %}<div class="singleline">{{r.description}}</div>{% endif %}
+                            <div class="r-prev-link d-flex">
+                                {% if r.icon_url %}<img src="{{r.icon_url}}">{% endif %}
+                                <div id="site-link" class="max-2lines">{{r.site_url}}</div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div>
+                            <label class="max-2lines">{{r.title}}</label>
+                            {% if r.description %}<div class="singleline">{{r.description}}</div>{% endif %}
+                            <div class="prev-link d-flex">
+                                {% if r.icon_url %}<img src="{{r.icon_url}}">{% endif %}
+                                <div class="max-2lines">{{r.site_url}}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="r-item" id="{{r.id}}">
+                <div class="form-group">
+                    <a href="{{r.site_url}}" target="_blank" class="item-link singleline" id="site-link">
+                        {{r.site_url}}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-list">
+        No result found...
+    </div>
+    {% endif %}
+</div>
+
+
+<div id="notiLayout" style="display:none;" onclick="javascript:dismissLayouts();">
+    <center>
+        <div style="font-size:16px; font-weight:600; font-family:verdana; color:white; text-align:center; width:280px;
+            border-radius:50px; margin-top:10px; margin-bottom:15px; background-color:orange; padding:3px;">
+            Contact Again
+        </div>
+    </center>
+    <div id="notiForm">
+        <div class="contentform2">
+            <div class="formcontent2">
+                <div id="chat_log2">
+                    <div id="list2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function showPosterProfile(obj) {
+        let selector = ".postform";
+        let parentElem = findParentBySelector(obj, selector);
+        let userIdBox = parentElem.querySelector("#u-id");
+        let userNameBox = parentElem.querySelector("#u-name");
+        let userCohortBox = parentElem.querySelector("#u-cohort");
+        let userCityBox = parentElem.querySelector("#u-city");
+        let userPhotoBox = parentElem.querySelector("#u-photo");
+        let userAdminIdBox = parentElem.querySelector("#u-admin");
+        let userRegisteredTimeBox = parentElem.querySelector("#u-registered");
+
+        if(userCohortBox.value == "admin") document.getElementById("uNameBox").innerHTML = "MotherWise Manager";
+        else document.getElementById("uNameBox").innerHTML = userNameBox.value;
+
+        if(userAdminIdBox.value != '0') document.getElementById("uRegisteredTimeBox").innerHTML = "Member since " + "<label style='font-weight:300;'>" + userRegisteredTimeBox.value + "</label>";
+        else document.getElementById("uRegisteredTimeBox").innerHTML = '<label style="font-weight:600; color:orange; opacity:0;">Manager</label>';
+
+        if(userAdminIdBox.value != '0') {
+            if(userCohortBox.value.length > 0) {
+                document.getElementById("uCohortBox").innerHTML = '<span class="fas fa-user-friends"></span>' +  userCohortBox.value;
+                // document.getElementById("uCohortBox").href = "javascript:void(0)";
+                document.getElementById("uCohortBox").addEventListener("click", function() { cohortMembers(this.innerHTML.replace('<span class="fas fa-user-friends"></span>', '')) });
+            } else document.getElementById("uCohortBox").innerHTML = "--- No Group ---";
+        }else document.getElementById("uCohortBox").innerHTML = '<span class="fas fa-user-friends"></span>' +  "MotherWise Community";
+
+        if(userCityBox.value.length > 0) {
+            document.getElementById("uCityBox").innerHTML = '<span class="glyphicon glyphicon-map-marker" style="font-size:16px; margin-right:5px;color:white;"></span><span>' + userCityBox.value + '</span>';
+        }else document.getElementById("uCityBox").innerHTML = "--- --- ---";
+
+        if(userPhotoBox.value.length > 0) {
+            document.getElementById("uPhotoBox").src = userPhotoBox.value;
+            document.getElementById("uPhoto").href = userPhotoBox.value;
+            document.getElementById("uPhoto").target = "_blank";
+        }else {
+            if(userCohortBox.value == 'admin') document.getElementById("uPhotoBox").src = '/static/images/logo.jpg';
+            else document.getElementById("uPhotoBox").src = '/static/images/ic_profile.png';
+        }
+
+        document.getElementById("uPosts").href = "/mothers/qqqqqqqqqqqq?user_id=" + userIdBox.value;
+        document.getElementById("uChat").href = "/mothers/to_private_chat?member_id=" + userIdBox.value;
+        document.getElementById("profile-section").style.display = "inline-block";
+        document.getElementById("backgroundOverlay").style.display = "block";
+    }
+
+    function cohortMembers(ch) {
+        document.getElementById("profile-cohort").value = ch;
+        document.getElementById("profile-cohort-form").submit();
+    }
+
+</script>
+
+
+<form action="/mothers/do_cohort/" method="post" enctype="multipart/form-data" id="profile-cohort-form">
+    {% csrf_token %}
+	<input hidden name="cohort" id="profile-cohort">
+	<input hidden name="option" value="members">
+	<input hidden name="code" value="">
+</form>
+
+
+<div id="profile-section">
+    <div>
+        <div class="profile-body">
+            <div>
+                <!--<input type="hidden" id="user_id" value="{{user_id}}">-->
+                <div class="contentform">
+                    <div style="width:100%;">
+
+                        <div id="uNameBox"></div>
+                        <div id="uRegisteredTimeBox"></div>
+                        <br>
+                        <div id="uCohortBox" data-toggle="tooltip" data-placement="top" title="See group members"></div>
+                        <br>
+                        <br>
+                        <div class="uFooter">
+                            <div id="uCityBox"></div>
+                            <div class="flex-grow-1"></div>
+                            <a id="uPosts">
+                                <span class="glyphicon glyphicon-flag" title="Posts"></span>
+                            </a>
+                            <a id="uChat">
+                                <span class="fa fa-comments" title="Chat"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="photo-frame">
+            <center>
+                <a id="uPhoto">
+                    <img id="uPhotoBox">
+                        <!--#E5F2FA-->
+                </a>
+            </center>
+        </div>
+        <i class="fa fa-close close-profile"></i>
+        <br>
+    </div>
+</div>
+
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+<input type="hidden" id="me_id" value="{{me.pk}}">
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" class="topBtn" id="topBtn" style="right:15px;"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<div class="trans">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+    $( document ).ready(function() {
+        $('#google_translate_element').bind('DOMSubtreeModified', function() {
+            var val = $(this);
+            var strlang = "" + val[0].innerText + "";
+            var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+            if(toolBar !== undefined) {
+                toolBar.style.display  = 'none';
+                document.body.style.top = '0px';
+            }
+        });
+    });
+</script>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("topBtn").style.display = "block";
+    } else {
+        document.getElementById("topBtn").style.display = "none";
+    }
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight){
+        console.log('scrolled to end')
+        if(endindx < total_count - 1) {
+            refreshAtBottom();
+        }
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+var y = document.getElementsByClassName("text");
+var i;
+for (i = 0; i < y.length; i++) {
+  y[i].innerHTML = urlify(y[i].innerHTML);
+  y[i].style.color = "white";
+  y[i].style.textAlign = "left";
+}
+
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:yellow; word-break: break-all;">' + url + '</a>';
+    });
+}
+
+
+$(document).ready(function() {
+    $('.postform .text').each(function(i) {
+        const response = this.innerHTML
+        const decoded = response
+            .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+            .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+        this.innerHTML = decoded;
+    });
+});
+
+document.getElementsByClassName("close-profile")[0].addEventListener('click', function (event) {
+    dismissLayouts();
+});
+
+
+{% if pst %}
+ScrollTo({{pst.pk}});
+{% endif %}
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "50");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+</script>
+
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDveaXbV1HHMREyZzbvQe53BJEHVIRCf14",
+    authDomain: "motherwise-1585202524394.firebaseapp.com",
+    databaseURL: "https://motherwise-1585202524394.firebaseio.com",
+    projectId: "motherwise-1585202524394",
+    storageBucket: "motherwise-1585202524394.appspot.com",
+    messagingSenderId: "805720875706",
+    appId: "1:805720875706:web:1e90b519b4cf8ca0f69883",
+    measurementId: "G-TLGYEHY3TK"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script>
+	function showNotifications(){
+		window.location.href = "/adminNotifications";
+	}
+
+</script>
+
+<script>
+
+createjs.Sound.registerSound("/static/sound/notification.mp3", "x");
+navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+
+var keys = [];
+var me_email = document.getElementById("me_email").value;
+me_email = me_email.replace(/\./g,"ddoott");
+var ref = firebase.database().ref('notification/' + me_email);
+ref.on('child_added', function(snapshot) {
+	var key = snapshot.val();
+	keys.push(key);
+	if(keys.length == 1){
+// 		createjs.Sound.play("x");
+        document.getElementById("notif").style.backgroundColor = "white";
+        document.getElementById("notif").style.color = "red";
+		if (navigator.vibrate) {
+			// vibration API supported
+			navigator.vibrate(500);
+		}else {
+			window.navigator.vibrate(500); // vibrate for 500ms
+		}
+	}
+});
+
+var keys2 = [];
+var me_id = document.getElementById("me_id").value;
+var notiref = firebase.database().ref('notify/' + me_id);
+notiref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+//   console.log(snapshot.key);
+  if (key){
+    var sender_name = key.sender_name;
+    // console.log(key.sender_name);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    var role_caption = "";
+    if(key.role == "manager") role_caption = "<div style='color:white; font-size:10px; margin-left:2px; border-radius:3px; background-color:red; width:auto; padding:0px 6px 0px 6px; display:inline-block;'>Manager</div>";
+    li.innerHTML = "<div style='font-size:14px; font-weight:600;'>" + sender_name + "</div>"
+        + role_caption
+        + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key.date))
+        + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>"
+        + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key.msg + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    var sender_photo = key.sender_photo;
+    if (sender_photo.length > 0 && isValidImage(sender_photo)) img.src = sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        var type = key.type
+        var id = key.id
+        var mes_id = key.mes_id
+        if(type == 'gchat'){
+            window.location = "/mothers/open_group_chat?group_id=" + id;
+        }else if(type == 'cchat'){
+            window.location = "/mothers/open_cohort_chat?cohort=" + id;
+        }else {
+            window.location = "/mothers/notifications?noti_id=" + mes_id;
+        }
+        notiref.child(snapshot.key).remove();
+    });
+    ul.appendChild(ul2);
+
+    keys2.push(key);
+	if(keys2.length == 1){
+// 		createjs.Sound.play("x");
+		document.getElementById("notif").style.backgroundColor = "white";
+        document.getElementById("notif").style.color = "red";
+		if (navigator.vibrate) {
+			// vibration API supported
+			navigator.vibrate(500);
+		}else {
+			window.navigator.vibrate(500); // vibrate for 500ms
+		}
+	}
+  }
+});
+
+
+
+</script>
+
+<script src="/static/js/chat/memb_notification.js"></script>
+
+<script>
+
+    function dismissLayouts(){
+        document.getElementById('foodResourceDetailBox').style.display='none';
+        document.getElementById('cohortBox').style.display='none';
+        document.getElementById('backgroundOverlay').style.display='none';
+        document.getElementById('notiLayout').style.display='none';
+        document.getElementById('profile-section').style.display='none';
+        document.getElementById("recipe-section").style.display = "none";
+    }
+
+    function doCohort(option){
+        if(document.getElementById('cohort2').value == ''){
+            showFailureAlert('Please choose a group.');
+            return;
+        }
+        document.getElementById('cohort_option').value = option;
+        var form = document.getElementById("cohortform");
+        form.submit();
+    }
+
+    function doGroup(option){
+        if(document.getElementById('groupid').value == ''){
+            showFailureAlert('Please choose a community.');
+            return;
+        }
+        document.getElementById('group_option').value = option;
+        var form = document.getElementById("groupform");
+        form.submit();
+    }
+
+</script>
+
+<script>
+
+function formSubmit(form, gif, text){
+    gif.style.display = "block";
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            showSuccessAlert(text);
+            gif.style.display = "none";
+            dismissLayouts();
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+
+</script>
+
+<script>
+
+{% if groups %}
+{% for group in groups %}
+
+var gref = firebase.database().ref('gmnotis' + {{admin.pk}} + "gr" + {{group.pk}});
+gref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.sender;
+    var cohort = key2.cohort;
+    var groupid = key2.groupid;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>" + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key2.message + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.sender_photo.length > 0 && isValidImage(key2.sender_photo)) img.src = key2.sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        if(groupid != '') window.open('/mothers/open_group_chat?group_id=' + groupid);
+        else if(cohort != '') window.open('/mothers/open_cohort_chat?cohort=' + cohort);
+    });
+    if({{me.pk}} != parseInt(key2.sender_id)){
+        ul.appendChild(ul2);
+        document.getElementById("notif").style.backgroundColor = "white";
+        document.getElementById("notif").style.color = "red";
+    }
+  }else {
+      var lii = document.createElement("div");
+      lii.style.color = 'white';
+      lii.style.fontSize = '14';
+      lii.style.textAlign = 'center';
+      lii.innerHTML = "No message ...";
+      ul.append(lii);
+  }
+});
+
+{% endfor %}
+{% endif%}
+
+
+var cref = firebase.database().ref('gmnotis' + {{admin.pk}} + '{{me.cohort}}');
+cref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.sender;
+    var cohort = key2.cohort;
+    var groupid = key2.groupid;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>" + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key2.message + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.sender_photo.length > 0 && isValidImage(key2.sender_photo)) img.src = key2.sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        if(groupid != '') window.open('/mothers/open_group_chat?group_id=' + groupid);
+        else if(cohort != '') window.open('/mothers/open_cohort_chat?cohort=' + cohort);
+    });
+    if({{me.pk}} != parseInt(key2.sender_id)){
+        ul.appendChild(ul2);
+        document.getElementById("notif").style.backgroundColor = "white";
+        document.getElementById("notif").style.color = "red";
+    }
+  }else {
+      var lii = document.createElement("div");
+      lii.style.color = 'white';
+      lii.style.fontSize = '14';
+      lii.style.textAlign = 'center';
+      lii.innerHTML = "No message ...";
+      ul.append(lii);
+  }
+});
+
+
+</script>
+
+
+<script type = "text/javascript">
+    setInterval(getNewNofiCount, 5000);
+    function getNewNofiCount(){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // console.log(xhr.response);
+                var new_msg_count = xhr.response;
+                if(parseInt(new_msg_count) > 0) {
+                    let badges = document.getElementsByClassName("badge");
+                    for(var i=0; i<badges.length; i++) {
+                        badges[i].style.display = "block";
+                        badges[i].innerHTML = new_msg_count;
+                    }
+                }else {
+                    let badges = document.getElementsByClassName("badge");
+                    for(var i=0; i<badges.length; i++) {
+                        badges[i].style.display = "none";
+                    }
+                }
+            }
+        };
+        xhr.open('GET', "/mothers/new_notis", true);
+        xhr.send('');
+    }
+</script>
+
+<script>
+
+var ul0 = document.getElementById("list2");
+var keys = [];
+me_email = me_email.replace(/\./g,"ddoott");
+var notifRef = firebase.database().ref('notification2/' + me_email);
+notifRef.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.senderName;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) +
+        "<label style='overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:100; margin-left:8px; float:right; max-width: 160px;'>" + key2.msg + "</label>" + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>Click to contact</label>" + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.senderPhoto.length > 0 && isValidImage(key2.senderPhoto)) img.src = key2.senderPhoto;
+    else img.src = "/static/images/manager.jpg";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "5px";
+    ul2.addEventListener('click', function (event) {
+       var context = {
+            'member_email': key2.sender
+       }
+       post('/mothers/to_chat/', context);
+    //   console.log('/mothers/to_chat/');
+    });
+    ul0.appendChild(ul2);
+  }
+});
+
+
+me_id = document.getElementById("me_id").value;
+var notiref2 = firebase.database().ref('notify2/' + me_id);
+notiref2.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+//   console.log(snapshot.key);
+  if (key){
+    var sender_name = key.sender_name;
+    // console.log(key.sender_name);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    var role_caption = "";
+    if(key.role == "manager") role_caption = "<div style='color:white; font-size:10px; margin-left:2px; border-radius:3px; background-color:red; width:auto; padding:0px 6px 0px 6px; display:inline-block;'>Manager</div>";
+    li.innerHTML = "<div style='font-size:14px; font-weight:600;'>" + sender_name + "</div>"
+        + role_caption
+        + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key.date))
+        + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>"
+        + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key.msg + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    var sender_photo = key.sender_photo;
+    if (sender_photo.length > 0 && isValidImage(sender_photo)) img.src = sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        var type = key.type
+        var id = key.id
+        var mes_id = key.mes_id
+        if(type == 'gchat'){
+            window.location = "/mothers/open_group_chat?group_id=" + id;
+        }else if(type == 'cchat'){
+            window.location = "/mothers/open_cohort_chat?cohort=" + id;
+        }else {
+            window.location = "/mothers/notifications?noti_id=" + mes_id;
+        }
+        notiref2.child(snapshot.key).remove();
+    });
+    ul0.appendChild(ul2);
+
+  }
+});
+
+function isValidImage(imageurl) {
+   try {
+        var img = document.createElement("img");
+        img.src = imageurl;
+    } catch(err) {
+        //
+    }
+
+    if(img.height > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+function confirmDeletion(postid) {
+    var msg = "Are you sure you want to delete this post？";
+    swal({
+        title: "Warning！",
+        text: msg,
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            window.location.href = "/mothers/delpost?post_id=" + postid + "&opt=home";
+        }
+    });
+}
+
+
+function toPostCreateForm() {
+    var token = generate_token(200);
+    window.sessionStorage.setItem('mw_token', token);
+    window.open("/mothers/tonewpost?token=" + token + "&comida=yes") ;
+}
+
+
+function generate_token(length){
+    //edit the token allowed characters
+    var a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".split("");
+    var b = [];
+    for (var i=0; i<length; i++) {
+        var j = (Math.random() * (a.length-1)).toFixed(0);
+        b[i] = a[j];
+    }
+    return b.join("");
+}
+
+
+const channel = new BroadcastChannel("mw_post");
+channel.addEventListener("message", e => {
+    // console.log(e.data);
+    if(e.data != null) {
+        let data = JSON.parse(JSON.stringify(e.data));
+        let token = data["token"];
+        if(token.length > 0 && token == window.sessionStorage.getItem('mw_token')) {
+            location.reload();
+        }
+    }
+});
+
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+
+function updateReaction(option, postid, feeling) {
+    console.log(option + " /// " + postid + " /// " + feeling)
+    if(feeling == null) feeling = "";
+    console.log(feeling)
+    if(option == "mother") {
+	    var formData = new FormData();
+	    formData.append("post_id", postid);
+	    formData.append("feeling", feeling);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let response = xhr.response;
+                // console.log(response)
+                if(response != "error") {
+                    let resp = xhr.responseText;
+                    // console.log(resp)
+                    let data = JSON.parse(resp);
+                    let post = data["post"];
+                    let allfeelings = post["reactions"];  if(allfeelings.length == 0) allfeelings = "0";
+                    document.getElementById("feelings-" + postid).innerHTML = allfeelings;
+                    if(parseInt(allfeelings) == 0) document.getElementById("feelings-" + postid).style.display = "none";
+                    else document.getElementById("feelings-" + postid).style.display = "block";
+                    if(feeling.length == 0) document.getElementById("flbl-" + postid).innerHTML = "Like";
+                    let likes = post["likes"]; if(likes.length == 0) likes = "0";
+                    let loves = post["loves"]; if(loves.length == 0) loves = "0";
+                    let haha = post["haha"]; if(haha.length == 0) haha = "0";
+                    let wow = post["wow"]; if(wow.length == 0) wow = "0";
+                    let sad = post["sad"]; if(sad.length == 0) sad = "0";
+                    let angry = post["angry"]; if(angry.length == 0) angry = "0";
+                    if(parseInt(likes) == 0) document.getElementById("like-" + postid).style.display = "none";
+                    else document.getElementById("like-" + postid).style.display = "block";
+                    if(parseInt(loves) == 0) document.getElementById("love-" + postid).style.display = "none";
+                    else document.getElementById("love-" + postid).style.display = "block";
+                    if(parseInt(haha) == 0) document.getElementById("haha-" + postid).style.display = "none";
+                    else document.getElementById("haha-" + postid).style.display = "block";
+                    if(parseInt(wow) == 0) document.getElementById("wow-" + postid).style.display = "none";
+                    else document.getElementById("wow-" + postid).style.display = "block";
+                    if(parseInt(sad) == 0) document.getElementById("sad-" + postid).style.display = "none";
+                    else document.getElementById("sad-" + postid).style.display = "block";
+                    if(parseInt(angry) == 0) document.getElementById("angry-" + postid).style.display = "none";
+                    else document.getElementById("angry-" + postid).style.display = "block";
+                }
+            }
+        };
+        xhr.open('POST', "/mothers/react_post", true);
+        xhr.send(formData);
+	}
+}
+
+
+function openMessageBox(){
+    document.getElementById('backgroundOverlay').style.display='block';
+    document.getElementById('messageBox').style.display='block';
+    document.getElementById('cohortBox').style.display='none';
+    document.getElementById('groupBox').style.display='none';
+}
+
+function openCohortBox(){
+    document.getElementById('backgroundOverlay').style.display='block';
+    document.getElementById('cohortBox').style.display='block';
+    document.getElementById('groupBox').style.display='none';
+    // document.getElementById('messageBox').style.display='none';
+}
+
+function openFoodResourceDetailBox(obj){
+    let selector = ".item-res";
+    let parentElem = findParentBySelector(obj, selector);
+    let frtitlebox = parentElem.querySelector("#fr-title");
+    let frcategorybox = parentElem.querySelector("#fr-category");
+    let frgroupbox = parentElem.querySelector("#fr-group");
+    let frlocationbox = parentElem.querySelector("#fr-location");
+    let frlatbox = parentElem.querySelector("#fr-lat");
+    let frlngbox = parentElem.querySelector("#fr-lng");
+    let frdailymealbox = parentElem.querySelector("#fr-daily-meal");
+    let frlinkbox = parentElem.querySelector("#fr-link");
+    let frimagebox = parentElem.querySelector("#fr-image");
+    let frdescbox = parentElem.querySelector("#fr-desc");
+
+    let frdetailbox = document.getElementById('foodResourceDetailBox');
+    if(frimagebox.value.length > 0) frdetailbox.getElementsByClassName("fr-img")[0].src = frimagebox.value;
+    else frdetailbox.getElementsByClassName("fr-img")[0].src = "/static/images/frlogo.png";
+    frdetailbox.getElementsByClassName("grouptitle")[0].innerHTML = frtitlebox.value;
+    if(frgroupbox.value.length > 0) {
+        frdetailbox.getElementsByClassName("fr-g")[0].innerHTML = frgroupbox.value;
+        document.getElementById("li-g").style.display = "list-item";
+    }else document.getElementById("li-g").style.display = "none";
+    if(frlocationbox.value.length > 0) {
+        frdetailbox.getElementsByClassName("fr-l")[0].innerHTML = frlocationbox.value;
+        document.getElementById("li-l").style.display = "list-item";
+    } else document.getElementById("li-l").style.display = "none";
+    if(frdailymealbox.value.length > 0) {
+        frdetailbox.getElementsByClassName("fr-dm")[0].innerHTML = frdailymealbox.value;
+        document.getElementById("li-dm").style.display = "list-item";
+    } else document.getElementById("li-dm").style.display = "none";
+    if(frdescbox.value.length > 0) {
+        frdetailbox.getElementsByClassName("fr-d")[0].innerHTML = frdescbox.value;
+        frdetailbox.getElementsByClassName("fr-d")[0].style.display = "block";
+    } else frdetailbox.getElementsByClassName("fr-d")[0].style.display = "none";
+    if(frdescbox.value.length == 0) frdetailbox.getElementsByClassName("fr-d")[0].style.display = "none";
+    if(frlocationbox.value.length == 0 && frlinkbox.value.length == 0) frdetailbox.getElementsByClassName("fr-footer")[0].style.display = "none";
+    else if(frlinkbox.value.length == 0) frdetailbox.getElementsByClassName("fr-footer")[0].querySelectorAll("a")[0].style.display = "none";
+    else if(frlocationbox.value.length == 0) frdetailbox.getElementsByClassName("fr-footer")[0].querySelectorAll("a")[1].style.display = "none";
+    frdetailbox.getElementsByClassName("fr-footer")[0].querySelectorAll("a")[0].href = frlinkbox.value;
+    frdetailbox.getElementsByClassName("fr-footer")[0].querySelectorAll("a")[0].target = "_blank";
+    frdetailbox.getElementsByClassName("fr-footer")[0].querySelectorAll("a")[1].href = "https://www.google.com/maps/search/?api=1&query=" + frlocationbox.value + "&z=15";
+    frdetailbox.getElementsByClassName("fr-footer")[0].querySelectorAll("a")[1].target = "_blank";
+
+    // document.getElementById('backgroundOverlay').style.display='block';
+    frdetailbox.style.display='block';
+}
+
+</script>
+
+<script>
+
+var endindx = 25;
+var total_count = parseInt("{{total_count}}");
+
+console.log(String(endindx) + " / " + String(total_count))
+
+function refreshAtBottom() {
+    let bottomProg = document.getElementsByClassName("bottom-progress")[0];
+    bottomProg.style.display = "block";
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // console.log('Result: ' + xhr.responseText)
+            bottomProg.style.display = "none";
+            let resp = xhr.responseText;
+            let data = JSON.parse(resp);
+            let result = data["result"];
+            if (result == "success") {
+                let html = data["html"];
+                endindx = parseInt(data["endindx"]);
+                total_count = parseInt(data["total_count"]);
+                document.getElementById("post-container").innerHTML += html + "<br>";
+
+                var y = document.getElementsByClassName("text");
+                var i;
+                for (i = 0; i < y.length; i++) {
+                    y[i].innerHTML = urlify(y[i].innerHTML);
+                    y[i].style.color = "white";
+                    y[i].style.textAlign = "left";
+                }
+                $('.postform .text').each(function(i) {
+                    const response = this.innerHTML
+                    const decoded = response
+                        .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+                        .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+                    this.innerHTML = decoded;
+                });
+                $('.FB_reactions').facebookReactions({
+            		postUrl: "mother"
+            	});
+            }
+        }
+    };
+    xhr.open('GET', '/mothers/refcomida?endindx=' + String(endindx), true);
+    xhr.send('');
+}
+
+document.getElementById("main-menu").addEventListener("click", openMainMenu);
+
+document.getElementById("s-form").querySelector("input[name='q']").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("s-form").querySelector("button").click();
+  }
+});
+
+function searchHome() {
+    let q = document.getElementsByName("q")[0];
+    if(q.value.length == 0) {
+        showFailureAlert("Please enter a keyword.");
+        return;
+    }
+    let form = document.getElementById("s-form");
+    let formData = new FormData(form);
+    let topProg = document.getElementsByClassName("top-progress")[0];
+    topProg.style.display = "block";
+    var xhr_s = new XMLHttpRequest();
+    xhr_s.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // console.log('Result: ' + xhr_s.responseText)
+            topProg.style.display = "none";
+            let resp = xhr_s.responseText;
+            let data = JSON.parse(resp);
+            let result = data["result"];
+            if (result == "success") {
+                let html = data["html"];
+                total_count = parseInt(data["total_count"]);
+                document.getElementById("post-container").innerHTML = html + "<br>";
+                if(html.length == 0) document.getElementById("no_result").style.display = "block";
+                else document.getElementById("no_result").style.display = "none";
+
+                var y = document.getElementsByClassName("text");
+                var i;
+                for (i = 0; i < y.length; i++) {
+                    y[i].innerHTML = urlify(y[i].innerHTML);
+                    y[i].style.color = "white";
+                    y[i].style.textAlign = "left";
+                }
+                $('.postform .text').each(function(i) {
+                    const response = this.innerHTML
+                    const decoded = response
+                        .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+                        .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+                    this.innerHTML = decoded;
+                });
+                $('.FB_reactions').facebookReactions({
+            		postUrl: "mother"
+            	});
+            }
+        }
+    };
+    xhr_s.open('POST', '/mothers/s_____comida/', true);
+    xhr_s.send(formData);
+}
+
+
+
+function getRecipesForCategory(category) {
+    document.getElementById("recipe-section").innerHTML = '<center><img src="/static/images/progressbar.gif" class="recipe-progress"></center>';
+    document.getElementById("recipe-section").style.display = "block";
+    document.getElementById("backgroundOverlay").style.display = "block";
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // console.log('Result: ' + xhr.responseText)
+            let resp = xhr.responseText;
+            let data = JSON.parse(resp);
+            let result = data["result"];
+            if (result == "success") {
+                document.getElementById("recipe-section").innerHTML = "";
+                let html = data["html"];
+                document.getElementById("recipe-section").innerHTML += html;
+                document.getElementById("recipe-section").style.display = "block";
+                document.getElementById("backgroundOverlay").style.display = "block";
+            }
+        }
+    };
+    xhr.open('GET', '/mothers/refrecipe?category=' + category, true);
+    xhr.send('');
+}
+
+
+
+
+</script>
+
+
+</body>
+
+
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

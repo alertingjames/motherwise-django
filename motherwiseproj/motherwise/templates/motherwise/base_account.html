@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
@@ -122,6 +122,15 @@ div#list > div > div {
 	border-radius:30px;
 }
 
+input:focus, button:focus {
+    outline:none;
+}
+
+#google_translate_element {display:inline-block; width:auto; border-radius:30px; z-index:9999; bottom:15px; left:1%; position:fixed;}
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
 </style>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
 </head>
@@ -129,14 +138,6 @@ div#list > div > div {
 <body>
 
 <nav id="navbar" class="navbar navbar-inverse" style="background:rgba(0,0,0,0.7);">
-
-    <div id="google_translate_element"></div>
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-          new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <div class="container-fluid">
 
@@ -266,6 +267,29 @@ div#list > div > div {
     }
 
 </script>
+
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+$( document ).ready(function() {
+    $('#google_translate_element').bind('DOMSubtreeModified', function() {
+        var val = $(this);
+        var strlang = "" + val[0].innerText + "";
+        var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+        if(toolBar !== undefined) {
+            toolBar.style.display  = 'none';
+            document.body.style.top = '0px';
+        }
+    });
+});
+</script>
+
 
 
 

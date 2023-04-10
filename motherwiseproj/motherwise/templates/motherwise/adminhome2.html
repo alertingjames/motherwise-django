@@ -1,0 +1,1788 @@
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home | MotherWise Nest</title>
+
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<link rel="stylesheet" type="text/css" href="/static/css/admin_home.css"/>
+
+<style>
+
+body {
+  font-family: "Lato", sans-serif;
+  transition: background-color .5s;
+}
+
+.sidenav { height:100%;width:250px;position:fixed;z-index:999;top:0;left:0;background-color:#111;overflow-x:hidden;transition:0.5s; }
+.sidenav a { padding:8px 8px 8px 32px;text-decoration:none;font-size:17px;color:#818181;display:block;transition:0.3s;white-space:nowrap; }
+.sidenav a:hover { color:#f1f1f1; }
+.sidenav .closebtn { position:absolute;top:0px;right:25px;font-size:36px;display:none; }
+.sidenav .nav-img-frame { position:relative;width:100%;aspect-ratio:12 / 9;min-height:200px;margin-bottom:30px; }
+.sidenav .nav-img-frame > .bg { width:100%;height:100%;object-fit:cover;opacity:0.3;transition:0.5s; }
+.sidenav .nav-img-frame > .bg:hover { opacity:0.5; }
+.sidenav .nav-img-frame > .titlelogo { position:absolute;width:auto;height:35px;bottom:0px;left:50%;transform:translate(-50%, -50%); }
+.sidenav::-webkit-scrollbar { display:none; }
+.sidenav { -ms-overflow-style:none;scrollbar-width:none; }
+.sidenav li { margin-bottom:10px;background-color:transparent; }
+#main { margin-left:250px;transition:margin-left .5s; }
+.topnav { position:fixed;left:0;top:0;right:0;padding:10px 20px;margin-left:250px;transition:margin-left .5s;z-index:9999;display:flex; }
+.topnav a { padding:8px 8px 8px 32px;text-decoration:none;font-size:17px;color:rgba(255,255,255,0.7);display:block;transition:0.3s; }
+.topnav a:hover { color:#f1f1f1; }
+.topnav ul { list-style-type:none;margin:0;padding:0;overflow:hidden; }
+.topnav li { float:left; }
+.topnav li a { background-color:transparent; }
+#btn-menu { font-size:22px;cursor:pointer;color:rgba(255,255,255,0.8); }
+#btn-menu:hover { color:white; }
+#google_translate_element {display:inline-block; width:auto; border-radius:30px; z-index:9999; bottom:15px; left:1%; position:fixed;}
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link { display:none !important; }
+.goog-te-gadget { font-size:0px !important; }
+.cropping{ object-fit:cover; }
+#noticon > div { color:red;font-size:12px;display:inline-block;text-decoration:underline;background-color:white;border-radius:50px;padding:2px 5px; }
+table th { white-space:nowrap; }
+.ggg { display:flex; }
+.ggg label { font-size:14px;flex-grow:1;color:#008CBA; }
+.ggg i { margin-left:8px;cursor:pointer;font-size:16px;color:gray; }
+.header1 { height:200px; }
+.header1 .logottl { margin-top:100px; display:inline-block;padding:5px;visibility:hidden; }
+.header1 .logottl > img { width:400px;height:auto;margin-bottom:20px; }
+.flex-grow-1 { flex-grow:1 !important; }
+a.btn-members { display:flex !important;white-space:nowrap; }
+a.btn-members i { margin-right:20px; }
+.fa-caret-up {transform:rotate(0deg);transition:all 0.5s ease;}
+.fa-caret-up.rotate-icon {transform:rotate(180deg);}
+ul.members-menu { margin-left:30px;height:0px;overflow-y:hidden;transition:0.5s; }
+ul.members-menu li { margin-bottom:0px; }
+
+.dropdown-container { position:relative;display:inline-block; }
+.show {display:block;}
+.sear-dropdown-content {display:none;position:absolute;left:10px;top:60px;background-color:white;min-width:300px;overflow:auto;padding:1px;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:9999;border-radius:3px;border:1px solid white;}
+.sear-dropdown-content a { color:black;padding:8px 10px 8px 12px;text-decoration:none;display:block;font-family:verdana; }
+.sear-dropdown-content a:hover { background-color:#eee;color:black;text-decoration:none !important; }
+.sear-dropdown-content a:first-child {background-color:#404040;}
+.sear-dropdown-content a > div {font-size:16px;font-weight:520;display:flex;}
+.sear-dropdown-content a > div > i {padding:10px 8px 10px 8px;background:rgba(0,0,0,0.1);border-radius:50%;width:35px;height:35px;text-align:center;}
+.sear-dropdown-content a > div > i:last-child {padding:10px;background:transparent;font-weight:400;}
+.sear-dropdown-content a > div > div {flex-grow:1;margin-left:15px;margin-top:7px;}
+.sear-dropdown-content a {border-bottom:1px solid #eee;padding-top:-10px;padding-bottom:10px;}
+.sear-dropdown-content a:last-child {border-bottom:0;}
+.sear-dropdown-content a > form button { background-color:transparent;border:0; }
+.sear-dropdown-content a > form button:hover { background-color:transparent !important;border:0; }
+.sear-dropdown-content a > form button > i { color:white;font-size:18px;padding:1.5px;margin-right:-10px; }
+.sear-dropdown-content a > form > div > input {background:transparent;color:white;border:0;border-bottom:1.5px solid white;border-radius:0px;box-shadow:none;}
+.sear-dropdown-content a > form > div > input:focus {outline:none;box-shadow:none;}
+
+.templ-dropdown-content {display:none;position:absolute;right:10px;top:60px;background-color:white;min-width:270px;overflow:auto;padding:1px;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:99;border-radius:3px;border:1px solid white;}
+.templ-dropdown-content a { color:black;padding:8px 10px 8px 12px;text-decoration:none;display:block;font-family:verdana;border-bottom:1px solid #eee !important; }
+.templ-dropdown-content a:hover { background-color:#eee;color:black;text-decoration:none !important; }
+.templ-dropdown-content a > div {font-size:16px;font-weight:520;display:flex;}
+.templ-dropdown-content a > div > i {padding:10px 8px 10px 8px;background:rgba(0,0,0,0.1);border-radius:50%;width:35px;height:35px;text-align:center;}
+.templ-dropdown-content a > div > i:last-child {padding:10px;background:transparent;font-weight:400;}
+.templ-dropdown-content a > div > div {flex-grow:1;margin-left:15px;margin-top:5px;}
+.templ-dropdown-content a:last-child {border-bottom:0 !important;}
+.templ-dropdown-content > div { display:flex;padding:6px 12px;border-bottom:2px solid #eee;background:#404040;color:white;text-align:center !important; }
+.templ-dropdown-content > div > img { width:40px;height:40px;object-fit:cover;margin-right:15px;border-radius:50%; }
+.templ-dropdown-content > div > div { color:white;font-size:12px;font-weight:600;padding:6px 0px 6px 0px;margin-left:auto;margin-right:auto;font-family:verdana; }
+
+.msg-dropdown-content {display:none;position:absolute;right:10px;top:60px;background-color:white;min-width:350px;overflow:auto;padding:1px;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:9999;border-radius:3px;border:1px solid white;}
+
+.acc-dropdown-content {display:none;position:absolute;right:10px;top:60px;background-color:white;min-width:250px;overflow:auto;padding:1px;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:99;border-radius:3px;border:1px solid white;}
+.acc-dropdown-content a {color:black;padding:8px 10px 8px 12px;text-decoration:none;display:block;font-family:verdana;border-bottom:1px solid #eee !important;}
+.acc-dropdown-content a:hover { background-color:#eee;color:black;text-decoration:none !important; }
+.acc-dropdown-content a > div {font-size:16px;font-weight:520;display:flex;}
+.acc-dropdown-content a > div > i {padding:10px 8px 10px 8px;background:rgba(0,0,0,0.1);border-radius:50%;width:35px;height:35px;text-align:center;}
+.acc-dropdown-content a > div > i:last-child {padding:10px;background:transparent;font-weight:400;}
+.acc-dropdown-content a > div > div {flex-grow:1;margin-left:15px;margin-top:5px;}
+.acc-dropdown-content a:last-child {border-bottom:0 !important;}
+.acc-dropdown-content > div {display:flex;padding:12px;border-bottom:2px solid #eee;background:#404040;}
+.acc-dropdown-content > div > img {width:40px;height:40px;object-fit:cover;margin-right:15px;border-radius:50%;}
+.acc-dropdown-content > div > div {margin-top:9px;color:white;}
+
+@media (max-width:576px) {
+  .sidenav a { font-size:14px; }
+  .sidenav { width:0px; }
+  .topnav, #main { margin-left:0px; }
+  .sidenav .closebtn { display:block; }
+  .sidenav .nav-img-frame { position:relative;width:100%;aspect-ratio:12 / 9;max-height:120px;margin-bottom:30px; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<script>
+	history.pushState(null, null, location.href);
+    history.back();
+    history.forward();
+    window.onpopstate = function () { history.go(1); };
+</script>
+
+{% if notify == 'message_sent' %}
+    <script>showSuccessAlert('Your message sent to them successfully.');</script>
+{% endif %}
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div id="no_result" style="font-size:16px; font-weight:300; color: black; text-align:center;
+	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
+	transform:translate(-50%, -50%); width:auto; z-index:100; top:450px; display:none;">
+    No any member registered ...
+</div>
+
+<div onclick="showNotifications()" id="alert" style="font-size:18px; font-weight:300; color: black; text-align:center; box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.9);
+	position:fixed; left:30px; float:middle; background-color:white; border-radius:3px; padding: 8px 12px 8px 12px;
+	width:180px; z-index:100; top:85px; display:none;">
+    <i class="fa fa-bell" style="font-size:16px; color:red;"/></i>
+	New Message!<br>
+	<div style="color:red; font-size:14px; margin-top:5px;">Click here to view.</div>
+</div>
+
+
+<div id="title" style="font-size:16px; font-weight:600; color: white; text-align:center; border-radius:50px; padding:8px 20px 8px 20px; background-color:rgb(0,0,0,0.1); display:none;
+	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:auto; z-index:100; top:130px;">{{title}}</div>
+
+<div id="tool_panel" style="position:fixed; right:2%; background-color:transparent; width:auto; min-width:350px; z-index:200; bottom:20px; display:inline-block;">
+    <a href="javascript:void(0)" onclick="javascript:toVideo();">
+        <img class="panel-button" id="video" src="/static/images/ic_video.png" style="background-color:red;">
+    </a>
+    <a href="javascript:void(0)" onclick="javascript:toChat('group_chat');">
+        <img class="panel-button" id="gchat" src="/static/images/ic_group_chat.png" style="margin-left:20px; background-color:#0066cc;">
+    </a>
+    <a href="javascript:void(0)" onclick="javascript:toChat('private_chat');">
+        <img class="panel-button" id="chat" src="/static/images/ic_chat.png" style="margin-left:20px; background-color:green;">
+    </a>
+    <a href="javascript:void(0)" onclick="javascript:dismissLayouts(); document.getElementById('messageBox2').style.display='block'; document.getElementById('backgroundOverlay').style.display='block';">
+        <img class="panel-button" id="message" src="/static/images/ic_message.png" style="margin-left:20px; background-color:brown;">
+    </a>
+    <img class="panel-button" id="trash" src="/static/images/cancelicon.png" style="margin-left:20px; background-color:gray;">
+</div>
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<img src="/static/images/processing.gif" id="gif">
+
+<img src="/static/images/logo.png" id="logo" align="top">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div class="table-owner1" id="header" style="z-index:1; position:relative; background:transparent;" align="top">
+    <div class="header" id="header"></div>
+    <table cellspacing="0" class="table table-fit">
+        <tr>
+            <th style="width:3%;">id</th>
+            <th style="width:4%;">Picture</th>
+            <th style="width:10%;">Name & Email</th>
+            <th style="width:6%;">Phone Number</th>
+            <th style="width:9%;">Address</th>
+            <th style="width:6%;">Member Since</th>
+            <th style="width:10%;">Group</th>
+            <th style="width:5%;">Share Video</th>
+            <th style="width:5%;">Contact</th>
+            <th style="width:3%;">Remove</th>
+        </tr>
+    </table>
+</div>
+
+
+<div id="sidenav" class="sidenav">
+    <div class="nav-img-frame">
+        <img src="/static/images/anh.jpg" class="bg">
+        <img src="/static/images/logotitle.png" class="titlelogo">
+    </div>
+    <ul>
+        <li>
+            <a href="javascript:void(0)" class="btn-members" onclick="showMemberMenu(this)">
+                <span class="fas fa-user-friends" aria-hidden="true" style="margin-right:10px;"></span>Members<div class="flex-grow-1"></div><i class="fa fa-caret-up rotate-icon"></i>
+            </a>
+            <ul class="members-menu">
+                <li ><a href="/manager/active_members/"><span class="fa fa-user-circle" style="font-size:16px; margin-right:10px;"></span>Active members</a></li>
+                <li ><a href="/manager/inactive_members/"><span class="fa fa-user-o" style="font-size:16px; margin-right:10px;"></span>Inactive members</a></li>
+                <li >
+                    <a href="javascript:void(0)" onclick="javascript:openCohortBox();">
+                        <span class="fa fa-sitemap" style="font-size:16px; margin-right:10px;"></span>Search by Group
+                    </a>
+                </li>
+            </ul>
+            <script>
+                let memberMenu = document.getElementsByClassName("members-menu")[0];
+                memberMenu.style.height = "0px";
+                function showMemberMenu(obj) {
+                    if(memberMenu.style.height == "0px") {
+                        obj.querySelector("i").className = "fa fa-caret-up fa-caret-up";
+                        memberMenu.style.height = "120px";
+                    } else {
+                        obj.querySelector("i").className = "fa fa-caret-up fa-caret-up rotate-icon";
+                        memberMenu.style.height = "0px";
+                    }
+                }
+            </script>
+        </li>
+
+        <li>
+            <a href="/manager/openbroadcast" target="_blank">
+                <span class="fas fa-broadcast-tower" aria-hidden="true" style="margin-right:10px;"></span>Broadcast
+            </a>
+        </li>
+
+        <li>
+            <a href="javascript:void(0)" onclick="javascript:openCohortBox();">
+                <span class="fa fa-sitemap" style="margin-right:10px;"></span>Groups
+            </a>
+        </li>
+
+        <li>
+            <a href="/motherwise/cohort_names/">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true" style="margin-right:10px;"></span>Group Names
+            </a>
+        </li>
+
+        <li style="display:none;">
+            <a href="/manager/groups">
+                <span class="fa fa-group" aria-hidden="true" style="margin-right:10px;"></span>Communities
+            </a>
+        </li>
+
+        <li>
+            <a href="/manager/to_conferences">
+                <span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Workshop Videos
+            </a>
+        </li>
+
+        <li>
+            <a href="/manager/posts">
+                <span class="fa fa-flag" aria-hidden="true" style="margin-right:10px;"></span>Posts
+            </a>
+        </li>
+
+        <li>
+            <a href="/motherwise/post_categories/">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true" style="margin-right:10px;"></span>Post Categories
+            </a>
+        </li>
+
+        <li>
+            <a href="/motherwise/comidaposts">
+                <span class="fas fa-hamburger" aria-hidden="true" style="margin-right:10px;"></span>Comida
+            </a>
+        </li>
+
+        <li>
+            <a href="/motherwise/recipes?category=meat">
+                <span class="fas fa-pizza-slice" aria-hidden="true" style="margin-right:10px;"></span>Recipes
+            </a>
+        </li>
+
+        <li>
+            <a href="/motherwise/foodresources/">
+                <span class="fas fa-pepper-hot" aria-hidden="true" style="margin-right:10px;"></span>Food Resources
+            </a>
+        </li>
+
+        <li>
+            <a href="/manager/notifications" title="Messages" id="msg-caption">
+                <span class="far fa-comment-alt" aria-hidden="true" style="margin-right:10px;"></span>Message
+            </a>
+        </li>
+
+    </ul>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+</div>
+
+<div id="main">
+    <div id="topnav" class="topnav">
+        <span id="btn-menu" onclick="toggleMenuShow()">&#9776;</span>
+        <div class="flex-grow-1"></div>
+        <script>
+            var isMenuOpened = true;
+            function toggleMenuShow() {
+                if(isMenuOpened == true) closeNav();
+                else openNav();
+            }
+            function openNav() {
+                if(isMobile) {
+                    document.getElementById("sidenav").style.width = "100vw";
+                    document.getElementById("main").style.marginLeft = "100vw";
+                    document.getElementById("topnav").style.marginLeft = "100vw";
+                } else {
+                    document.getElementById("sidenav").style.width = "250px";
+                    document.getElementById("main").style.marginLeft = "250px";
+                    document.getElementById("topnav").style.marginLeft = "250px";
+                }
+                document.getElementsByClassName("titlelogo")[0].style.visibility = "visible";
+                document.getElementsByClassName("logottl")[0].style.visibility = "hidden";
+                isMenuOpened = true;
+            }
+            function closeNav() {
+                document.getElementById("sidenav").style.width = "0px";
+                document.getElementById("main").style.marginLeft= "0px";
+                document.getElementById("topnav").style.marginLeft = "0px";
+                document.getElementsByClassName("titlelogo")[0].style.visibility = "hidden";
+                document.getElementsByClassName("logottl")[0].style.visibility = "visible";
+                isMenuOpened = false;
+            }
+        </script>
+
+        <div class="dropdown-container">
+            <a href="javascript:void(0)">
+                <span class="fa fa-search" aria-hidden="true" id="sear" onclick="openSearchMenu()"></span>
+            </a>
+            <div id="sear-dropdown-menu" class="sear-dropdown-content">
+                <a href="#">
+                    <form id="s-form" method="POST" action="/manager/search_members/" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" id="q" placeholder="Type a keyword...">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" onclick="searchHome()"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </a>
+                <a href="/manager/home/">
+                    <div><i class="fa fa-refresh" aria-hidden="true"></i><div>Refresh to View All</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+            </div>
+        </div>
+
+        <a href="javascript:void(0)" onclick="javascript:openMessageBox();" title="Add New Member">
+            <span class="fas fa-user-plus" aria-hidden="true"></span>
+        </a>
+
+        <div class="dropdown-container">
+            <a href="javascript:void(0)">
+                <span class="glyphicon glyphicon-option-vertical" aria-hidden="true" id="templ" onclick="openTemplMenu()"></span>
+            </a>
+            <div id="templ-dropdown-menu" class="templ-dropdown-content">
+                <div>
+                    <div>ADD FROM DOCUMENT</div>
+                </div>
+                <a href="/manager/export_xlsx_member">
+                    <div><i class="glyphicon glyphicon-arrow-down" aria-hidden="true"></i><div>Get xlsx template</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+                <a href="/manager/import_view/member">
+                    <div><i class="glyphicon glyphicon-open-file" aria-hidden="true"></i><div>Load xlsx document</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+                <a href="javascript:void(0)" onclick="javascript:openMessageBox();">
+                    <div><i class="fa fa-user-plus" aria-hidden="true"></i><div>Add individually</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+            </div>
+        </div>
+
+        <div class="dropdown-container">
+            <a href="javascript:void(0)" title="Notifications" id="noticon">
+                <span class="fa fa-bell-o" aria-hidden="true" id="notif" onclick="openNotifMenu()"></span>
+            </a>
+            <div id="msg-dropdown-menu" class="msg-dropdown-content">
+                <div id="chat_log">
+                    <div id="list">
+                        <button onclick="if(document.getElementById('list2').innerHTML == ''){alert('No history browsing'); return;}
+                                document.getElementById('notiLayout').style.display='block';">Click here to browse history...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dropdown-container">
+            <a href="javascript:void(0)" title="Account">
+                <span class="fa fa-user-circle" aria-hidden="true" id="prof" onclick="openAccountMenu()"></span>
+            </a>
+            <div id="acc-dropdown-menu" class="acc-dropdown-content">
+                <div>
+                    <img src="{% if me.photo_url %}{{me.photo_url}}{% else %}/static/images/manager.jpg{% endif %}">
+                    <div>Manager</div>
+                </div>
+                <a href="/manager/analytics/" onclick="document.getElementById('acc-dropdown-menu').classList.toggle('show');">
+                    <div><i class="fas fa-analytics" aria-hidden="true"></i><div>Analytics</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+                <a href="/manager/account/">
+                    <div><i class="glyphicon glyphicon-lock" aria-hidden="true"></i><div>Change Password</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+                <a href="/manager/logout">
+                    <div><i class="glyphicon glyphicon-off" aria-hidden="true"></i><div>Login Out</div><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                </a>
+            </div>
+        </div>
+
+
+        <script>
+            function openSearchMenu() {
+                document.getElementById("sear-dropdown-menu").classList.toggle("show");
+            }
+            function openTemplMenu() {
+                document.getElementById("templ-dropdown-menu").classList.toggle("show");
+            }
+            function openNotifMenu() {
+                document.getElementById("msg-dropdown-menu").classList.toggle("show");
+            }
+            function openAccountMenu() {
+                document.getElementById("acc-dropdown-menu").classList.toggle("show");
+            }
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.matches('#sear') && !event.target.matches('#q')) {
+                    var dropdowns = document.getElementsByClassName("sear-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+                if (!event.target.matches('#templ')) {
+                    var dropdowns = document.getElementsByClassName("templ-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+                if (!event.target.matches('#notif')) {
+                    var dropdowns = document.getElementsByClassName("msg-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+                if (!event.target.matches('#prof')) {
+                    var dropdowns = document.getElementsByClassName("acc-dropdown-content");
+                    var i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            }
+        </script>
+
+    </div>
+
+    <div class="table-owner">
+        <div class="header1" id="header1" style="position:relative;">
+            <div class="logottl">
+                <img src="/static/images/logotitle.png">
+            </div>
+            <img src="/static/images/logo.png" style="width:100px; height:auto; left:20px; border-radius:50%; position:absolute; bottom:-15px; display:none;"/>
+            <div id="title0" style="font-size:16px; font-weight:500; color:white; left:130px; position:absolute; bottom:10px; font-style:italic; display:none;">{{title}}</div>
+            <div style="font-size:30px; font-weight:600; font-family:cursive; color:#ffcc00; right:10%; position:absolute; bottom:10px; font-style:italic; display:none;" id="sel_cohort">{{cohort}}</div>
+            {% if cohort %}
+            <div style="width:auto; display:inline-block; right:1%; bottom:10px; position:absolute; display:none;">
+                <a href="javascript:void(0)" onclick="javascript:post('/manager/do_cohort/', {'cohort':document.getElementById('sel_cohort').innerHTML, 'option':'video'});">
+                    <img class="cohort-panel-button" src="/static/images/ic_video.png" style="background:rgba(0,0,0,0.2);">
+                </a>
+                <a href="javascript:void(0)" onclick="javascript:post('/manager/do_cohort/', {'cohort':document.getElementById('sel_cohort').innerHTML, 'option':'group_chat'});">
+                    <img class="cohort-panel-button" src="/static/images/ic_group_chat.png" style="margin-left:10px; background:rgba(0,0,0,0.2);">
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+    <script type = "text/javascript">
+        var header1 = document.getElementById("header1");
+        header1.style.backgroundImage = "linear-gradient(0deg,rgba(0,0,0,0.3),rgba(0,0,0,0.3)), url('/static/images/abg.jpg')";
+
+        var currentPos = 0;
+        // var images = ["/static/images/bg.jpg", "/static/images/bg2.jpg", "/static/images/bg3.jpg"]
+        var images = [
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/222.jpg')",
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/555.jpg')",
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/666.jpg')",
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/777.jpg')",
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/333.jpg')",
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/000.jpg')",
+            "linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url('/static/images/888.jpg')",
+        ]
+
+        function volgendefoto() {
+            if (++currentPos >= images.length)
+                currentPos = 0;
+
+            // header1.style.backgroundImage = images[currentPos];
+            getNewNofiCound();
+        }
+
+        setInterval(volgendefoto, 5000);
+    </script>
+
+    <script>
+        function getNewNofiCound(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(xhr.response);
+                    var new_msg_count = xhr.response;
+                    if(parseInt(new_msg_count) > 0) {
+                        $("#msg-caption").html("<span class='far fa-comment-alt' aria-hidden='true' style='margin-right:10px;'></span>Messages (" + new_msg_count + ")");
+                    }
+                }
+            };
+            xhr.open('GET', "/manager/new_notis", true);
+            xhr.send('');
+        }
+    </script>
+
+        <form action="/manager/message_to_selected_members/" method="post" enctype="multipart/form-data" id="form">
+            {% csrf_token %}
+        <table cellspacing="0" class="table table-fit">
+            <tr>
+                <th style="width:3%;">id</th>
+                <th style="width:4%;">Picture</th>
+                <th style="width:10%;">Name & Email</th>
+                <th style="width:6%;">Phone Number</th>
+                <th style="width:9%;min-width:90px;">Address</th>
+                <th style="width:6%;min-width:90px;">Member Since</th>
+                <th style="width:10%;min-width:100px;">Group</th>
+                <th style="width:5%;display:none;">Share Video</th>
+                <th style="width:5%;min-width:100px;">Contact</th>
+                <th style="width:3%;">Remove</th>
+            </tr>
+            {% if users %}
+                {% for user in users %}
+                <tr class="test" id="{{user.id}}">
+                    <td><label>{{forloop.counter}}</label></td>
+                    <td>
+                        <a href="{% if user.photo_url %}{{user.photo_url}}{% endif %}" target="_blank">
+                            <img src="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" style="border-radius:50%; height:60px; width:60px; object-fit:cover;"/>
+                        </a>
+                    </td>
+                    <td style="position:relative;">
+                        <div style="text-align:left;">{{user.name}}<br><span class="email">{{user.email}}</span></div>
+                        <div style="color:orange; font-size:12px; position:absolute; top:5px; right:5px; font-style:italic;">{% if user.status %}{{user.status}}{% endif %}</div>
+                    </td>
+                    <td><a href="tel:{{user.phone_number}}">{{user.phone_number}}</a></td>
+                    <td>
+                        <div style="width:100%;">
+                            <a href="https://www.google.com/maps/search/?api=1&query={{user.city}}" target="_blank">
+                                {% if user.city %}<div class="owneraddress"><div style="text-align:left;"><i class="fa fa-map-marker" style="color:red; font-size:16px; margin-right:5px;"></i>{{user.city}}</div></div>{% else %}---{% endif %}
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        {% if user.registered_time != '' %}<div style="color:black; font-size:14px;">{{user.registered_time}}</div>{% else %}---{% endif %}
+                    </td>
+                    <td>
+                        <div class="cohort_frame">
+                            <div class="ggg">
+                                <label>{% if user.cohort %}{{user.cohort}}{% else %}---{% endif %}</label>
+                                <i class="fa fa-pencil" onclick="openCohortSelBox(this)"></i>
+                                <input hidden id="cimg" value="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                <input hidden id="cuid" value="{{user.id}}">
+                            </div>
+                        </div>
+                        <script>
+                            var selectedObj = null;
+                            function openCohortSelBox(obj) {
+                                document.getElementById("cohortEditBox").style.display = "block";
+                                document.getElementById("backgroundOverlay").style.display = "block";
+                                let parent = findParentBySelector(obj, '.cohort_frame');
+                                document.getElementById("uimg").src = parent.querySelector("input#cimg").value;
+                                document.getElementById("ucohort").value = parent.querySelector("label").innerHTML;
+                                if(selectedObj != null) selectedObj.style.border = "0";
+                                parent.style.border = "2px solid red";
+                                selectedObj = parent;
+                            }
+                        </script>
+                    </td>
+                    <td style="display:none;">
+                        {% if user.registered_time %}
+                        <div>
+                            <a href="javascript:void(0)" class="user-sel-check">
+                                <label style="margin-left:10px; color:#04a2be;">
+                                    <input type="checkbox" name="users[]" value="{{user.id}}" class="chx" id="selusers" style="width:10px;height:10px;" onchange="highlight(this)">
+                                    <span></span><i class="fa fa-user-plus" style="color:gray;font-size:18px;margin-right:10px;"></i>
+                                </label>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.registered_time %}
+                        <div>
+                            <a href="javascript:void(0)" class="user-sel-check">
+                                <label style="margin-left:10px; color: #04a2be;">
+                                    <input type="checkbox" name="users2[]" value="{{user.id}}" class="chx" id="selusers2" style="width:10px; height:10px;" onchange="highlight2(this)">
+                                    <span></span><i class="fa fa-user-plus" style="color: gray; font-size:18px; margin-right:10px;"></i>
+                                </label>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="reinv-parent">
+                            <center>
+                                <img src="/static/images/progressbar.gif" style="width:30px;height:30px;display:none;" id="progressbar">
+                                <button type="button" class="reinv" onclick="resendInvitation(this)" id="inv-{{user.id}}">Re-Invite</button>
+                            </center>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" role="button" onclick="showConfirmMemberDeletionAlert('Are you sure you want to delete this member?','{{user.id}}')">
+                            <img src="/static/images/canceliconblack.png" style="width:35px; height:35px; padding:5px;">
+                        </a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                <input type="hidden" id="msg" name="message" value="">
+                <input type="hidden" id="option" name="option" value="">
+
+            {% else %}
+                <script>document.getElementById('no_result').style.display = 'block';</script>
+            {% endif %}
+            </table>
+
+            {% if users %}
+            <ul class="pager" style="float:right; margin-right:20px;">
+                <li title="First"><a href="/to_page?index=1&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-double-left"></i></a></li>
+                <li title="Previous"><a href="/to_previous?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-left"></i></a></li>
+                {% for i in range %}
+                    {% if i >= 1 %}
+                        {% load tag_library %}
+                        {% if current|to_int == i %}
+                        <li><a href="/to_page?index={{i}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:red; font-weight:600;">{{i}}</a></li>
+                        {% else %}
+                        <li><a href="/to_page?index={{i}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">{{i}}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% if current|add:3 < last_page|to_int %}
+                {% if current|add:4 != last_page|to_int %}...{% endif %}
+                <li><a href="/to_page?index={{last_page}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;">{{last_page}}</a></li>
+                {% endif %}
+                <li title="Next"><a href="/to_next?index={{current}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-right"></i></a></li>
+                <li title="Last"><a href="/to_page?index={{last_page}}&page={% if title == 'Active members' %}active_members{% elif title == 'Inactive members' %}inactive_members{% else %}all_members{% endif %}" style="color:black;"><i class="fas fa-angle-double-right"></i></a></li>
+            </ul>
+            {% endif %}
+
+        </form>
+    </div>
+
+</div>
+
+
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+<script>
+
+    function resendInvitation(obj) {
+        let member_id = String(obj.id).replace('inv-','');
+        let parent = findParentBySelector(obj, '.reinv-parent');
+        let progressbar = parent.querySelector('#progressbar');
+        progressbar.style.display = 'block';
+        obj.style.display = 'none';
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                progressbar.style.display = 'none';
+                obj.style.display = 'block';
+                var resp = xhr.response;
+                if(resp == 'success') {
+                    showSuccessAlert('Successfully resent another invitation.');
+                }else if(resp == 'no_admin_auth') {
+                    window.location.href = '/manager/logout';
+                }else if(resp == 'no_auth') {
+                    showFailureAlert('Error! This member does not exist.');
+                }
+            }
+        };
+        xhr.open('GET', '/manager/reinv?member_id=' + member_id, true);
+        xhr.send('');
+    }
+
+    function collectionHas(a, b) { //helper function (see below)
+        for(var i = 0, len = a.length; i < len; i ++) {
+            if(a[i] == b) return true;
+        }
+        return false;
+    }
+
+    function findParentBySelector(elm, selector) {
+        var all = document.querySelectorAll(selector);
+        var cur = elm.parentNode;
+        while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+            cur = cur.parentNode; //go up
+        }
+        return cur; //will return null if not found
+    }
+
+</script>
+
+
+<div id="messageBox">
+    <img class="ll centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;"
+        onclick="javascript:dismissLayouts(); document.getElementById('messageBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">SEND MESSAGE TO INVITE</div><br>
+            <form action="/manager/add_member/" method="post" enctype="multipart/form-data" style="width:100%;" id="inviteForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="" placeholder="Name">
+                    <div class="validation"></div>
+    			</div>
+    			<div class="form-group" style="margin-top:20px;">
+                    <input type="email" name="email" id="email" data-rule="required" data-msg="" required value="" placeholder="E-mail">
+                    <div class="validation"></div>
+    			</div>
+    			<div class="form-group" style="margin-top:20px;">
+    				<input type="tel" name="phone_number" id="phone_number" value="" placeholder="Phone Number (Optional)">
+                    <div class="validation"></div>
+    			</div>
+    			<div class="form-group" style="margin-top:20px;">
+    				<select name="cohort" id="cohort" style="width:100%; color:black;">
+    				    <option value="">Please choose a group</option>
+    				    {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
+                    </select>
+    			</div>
+                <div class="form-group" style="margin-top:30px;">
+        			<center>
+        			    <img src="/static/images/progressbar.gif" style="width:30px;height:30px;display:none;margin-bottom:15px;" id="gif4">
+                        <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
+                            onclick="javascript:if(document.getElementById('name').value == ''){showFailureAlert('Enter name.'); return;}if(document.getElementById('email').value == ''){showFailureAlert('Enter email.'); return;}formSubmit(document.getElementById('inviteForm'), document.getElementById('gif4'), 'Invitation message sent.');">Submit</button>
+                    </center>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="messageBox2">
+    <img id="msg_logo" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts(); document.getElementById('messageBox2').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">SEND MESSAGE</div><br>
+            <form action="#" method="post" enctype="multipart/form-data" style="width:100%;">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea"));</script>
+                </div>
+                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif2"></center>
+                <center>
+                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;" onclick="javascript:sendMessageToSelectedMembers();">Submit</button>
+                </center>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="messageBox3">
+    <img id="msg_logo" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts(); document.getElementById('messageBox3').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="cohortmessageboxtitle">SEND MESSAGE</div><br>
+            <form action="/manager/send_cohort_message/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortMsgForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input style="height:5px; opacity:0;">
+                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."
+                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                    <script>autosize(document.getElementById("textarea2"));</script>
+                </div>
+                <input hidden id="selected_cohort" name="cohort" value="">
+                <center><img src="/static/images/processing.gif" style="width:80px; height:50px; display: none;" id="gif3"></center>
+                <center>
+                    <button type="button" class="bouton-update" style="width:60%; margin-bottom:20px;"
+                        onclick="javascript:if(document.getElementById('textarea2').value == ''){showFailureAlert('Enter your message.'); return;}formSubmit(document.getElementById('cohortMsgForm'), document.getElementById('gif3'), 'Message sent.');">Submit</button>
+                </center>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="cohortBox">
+    <img class="ll centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right;"
+        onclick="javascript:dismissLayouts(); document.getElementById('cohortBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">CONNECT WITH A GROUP</div><br>
+            <form action="/manager/do_cohort/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortform">
+                {% csrf_token %}
+                <div class="form-group" id="cohortSelBox">
+                    <select name="cohort" required id="cohort2" style="color:black;">
+                        <option value="">Please choose a group</option>
+                        {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
+                    </select>
+    			</div>
+
+    			<input hidden id="cohort_option" name="option" value="">
+
+                <div class="form-group" style="margin-top:30px; text-align:center;">
+
+                    <div style="width:auto; display:inline-block;">
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('members');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:orange;"><br>
+                                <label class="button-text">Members</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');" style="display:none;">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_video.png" style="margin-left:10px; background-color:red;"><br>
+                                <label class="button-text" style="margin-left:5px;">Video</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:toCohortGroupChat();">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group_chat.png" style="margin-left:10px; background-color:#0066cc;"><br>
+                                <label class="button-text" style="margin-left:4px;">Group Chat</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('group_chat');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_group.png" style="margin-left:10px; background-color:#008080;"><br>
+                                <label class="button-text">Communs</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('private_chat');">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_chat.png" style="margin-left:10px; background-color:green;"><br>
+                                <label class="button-text" style="margin-left:5px;">Priv Chat</label>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="javascript:openCohortMessageBox(document.getElementById('cohort2').value);">
+                            <div style="display:inline-block; text-align:center;">
+                                <img class="cohort-panel-button" src="/static/images/ic_message.png" style="margin-left:10px; background-color:brown;"><br>
+                                <label class="button-text" style="margin-left:5px;">Message</label>
+                            </div>
+                        </a>
+                    </div>
+
+                    <script>
+                        function toCohortGroupChat(){
+                            var cht = document.getElementById('cohort2').value;
+                            if(cht.length == 0){
+                                showFailureAlert('Please choose a group.');
+                                return;
+                            }
+                            window.location.href = "/manager/group_cohort_chat?cohort=" + cht;
+                        }
+                    </script>
+
+                    <!--<br>-->
+
+                    <!--<div style="width:auto; display:inline-block; margin-top:10px;">-->
+                    <!--    <a href="javascript:void(0)" onclick="javascript:doCohort('group_chat');">-->
+                    <!--        <div style="display:inline-block; text-align:center;">-->
+                    <!--            <img class="cohort-panel-button" src="/static/images/ic_group.png" style="background-color:#008080;"><br>-->
+                    <!--            <label class="button-text">Communs</label>-->
+                    <!--        </div>-->
+                    <!--    </a>-->
+                    <!--    <a href="javascript:void(0)" onclick="javascript:doCohort('private_chat');">-->
+                    <!--        <div style="display:inline-block; text-align:center;">-->
+                    <!--            <img class="cohort-panel-button" src="/static/images/ic_chat.png" style="margin-left:10px; background-color:green;"><br>-->
+                    <!--            <label class="button-text" style="margin-left:5px;">Priv Chat</label>-->
+                    <!--        </div>-->
+                    <!--    </a>-->
+                    <!--    <a href="javascript:void(0)" onclick="javascript:openCohortMessageBox(document.getElementById('cohort2').value);">-->
+                    <!--        <div style="display:inline-block; text-align:center;">-->
+                    <!--            <img class="cohort-panel-button" src="/static/images/ic_message.png" style="margin-left:10px; background-color:brown;"><br>-->
+                    <!--            <label class="button-text" style="margin-left:5px;">Message</label>-->
+                    <!--        </div>-->
+                    <!--    </a>-->
+                    <!--</div>-->
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="cohortEditBox">
+    <img id="uimg" class="centered-and-cropped" src="/static/images/ic_profile.png">
+    <span class="fa fa-close" style="font-size:20px; float:right;"
+        onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;">CHANGE GROUP NAME</div><br>
+            <div style="width:100%;" id="cohortform">
+                <div class="form-group" id="cohortSelBox">
+                    <select id="ucohort" style="color:black;" onchange="changeCohort()">
+                        <option value="">Please choose a group</option>
+                        {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
+                    </select>
+    			</div>
+    			<center><img id="ucprog" src="/static/images/progressbar.gif" style="width:30px; height:30px; display:none;"></center>
+                <div class="form-group" style="margin-top:30px; text-align:center;">
+                    <button id="chtsavebutton" class="bouton-update" type="button" style="width:80px;opacity:0.3;" onclick="SaveCohort()">Save</button>
+                    <script>
+                        function changeCohort() {
+                            if(document.getElementById("ucohort").value != selectedObj.querySelector("label").innerHTML) {
+                                document.getElementById("chtsavebutton").style.opacity = "1";
+                            }else {
+                                document.getElementById("chtsavebutton").style.opacity = "0.3";
+                            }
+                        }
+                        function SaveCohort(){
+                            if(document.getElementById("chtsavebutton").style.opacity == "0.3") return;
+                            var cht = document.getElementById('ucohort').value;
+                            if(cht.length == 0){
+                                showFailureAlert('Please choose a group.');
+                                return;
+                            }
+                            let progressbar = document.getElementById("ucprog");
+                            let uid = selectedObj.querySelector("#cuid").value;
+                            progressbar.style.display = "block";
+                            var formData = new FormData();
+                            formData.append("member_id", uid);
+                            formData.append("new_cohort", cht);
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function() {
+                                if (this.readyState == 4 && this.status == 200) {
+                                    progressbar.style.display = "none";
+                                    let result = xhr.response;
+                                    if(result == "success") {
+                                        dismissLayouts();
+                                        selectedObj.querySelector("label").innerHTML = cht;
+                                    }else {
+                                        showFailureAlert("Failed to change the group name.");
+                                    }
+                                }
+                            };
+                            xhr.open('POST', '/motherwise/membercohortchange', true);
+                            xhr.send(formData);
+                        }
+                    </script>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+<input type="hidden" id="me_id" value="{{me.pk}}">
+
+
+<div id="notiLayout" style="display:none;" onclick="javascript:dismissLayouts();">
+    <center>
+        <div style="font-size:16px; font-weight:600; font-family:verdana; color:white; text-align:center; width:280px;
+            border-radius:50px; margin-top:10px; margin-bottom:15px; background-color:orange; padding:3px;">
+            Contact Again
+        </div>
+    </center>
+    <div id="notiForm">
+        <div class="contentform2">
+            <div class="formcontent2">
+                <div id="chat_log2">
+                    <div id="list2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<div id="snackbar">Submited</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $(window).on('scroll', function () {
+
+  var $w = $(window);
+  $('.position-fixed-x').css('left', $w.scrollLeft());
+  $('.table-owner1').css('top', $w.scrollTop());
+
+});
+</script>
+
+<script>
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        document.getElementById("myBtn").style.display = "block";
+        {% if title %}
+            // document.getElementById("title").style.display = "block";
+        {% endif %}
+        // document.getElementById("title0").style.display = "none";
+        document.getElementById("topnav").style.backgroundColor = "rgba(0,0,0,0.9)";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+        // document.getElementById("title").style.display = "none";
+        // document.getElementById("title0").style.display = "block";
+        document.getElementById("topnav").style.backgroundColor = "transparent";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+</script>
+
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.10.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.10.0/firebase-messaging.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDveaXbV1HHMREyZzbvQe53BJEHVIRCf14",
+    authDomain: "motherwise-1585202524394.firebaseapp.com",
+    databaseURL: "https://motherwise-1585202524394.firebaseio.com",
+    projectId: "motherwise-1585202524394",
+    storageBucket: "motherwise-1585202524394.appspot.com",
+    messagingSenderId: "805720875706",
+    appId: "1:805720875706:web:1e90b519b4cf8ca0f69883",
+    measurementId: "G-TLGYEHY3TK"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script>
+	function showNotifications(){
+		window.location.href = "/adminNotifications";
+	}
+
+</script>
+
+<script>
+
+// ScrollTo({{member_id}});
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+</script>
+
+<script>
+
+createjs.Sound.registerSound("/static/sound/notification.mp3", "x");
+navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+
+var keys = [];
+var me_email = document.getElementById("me_email").value;
+me_email = me_email.replace(/\./g,"ddoott");
+var ref = firebase.database().ref('notification/' + me_email);
+ref.on('child_added', function(snapshot) {
+	var key = snapshot.val();
+	keys.push(key);
+	if(keys.length == 1){
+// 		createjs.Sound.play("x");
+		showBadge();
+		if (navigator.vibrate) {
+			// vibration API supported
+			navigator.vibrate(500);
+		}else {
+			window.navigator.vibrate(500); // vibrate for 500ms
+		}
+	}
+});
+
+function showBadge() {
+    document.getElementById("noticon").style.display = 'block';
+	document.getElementById("noticon").innerHTML = "<div><span class='fa fa-bell' aria-hidden='true' style='color:red;font-size:14px;margin-right:2px;' id='notif' onclick='openNotifMenu()'></span>New!</div>";
+}
+
+
+var keys2 = [];
+var me_id = document.getElementById("me_id").value;
+var notiref = firebase.database().ref('notify/' + me_id);
+notiref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+//   console.log(snapshot.key);
+  if (key){
+    var sender_name = key.sender_name;
+    console.log(key.sender_name);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>"
+        + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key.date))
+        + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>"
+        + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key.msg + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    var sender_photo = key.sender_photo;
+    if (sender_photo.length > 0) img.src = sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        var type = key.type
+        var id = key.id
+        var mes_id = key.mes_id
+        if(type == 'gchat'){
+            window.location = "/open_group_chat?group_id=" + id;
+        }else if(type == 'cchat'){
+            window.location = "/group_cohort_chat?cohort=" + id;
+        }else {
+            window.location = "/notifications?noti_id=" + mes_id;
+        }
+
+        notiref.child(snapshot.key).remove();
+    });
+    ul.appendChild(ul2);
+
+    keys2.push(key);
+	if(keys2.length == 1){
+// 		createjs.Sound.play("x");
+        showBadge();
+		if (navigator.vibrate) {
+			// vibration API supported
+			navigator.vibrate(500);
+		}else {
+			window.navigator.vibrate(500); // vibrate for 500ms
+		}
+	}
+  }
+});
+
+</script>
+
+<script src="/static/js/chat/admin_notification.js"></script>
+
+<script>
+
+var m = 0;
+var m2 = 0;
+
+// document.getElementById("export").style.display = "block";
+
+$(document).ready(function() {
+    $('.table #date').each(function(i) {
+        this.innerHTML = getDate(parseInt(this.innerHTML));
+    });
+});
+
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+function highlight(obj){
+   if(obj.checked) {
+      $(obj).parent().parent().css("background","#ccccff");
+      m++;
+   }else{ $(obj).parent().parent().css("background","#cce4ff"); if(m>0)m--;}
+   if(m > 0){
+       document.getElementById('video').style.display = 'block';
+   }else document.getElementById('video').style.display = 'none';
+}
+
+function highlight2(obj){
+   if(obj.checked) {
+      $(obj).parent().parent().css("background","#ccccff");
+      m2++;
+   }else{ $(obj).parent().parent().css("background","#cce4ff");if(m2>0)m2--;}
+   if(m2 > 0){
+       document.getElementById('message').style.display = 'block';
+       document.getElementById('chat').style.display = 'block';
+       document.getElementById('gchat').style.display = 'block';
+   }else {
+       document.getElementById('message').style.display = 'none';
+       document.getElementById('chat').style.display = 'none';
+       document.getElementById('gchat').style.display = 'none';
+   }
+
+   console.log("m2: " + m2);
+}
+
+</script>
+
+<script>
+
+    function dismissLayouts(){
+        document.getElementById('messageBox').style.display='none';
+        document.getElementById('messageBox2').style.display='none';
+        document.getElementById('messageBox3').style.display='none';
+        document.getElementById('cohortBox').style.display='none';
+        document.getElementById('cohortEditBox').style.display='none';
+        document.getElementById('backgroundOverlay').style.display='none';
+        document.getElementById('notiLayout').style.display='none';
+    }
+
+    function openCohortMessageBox(selected_cohort){
+        if(selected_cohort.length == 0){
+            showFailureAlert('Please select a group.');
+            return;
+        }
+        dismissLayouts();
+        document.getElementById('messageBox3').style.display='block';
+        document.getElementById('backgroundOverlay').style.display='block';
+        document.getElementById('cohortmessageboxtitle').innerHTML = 'SEND MESSAGE TO MEMBERS<br>IN ' + String(selected_cohort).toUpperCase();
+        document.getElementById('selected_cohort').value = selected_cohort;
+    }
+
+    function doCohort(option){
+        if(document.getElementById('cohort2').value == ''){
+            showFailureAlert('Please choose a group.');
+            return;
+        }
+        document.getElementById('cohort_option').value = option;
+        var form = document.getElementById("cohortform");
+        form.submit();
+    }
+
+</script>
+
+<script>
+
+function getCookie(name) {
+    console.log('getCookie');
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                    }
+            }
+    }
+    console.log('cookie:' + cookieValue);
+    return cookieValue;
+}
+
+function post(path, params, method) {
+   method = method || "post"; // Set method to post by default if not specified.
+
+   // The rest of this code assumes you are not using a library.
+   // It can be made less wordy if you use one.
+   var form = document.createElement("form");
+   form.setAttribute("method", method);
+   form.setAttribute("action", path);
+
+   for(var key in params) {
+      if(params.hasOwnProperty(key)) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", params[key]);
+
+          form.appendChild(hiddenField);
+      }
+   }
+
+   var hiddenField1 = document.createElement("input");
+   hiddenField1.setAttribute("type", "hidden");
+   hiddenField1.setAttribute("name", 'csrfmiddlewaretoken');
+   hiddenField1.setAttribute("value", getCookie('csrftoken'));
+   form.appendChild(hiddenField1);
+
+   document.body.appendChild(form);
+   form.submit();
+}
+
+
+function sendMessageToSelectedMembers(){
+    var chxarr = [];
+    var userchxs =  document.getElementsByName("users2[]");
+    var chxlength = userchxs.length;
+
+    for(k=0;k < chxlength;k++){
+      if(userchxs[k].checked) {
+         chxarr.push(userchxs[k].value);
+      }
+    }
+
+    var message = document.getElementById('textarea');
+    if(message.value.length == 0){
+        showFailureAlert("Please enter your message ...");
+        return;
+    }
+
+    // for(var i=0; i<chxarr.length; i++){
+    //     firebase.database().ref('adminmessage' + '/' + chxarr[i]).remove();
+    //     firebase.database().ref('adminmessage' + '/' + chxarr[i]).push().set({
+    //       noti: message.value,
+    //       time: new Date().getTime(),
+    //     });
+    // }
+
+    document.getElementById('msg').value = message.value;
+    var form = document.getElementById("form");
+    // form.submit();
+    formSubmit(form, document.getElementById('gif2'), 'Message sent.');
+}
+
+function toChat(option){
+    var userchxs =  document.getElementsByName("users2[]");
+    var chxlength = userchxs.length;
+    if (chxlength > 0){
+        document.getElementById('option').value = option;
+        var form = document.getElementById("form");
+        form.submit();
+    }
+}
+
+function toVideo(){
+    var userchxs =  document.getElementsByName("users[]");
+    var chxlength = userchxs.length;
+    if (chxlength > 0){
+        var form = document.getElementById("form");
+        form.setAttribute("action", '/manager/video_selected_members');
+        form.submit();
+    }
+}
+
+function showToast(text) {
+    var x = document.getElementById("snackbar");
+    x.innerHTML = text;
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+function formSubmit(form, gif, text){
+    gif.style.display = "block";
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            gif.style.display = "none";
+            dismissLayouts();
+            if(text == 'Invitation message sent.') {
+                showSuccessInvitationAlert(text);
+            }else{
+                showSuccessAlert(text);
+            }
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+</script>
+
+<script>
+
+{% if groups %}
+{% for group in groups %}
+
+var gref = firebase.database().ref('gmnotis' + {{me.pk}} + "gr" + {{group.pk}});
+gref.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.sender;
+    var cohort = key2.cohort;
+    var groupid = key2.groupid;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>" + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key2.message + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.sender_photo.length > 0) img.src = key2.sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        if(groupid != '') window.open('/manager/open_group_chat?group_id=' + groupid);
+        else if(cohort != '') window.open('/manager/group_cohort_chat?cohort=' + cohort);
+    });
+    if({{me.pk}} != parseInt(key2.sender_id)){
+        ul.appendChild(ul2);
+        showBadge();
+    }
+  }else {
+      var lii = document.createElement("div");
+      lii.style.color = 'white';
+      lii.style.fontSize = '14';
+      lii.style.textAlign = 'center';
+      lii.innerHTML = "No message ...";
+      ul.append(lii);
+  }
+});
+
+{% endfor %}
+{% endif%}
+
+</script>
+
+<script>
+
+var ul0 = document.getElementById("list2");
+var keys = [];
+me_email = me_email.replace(/\./g,"ddoott");
+var starCountRef = firebase.database().ref('notification2/' + me_email);
+starCountRef.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+  if (key){
+    var key2 = getChildObj(key);
+    var sender_name = key2.senderName;
+//    window.alert(key2.message);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>" + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key2.time)) +
+        "<label style='overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:100; margin-left:8px; float:right; max-width: 160px;'>" + key2.msg + "</label>" + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>Click to contact</label>" + "</div>";
+
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    if (key2.senderPhoto.length > 0) img.src = key2.senderPhoto;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+       var context = {
+            'member_email': key2.sender
+       }
+       post('/manager/to_chat/', context);
+       console.log('/manager/to_chat/');
+    });
+    ul0.appendChild(ul2);
+  }else {
+      var lii = document.createElement("div");
+      lii.style.color = 'white';
+      lii.style.fontSize = '14';
+      lii.style.textAlign = 'center';
+      lii.innerHTML = "No message ...";
+      ul0.append(lii);
+  }
+});
+
+
+me_id = document.getElementById("me_id").value;
+var notiref2 = firebase.database().ref('notify2/' + me_id);
+notiref2.on('child_added', function(snapshot) {
+  var key = snapshot.val();
+//   console.log(snapshot.key);
+  if (key){
+    var sender_name = key.sender_name;
+    console.log(key.sender_name);
+    var li = document.createElement("div");
+    li.style.color = 'black';
+    li.style.fontSize = '14';
+    li.style.maxWidth = "auto";
+    li.style.width = "auto";
+    li.innerHTML = "<label style='font-size:14px; font-weight:600;'>" + sender_name + "</label>"
+        + "<div style='color:gray; font-size:12px; margin-left:2px;'>" + timeConverter(Number(key.date))
+        + "<label style='color:orange; width:auto; text-align:left; font-size:11px; margin-left:8px;'>View message</label>"
+        + "</div>";
+    // li.innerHTML = li.innerHTML + "<div style='font-size:12px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + key.msg + "</div>";
+    li.style.textAlign = 'left';
+    var ul2 = document.createElement("div");
+    var img = document.createElement("img");
+    var sender_photo = key.sender_photo;
+    if (sender_photo.length > 0) img.src = sender_photo;
+    else img.src = "/static/images/ic_profile.png";
+    img.style.width = "40";
+    img.style.height = "40";
+    img.style.borderRadius = "50%";
+    img.classList.add("cropping");
+    img.style.cssFloat = 'right';
+    ul2.appendChild(img);
+    ul2.append(li);
+    ul2.style.marginBottom = "1px";
+    ul2.addEventListener('click', function (event) {
+        var type = key.type
+        var id = key.id
+        var mes_id = key.mes_id
+        if(type == 'gchat'){
+            window.location = "/open_group_chat?group_id=" + id;
+        }else if(type == 'cchat'){
+            window.location = "/group_cohort_chat?cohort=" + id;
+        }else {
+            window.location = "/notifications?noti_id=" + mes_id;
+        }
+
+        notiref2.child(snapshot.key).remove();
+    });
+    ul0.appendChild(ul2);
+  }
+});
+
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showSuccessInvitationAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    })
+    .then((ok) => {
+        if (ok) {
+            location.reload();
+        }
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+function showConfirmMemberDeletionAlert(msg,memberid){
+    swal({
+        title: "Warning!",
+        text: msg,
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            window.location.href = "/manager/delete_member?member_id=" + memberid;
+        }
+    });
+}
+
+$( document ).ready(function() {
+    $('#google_translate_element').bind('DOMSubtreeModified', function() {
+        var val = $(this);
+        var strlang = "" + val[0].innerText + "";
+        var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+        if(toolBar !== undefined) {
+            toolBar.style.display  = 'none';
+            document.body.style.top = '0px';
+        }
+    });
+});
+
+
+function openMessageBox(){
+    document.getElementById('backgroundOverlay').style.display='block';
+    document.getElementById('messageBox').style.display='block';
+}
+
+function openCohortBox(){
+    document.getElementById('backgroundOverlay').style.display='block';
+    document.getElementById('cohortBox').style.display='block';
+}
+
+var isMobile;
+if(window.innerWidth <= 576) {
+    isMobile = true;
+} else {
+    isMobile = false;
+}
+function checkUI(x) {
+    if (x.matches) {
+        isMobile = true;
+    } else {
+        isMobile = false;
+    }
+}
+var x = window.matchMedia("(max-width: 576px)")
+// checkUI(x)
+x.addListener(checkUI)
+
+
+if(isMobile) { isMenuOpened = false; }
+
+
+document.getElementById("s-form").querySelector("input[name='q']").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("s-form").querySelector("button").click();
+  }
+});
+
+function searchHome() {
+    let q = document.getElementsByName("q")[0];
+    if(q.value.length == 0) {
+        showFailureAlert("Please enter a keyword.");
+        return;
+    }
+    let form = document.getElementById("s-form");
+    form.submit();
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

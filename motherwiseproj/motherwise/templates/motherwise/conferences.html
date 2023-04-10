@@ -8,377 +8,93 @@
 <link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="/static/js/radialprogress.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
   <script>
       WebFont.load({
       google: {
-      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
-    }
+          families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
     });
 </script>
 
 <style>
 
-html, body{
-  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
-  background-size:cover;
+@font-face {
+   font-family: lemon;
+   src: url('/static/fonts/lemon.ttf');
 }
-
-img {
-  height: 80px;
-  width: 80px;
-}
-
-.topBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-.topBtn:hover {
-  background-color: orange;
-}
-
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.conf-form {
-  max-width:500px;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:3px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.conf-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 50px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:black;
-  text-align:left;
-}
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.bouton-update{
-  background-color: #0077b3;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 12px 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-select {
-  background:transparent;
-  border: 1.5px solid rgba(255,255,255,0.5);
-  border-radius:3px;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:white;
-  text-align-last:center;
-}
-
-option{
-    color:black;
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
-/* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-
-.cropping{
-    object-fit:cover;
-}
-
-/* The container */
-.container {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  color:white;
-  text-shadow: 2px 2px 4px gray;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Hide the browser's default radio button */
-.container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* Create a custom radio button */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-  background-color: red;
-}
-
-/* When the radio button is checked, add a blue background */
-.container input:checked ~ .checkmark {
-  background-color: orange;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
- 	top: 6px;
-	left: 6px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
-
-/* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-label.fileBtn {
-  display: inline-block;
-  /* Styles to make it look like a button */
-  padding: 0.5em;
-  border: 0;
-  border-radius:8px;
-  font-size:16px;
-  color:white;
-  width:auto;
-  text-align:center;
-  text-decoration: underline;
-}
-
-/* Look like a clicked/depressed button */
-label.fileBtn:active {
-  border-color: #CCC #EEE #EEE #CCC;
-}
-
-/* This is the part that actually hides the 'Choose file' text box for camera inputs */
-label.fileBtn input[accept*="video"] {
-  display: none;
-}
-
-iframe{
-    background-image: url("/static/images/video/youtube-backg.png");
+html, body {
+    background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/avb.png') no-repeat center center fixed;
     background-size:cover;
 }
+img {height: 80px;width: 80px;}
+.topBtn {display: none;position: fixed;bottom: 20%;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+.topBtn:hover {background-color: orange;}
+form h1 {font-size: 25px;background: #327a81 none repeat scroll 0% 0%;color: rgb(255, 255, 255);padding: 19px 22px;border-radius: 5px 5px 0px 0px;margin: auto;text-shadow: none;text-align:left}
+.conf-form { max-width:100%;width:auto;margin:auto;border-radius:5px;margin-bottom:5px;background-color:rgba(0,0,0,0.1);padding:20px;background-size:cover;overflow:hidden; }
+.conf-form:hover { background:rgba(0,0,0,0.3); }
+#conf-form { max-width:600px;height:auto;padding-bottom:15%;overflow:auto; }
+p span {color: #F00;}
+p {margin: 0px;font-weight: 200;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius: 50px;border: 1px solid #eee;margin-bottom: 15px;margin-right:auto;width: 100%;height: 42px;opacity:0.95;float: middle;padding: 0px 15px;color:black;text-align:left;}
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{background-color: #0077b3;color: #FFF;text-align: center;width: 100%;border:0;padding: 12px 18px;border-radius: 50px;cursor: pointer;font-size: 16px;}
+select {background:transparent;border: 1.5px solid rgba(255,255,255,0.5);border-radius:3px;margin-bottom: 15px;margin-right:auto;width: 100%;height: 42px;opacity:0.95;float: middle;
+padding: 0px 15px;color:white;text-align-last:center;}
+option{color:black;}
+::-webkit-scrollbar {width: 0px; background: transparent;}
+::-webkit-scrollbar-thumb {background: #FF0000;}
+.cropping{object-fit:cover;}
+.container1 {display: block;position:relative;padding-left:25px;margin-bottom:12px;cursor:pointer;font-size:18px;color:white;text-shadow: 2px 2px 4px gray;-webkit-user-select: none;
+-moz-user-select: none;-ms-user-select: none;user-select: none;}
+.container1 input {position: absolute;opacity: 0;cursor: pointer;}
+.checkmark {position: absolute;top: 0;left: 0;height: 20px;width: 20px;background-color: white;border-radius: 50%;}
+.container1:hover input ~ .checkmark {background-color: red;}
+.container1 input:checked ~ .checkmark {background-color: orange;}
+.checkmark:after {content: "";position: absolute;display: none;}
+.container1 input:checked ~ .checkmark:after {display: block;}
+.container1 .checkmark:after {top: 6px;left: 6px;width: 8px;height: 8px;border-radius: 50%;background: white;}
+::-webkit-scrollbar {width: 0px;background: transparent;  /* optional: just make scrollbar invisible */}
+::-webkit-scrollbar-thumb {background: #FF0000;}
+label.fileBtn {display: inline-block;padding: 0.5em;border: 0;border-radius:8px;font-size:16px;color:white;width:auto;text-align:center;text-decoration: underline;}
+label.fileBtn:active {border-color: #CCC #EEE #EEE #CCC;}
+label.fileBtn input[accept*="video"] {display: none;}
+iframe{background-image: url("/static/images/video/youtube-backg.png");background-size:cover;}
+video{background-image: url("/static/images/video/videobackg.jpg");background-size:cover;}
+.formcontent {width:100%;float:middle;margin:auto;box-sizing: border-box;padding: 10px;}
+.contentform {float:middle;margin:auto;}
+#youtubeurl::placeholder {color: white;opacity: 1;}
+#youtubeurl:-ms-input-placeholder { /* Internet Explorer 10-11 */color: white;}
+#youtubeurl::-ms-input-placeholder { /* Microsoft Edge */color: white;}
+#youtubeurl{background-color:transparent;color:white;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+.container2 {display:block;position:relative;padding-left:25px;margin-bottom:12px;cursor: pointer;font-size:18px;color:white;text-shadow:2px 2px 4px gray;-webkit-user-select:none;
+-moz-user-select: none;-ms-user-select: none;user-select: none;}
+.container2 input {position: absolute;opacity: 0;cursor: pointer;}
+.checkmark2 {position: absolute;top: 0;left: 0;height: 20px;width: 20px;background-color: white;border-radius: 50%;}
+.container2:hover input ~ .checkmark2 {background-color: red;}
+.container2 input:checked ~ .checkmark2 {background-color: orange;}
+.checkmark2:after {content: "";position: absolute;display: none;}
+.container2 input:checked ~ .checkmark2:after {display: block;}
+.container2 .checkmark2:after {top: 6px;left: 6px;width: 8px;height: 8px;border-radius: 50%;background: white;}
+.main { width:100%;height:auto;padding-top:50px; }
+#title {font-size:30px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);
+    width:100%;z-index:100;top:50px;display:none;}
+#title0 { font-size:70px;font-weight:800;margin-bottom:30px;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%;font-family:lemon; }
+#name, #fromdateBox {border-radius:3px;}
+#bar {margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);z-index:99999;}
+fieldset { border-radius:5px;border:1.5px solid white;max-width:600px;padding:15px 15px 0px 15px; }
+fieldset legend { border:0; }
+fieldset legend > div { width:auto;text-align:center;margin-bottom:0px; }
+fieldset legend > div > a { text-decoration:underline;font-size:18px;font-family:verdana;font-weight:600;color:white !important; }
+#arrow { color:white;font-size:16px;margin-left:10px; }
 
-video{
-    background-image: url("/static/images/video/videobackg.jpg");
-    background-size:cover;
-}
-
-.formcontent {
-  width:100%;
-  float:middle;
-  margin:auto;
-  box-sizing: border-box;
-  padding: 10px;
-}
-
-.contentform {
-  float:middle;
-  margin:auto;
-}
-
-#youtubeurl::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: white;
-  opacity: 1; /* Firefox */
-}
-
-#youtubeurl:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: white;
-}
-
-#youtubeurl::-ms-input-placeholder { /* Microsoft Edge */
-  color: white;
-}
-
-#youtubeurl{
-    background-color:transparent;
-    color:white;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-
-/* The container */
-.container2 {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  color:white;
-  text-shadow: 2px 2px 4px gray;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Hide the browser's default radio button */
-.container2 input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* Create a custom radio button */
-.checkmark2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container2:hover input ~ .checkmark2 {
-  background-color: red;
-}
-
-/* When the radio button is checked, add a blue background */
-.container2 input:checked ~ .checkmark2 {
-  background-color: orange;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark2:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container2 input:checked ~ .checkmark2:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container2 .checkmark2:after {
- 	top: 6px;
-	left: 6px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
-}
-
+@media(max-width:576px) { #title { top:80px; }
 
 </style>
 
@@ -391,37 +107,34 @@ video{
     setTimeout(function(){ sss=true; }, 1000);
 </script>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+<div id="bar" style="display:none;"></div>
 
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+<script>
+var bar=new RadialProgress(document.getElementById("bar"),{colorBg:"rgba(0,0,0,0)",colorFg:"#0066ff",thick:8,round:true,indeterminate:true,animationSpeed:0.5});
+</script>
 
-<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">CONFERENCES</div>
 
-<div style="width:100%; height:auto;">
+<div id="title">Network Videos</div>
 
-    <div style="font-size:25px; font-weight:800; margin-bottom:30px; margin-top:40px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">CONFERENCES</div>
+<div class="main">
 
-    <div class="container-fluid" style="margin-top:1.5%;">
+    <div id="title0">Network Videos</div>
+
+    <div class="container-fluid" style="padding-top:1.5%;">
 
         <div class="row">
-            <div class="col-sm-4" style="text-align:center; margin-bottom:20px;">
+            <div class="col-sm-6" style="text-align:center; margin-bottom:50px;">
 
                 <center>
 
-                    <fieldset style="border-radius:5px; border:1.5px solid white; max-width:400px; padding:15px 15px 0px 15px;">
-
-                        <legend style="border:0;">
-
-                            <div style="width:auto; text-align:center; margin-bottom:0px;">
-                                <a href="javascript:void(0);" onclick="javascript:toggleCreateForm();" style="text-decoration:underline; font-size:18px; font-family:verdana; font-weight:600; color:white;">
-                                    Create new conference
-                                    <span class="glyphicon glyphicon-menu-down" style="color:white; font-size:16px; margin-left:5px;" id="arrow"></span>
+                    <fieldset>
+                        <legend>
+                            <div>
+                                <a href="javascript:void(0);" onclick="javascript:toggleCreateForm();">
+                                    Register a new video
+                                    <span class="fas fa-caret-down" id="arrow"></span>
                                 </a>
                             </div>
-
                             <script>
                                 var showF = false;
                                 var ii = 0;
@@ -430,37 +143,36 @@ video{
                                     if(showF == true){
                                         showF = false;
                                         document.getElementById('form').style.display='none';
-                                        $('#arrow').removeClass('glyphicon glyphicon-menu-up').addClass('glyphicon glyphicon-menu-down');
+                                        $('#arrow').removeClass('fas fa-caret-up').addClass('fas fa-caret-down');
                                     }else{
                                         showF = true;
                                         document.getElementById('form').style.display='block';
-                                        if(ii > 1) $('#arrow').removeClass('glyphicon glyphicon-menu-down').addClass('glyphicon glyphicon-menu-up');
-                                        else $('#arrow').addClass('glyphicon glyphicon-menu-up');
+                                        if(ii > 1) $('#arrow').removeClass('fas fa-caret-down').addClass('fas fa-caret-up');
+                                        else $('#arrow').addClass('fas fa-caret-up');
                                     }
                                 }
                             </script>
-
                         </legend>
 
                         <form id="form" style="display:none;" action="/manager/create_conference" method="post" enctype="multipart/form-data">
                             <div class="contentform">
                 		        <div class="formcontent">
-                		            <div style="width:100%; display:inline-block; margin-bottom:20px;">
-                                        <div style="float:left; width:30%; margin-left:3%;">
-                                            <label class="container">Live
-                                                <input type="radio" checked="checked" name="type" id="live" value="live" onchange="javascript:selectType(this);">
+                		            <div style="width:80%;display:inline-block;margin-bottom:20px;">
+                                        <div style="float:left; width:30%; margin-left:3%;display:none;">
+                                            <label class="container1">Live
+                                                <input type="radio" name="type" id="live" value="live" onchange="javascript:selectType(this);">
                                                 <span class="checkmark"></span>
                                             </label>
                                         </div>
-                                        <div style="float:left; width:30%; margin-left:2%;">
-                                            <label class="container">File
+                                        <div style="float:left; width:20%; margin-left:2%;">
+                                            <label class="container1">File
                                                 <input type="radio" name="type" id="file" value="file" onchange="javascript:selectType(this);">
                                                 <span class="checkmark"></span>
                                             </label>
                                         </div>
-                                        <div style="float:left; width:30%; margin-left:2%;">
-                                            <label class="container">Youtube
-                                                <input type="radio" name="type" id="youtube" value="youtube" onchange="javascript:selectType(this);">
+                                        <div style="float:left; width:30%; margin-left:15%;">
+                                            <label class="container1">Youtube
+                                                <input type="radio" checked name="type" id="youtube" value="youtube" onchange="javascript:selectType(this);">
                                                 <span class="checkmark"></span>
                                             </label>
                                         </div>
@@ -485,7 +197,7 @@ video{
 
                                     <br>
 
-                		            <div class="form-group" style="margin-bottom:20px; display:none;" id="file_frame">
+                		            <div class="form-group" style="margin-bottom:20px;display:none;" id="file_frame">
                 		                <center>
                     		                <video id="videoresult" autobuffer  controls width="250" autoplay loop style="margin-bottom:5px;">
                                                 <source src="" id="videohere"/>
@@ -509,7 +221,7 @@ video{
 
                                     <div class="form-group" style="margin-bottom:20px; display:none;" id="youtube_frame">
                                         <center>
-                                            <iframe id="youtuberesult" autobuffer  width="250" style="margin-bottom:5px;" src="" frameborder="0" allowfullscreen>
+                                            <iframe id="youtuberesult" autobuffer  width="250" style="margin-bottom:5px;" frameborder="0" allowfullscreen>
                                             </iframe>
                                             <div class="input-group" style="width:80%; margin-top:10px;">
                                                 <input type="text" class="form-control" name="youtubeurl" id="youtubeurl" value="" placeholder="Enter YouTube ID...">
@@ -519,18 +231,20 @@ video{
                                             </div>
                                         </center>
                                         <script>
-
+                                            selectType(document.getElementById('youtube'));
+                                            document.getElementById('file_frame').style.display = 'none';
+                                            document.getElementById('youtube_frame').style.display = 'block';
                             			</script>
                                     </div>
 
-                                    <div class="form-group">
-                                        <input type="text" name="name" id="name" data-rule="required" data-msg="" required value="" placeholder="Conference Name">
+                                    <div class="form-group" style="width:80%;">
+                                        <input type="text" name="name" id="name" required placeholder="Video Name">
                                 	</div>
 
                                 	<link rel="stylesheet" href="/static/css/jquery.datetimepicker.min.css">
                                     <script src="/static/js/jquery.datetimepicker.full.js"></script>
 
-            		                <div class="form-group" style="margin-top:20px;" id="datetimebox" onchange="updatedatetime();">
+            		                <div class="form-group" style="margin-top:20px;display:none;" id="datetimebox" onchange="updatedatetime();">
                                         <input type="text" value="" placeholder="Enter conference date and time..." id="fromdateBox" autocomplete="off">
                                         <input type="hidden" name="event_time" id="fromdate">
                                             <script>
@@ -559,16 +273,16 @@ video{
                                             </script>
                             		</div>
 
-                            		<div style="width:100%; display:inline-block; margin-top:20px; text-align:center;">
-                                        <div style="float:left; width:40%; margin-left:3%;">
-                                            <label class="container2">Community
-                                                <input type="radio" checked="checked" id="groupCheck" name="gtype" value="group" onchange="javascript:selectGroup(this);">
+                            		<div style="width:80%;display:inline-block;margin-top:20px;text-align:center;">
+                                        <div style="float:left; width:40%;">
+                                            <label class="container2">Everyone
+                                                <input type="radio" checked="checked" id="everyoneCheck" name="gtype" value="everyone" onchange="javascript:selectGroup(this);">
                                                 <span class="checkmark2"></span>
                                             </label>
                                         </div>
-                                        <div style="float:left; width:30%; margin-left:24%; margin-right:3%;">
-                                            <label class="container2">Group
-                                                <input type="radio" id="cohortCheck" name="gtype" value="cohort" onchange="javascript:selectGroup(this);">
+                                        <div style="float:left; width:40%; margin-left:15%;">
+                                            <label class="container2">Community
+                                                <input type="radio" id="communityCheck" name="gtype" value="community" onchange="javascript:selectGroup(this);">
                                                 <span class="checkmark2"></span>
                                             </label>
                                         </div>
@@ -577,22 +291,21 @@ video{
                                     <script>
                                         function selectGroup(obj){
                                             if(obj.checked){
-                                                if(obj.value == 'group'){
+                                                if(obj.value == 'community'){
                                                     document.getElementById('groupBox').style.display = 'block';
-                                                    document.getElementById('cohortBox').style.display = 'none';
-                                                }else if(obj.value == 'cohort'){
+                                                    document.getElementById('group_option').value= 'community';
+                                                }else if(obj.value == 'everyone'){
                                                     document.getElementById('groupBox').style.display = 'none';
-                                                    document.getElementById('cohortBox').style.display = 'block';
+                                                    document.getElementById('group_option').value= 'everyone';
                                                 }
                                             }
                                         }
                                     </script>
 
-                                    <div id="groupBox" style="text-align:center;">
+                                    <div id="groupBox" style="text-align:center;display:none;">
                                         <div style="display:flex; margin:0px;">
                                             <select name="group_id" id="group_id" style="flex-grow:1; font-size:16px;">
                                             </select>
-                                            <input hidden id="selected_cohort">
                                             <script>
                                                 var x = document.getElementById("group_id");
                                                 {% if groups %}
@@ -614,48 +327,6 @@ video{
 
                                     </div>
 
-                                    <div id="cohortBox" style="text-align:center; display:none;">
-                                        <div style="display:flex; margin:0px;">
-                                            <select name="cohort" id="cohort" style="flex-grow:1; font-size:16px;">
-                                                <option value="">Please choose a group</option>
-                                                <option value="E81">E81</option>
-                                                <option value="E83">E83</option>
-                                                <option value="E84">E84</option>
-                                                <option value="E86">E86</option>
-                                                <option value="E87">E87</option>
-                                                <option value="S82">S82</option>
-                                                <option value="S85">S85</option>
-                                                <option value="S88">S88</option>
-                                                <option value="E(v)89">E(v)89</option>
-                                                <option value="E(v)90">E(v)90</option>
-                                                <option value="S(v)91">S(v)91</option>
-                                                <option value="E(v)92">E(v)92</option>
-                                                <option value="E(v)93">E(v)93</option>
-                                                <option value="E(v)94">E(v)94</option>
-                                                <option value="S(v)95">S(v)95</option>
-                                                <option value="E(v)96">E(v)96</option>
-                                                <option value="E(v)97">E(v)97</option>
-                                                <option value="S(v)98">S(v)98</option>
-                                                <option value="E(v)99">E(v)99</option>
-                                                <option value="E(v)100">E(v)100</option>
-                                                <option value="S(v)101">S(v)101</option>
-                                                <option value="E(v)102">E(v)102</option>
-                                                <option value="E(v)103">E(v)103</option>
-                                                <option value="S(v)104">S(v)104</option>
-                                                <option value="E(v)105">E(v)105</option>
-                                                <option value="E(v)106">E(v)106</option>
-                                                <option value="S(v)107">S(v)107</option>
-                                                <option value="E(v)108">E(v)108</option>
-                                                <option value="E(v)109">E(v)109</option>
-                                                <option value="S(v)110">S(v)110</option>
-                                                <option value="MotherWise Alumni">MotherWise Alumni</option>
-                                                <option value="MotherWise Team">MotherWise Team</option>
-                                            </select>
-                                            <input hidden id="selected_cohort">
-                            			</div>
-
-                                    </div>
-
                             		<input name="option" id="option" hidden>
                             		<input name="branch" value="conferences" hidden>
 
@@ -664,9 +335,9 @@ video{
                             				<button type="button" class="bouton-update" onclick="javascript:if(progressBar()) {document.getElementById('option').value=''; document.getElementById('form').submit();}">JUST CREATE</button>
                             			</div>
 
-                            			<div style="color:white; opacity:0.8;">Or you can notify this conference to the group</div>
+                            			<div style="color:white; opacity:0.8;">Or you can notify this conference to them</div>
 
-                            			<div class="form-group" style="margin-top:10px; margin-bottom:3%; width:80%;">
+                            			<div class="form-group" style="margin-top:10px; margin-bottom:5%; width:80%;">
                             				<button type="button" class="bouton-update" onclick="javascript:if(progressBar()) {document.getElementById('option').value='message'; document.getElementById('form').submit();}">CREATE & NOTIFY</button>
                             			</div>
                             		</center>
@@ -682,15 +353,15 @@ video{
 
             </div>
 
-            <div class="col-sm-4" style="margin-bottom:30px;">
+            <div class="col-sm-6" style="margin-bottom:30px;">
 
-                <div style="width:auto; text-align:center; font-size:22px; font-family:verdana; font-weight:600; color:white; margin-bottom:30px;">
-                    Community Conferences
+                <div style="width:auto; text-align:center; font-size:22px; font-family:verdana; font-weight:600; color:white; margin-bottom:30px; display:none;">
+                    Videos
                 </div>
 
-                {% if gconfs %}
-                    <div style="width:100%; max-height:80%; padding-bottom:3%; overflow:auto;" id="conf-form">
-                        {% for conf in gconfs %}
+                {% if confs %}
+                    <div id="conf-form">
+                        {% for conf in confs %}
                         <div class="conf-form">
                             <div class="contentform">
                                 <div style="width:100%; padding-bottom:8px; display:flex;" >
@@ -700,16 +371,16 @@ video{
                                                 style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
-                                    <a href="/manager/open_conference?conf_id={{conf.conf.pk}}&group_id={{conf.group.pk}}&cohort={{conf.conf.cohort}}" style="flex-grow:1;">
+                                    <a href="/manager/open_conference?conf_id={{conf.conf.pk}}&group_id={{conf.group.pk}}" style="flex-grow:1;">
                                         <div style="padding-left:8px; margin-top:10px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
                                             {{conf.conf.name}}
-                                            {% if conf.conf.event_time %}<div style="font-size:12px;">{{conf.conf.event_time}}</div>{% endif %}
-                                            <div style="font-size:14px; font-weight:600; color:yellow;">{{conf.group.name}}</div>
+                                            {% if conf.conf.created_time %}<div style="font-size:12px;">{{conf.conf.created_time}}</div>{% endif %}
+                                            <div style="font-size:14px; font-weight:600; color:yellow;">{% if conf.group is not None %}{{conf.group.name}}{% else %}Everyone{% endif %}</div>
                                         </div>
                                     </a>
                                     <div style="float:right; margin:5px;">
-                                        <a href="/manager/delconf?conf_id={{conf.conf.pk}}&branch=conferences" style="background-color:transparent; margin-left:15px;">
-                                            <span class="fa fa-close" aria-hidden="true" style="color:white; font-size:20px;" onclick="return confirm('Are you sure you want to remove this conference?')"></span>
+                                        <a href="javascript:void(0)" style="background-color:transparent; margin-left:15px;">
+                                            <span class="fa fa-close" aria-hidden="true" style="color:white;font-size:16px;padding:3px;" id="{{conf.conf.id}}" onclick="confirmVideoDeletion(this)"></span>
                                         </a>
                                     </div>
                                 </div>
@@ -725,56 +396,7 @@ video{
                         <div style="width:100%; text-align:center;">
                             <br>
                             <br>
-                            <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No conference created for group...</h4>
-                        </div>
-
-                {% endif %}
-
-            </div>
-
-            <div class="col-sm-4" id="conf-list">
-
-                <div style="width:auto; text-align:center; font-size:22px; font-family:verdana; font-weight:600; color:white; margin-bottom:30px;">
-                    Group Conferences
-                </div>
-
-                {% if cconfs %}
-                    <div style="width:100%; max-height:80%; padding-bottom:15%; overflow:auto;" id="conf-form">
-                        {% for conf in cconfs %}
-                        <div class="conf-form">
-                            <div class="contentform">
-                                <div style="width:100%; padding-bottom:8px; display:flex;" >
-                                    <div style="padding:10px; float:left; position:relative;">
-                                        <a href="#">
-                                            <img src="{% if conf.type == 'live' %}/static/images/video/live-icon.jpg{% elif conf.type == 'file' %}/static/images/video/video-icon.jpg{% elif conf.type == 'youtube' %}/static/images/video/youtube-icon.jpg{% else %}{% endif %}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-                                        </a>
-                                    </div>
-                                    <a href="/manager/open_conference?conf_id={{conf.pk}}&group_id={{conf.group_id}}&cohort={{conf.cohort}}" style="flex-grow:1;">
-                                        <div style="padding-left:8px; margin-top:10px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
-                                            {{conf.name}}
-                                            {% if conf.event_time %}<div style="font-size:12px;">{{conf.event_time}}</div>{% endif %}
-                                            <div style="font-size:14px; font-weight:600; color:yellow;">{{conf.cohort}}</div>
-                                        </div>
-                                    </a>
-                                    <div style="float:right; margin:5px;">
-                                        <a href="/manager/delconf?conf_id={{conf.pk}}&branch=conferences" style="background-color:transparent; margin-left:15px;">
-                                            <span class="fa fa-close" aria-hidden="true" style="color:white; font-size:20px;" onclick="return confirm('Are you sure you want to remove this conference?')"></span>
-                                        </a>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        {% endfor %}
-
-                    </div>
-                {%else %}
-                        <div style="width:100%; text-align:center;">
-                            <br>
-                            <br>
-                            <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No conference created for cohort...</h4>
+                            <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No video...</h4>
                         </div>
 
                 {% endif %}
@@ -786,48 +408,6 @@ video{
     </div>
 
 </div>
-
-<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
-	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:50%; display:none;">
-    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
-    <div style="width:100%; display:inline-block;">
-        <div>
-            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE TO GROUP<br>
-                    <div style="color:green; font-size:14px; font-weight:600;">{% if group %}{{group.name}}{% elif cohort %}{{cohort}}{% endif %}</div></div><br>
-            <form action="/manager/group_chat_message/" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input style="height:5px; opacity:0;">
-                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
-                    <textarea rows="8" name="message" required id="textarea" placeholder="Write something here..."
-                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
-                    <script>autosize(document.getElementById("textarea"));</script>
-                </div>
-                <input hidden id="group_id" name="group_id" value="{% if group %}{{group.pk}}{% elif cohort %}{{cohort}}{% endif %}">
-                <input hidden id="option" name="option" value="{% if group %}group{% elif cohort %}cohort{% endif %}">
-                <center>
-                    <button type="submit" class="bouton-update" style="width:60%; margin-bottom:20px;">Submit</button>
-                </center>
-
-            </form>
-        </div>
-    </div>
-</div>
-
-
-<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
-</div>
-
-<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
-    <div id="google_translate_element" style="float:left;"></div>
-</div>
-<script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-    }
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
@@ -866,6 +446,7 @@ $(document).ready(function(){
     });
 })
 
+
 function progressBar(){
     var live = document.getElementById("live");
     var file = document.getElementById("file");
@@ -874,43 +455,45 @@ function progressBar(){
     var name = document.getElementById("name").value;
     var event_time = document.getElementById("fromdateBox").value;
 
-    var gcheck = document.getElementById("groupCheck");
-    var ccheck = document.getElementById("cohortCheck");
+    var communityCheck = document.getElementById("communityCheck");
+    var everyoneCheck = document.getElementById("everyoneCheck");
 
     var gid = document.getElementById("group_id").value;
-    var cohort = document.getElementById("cohort").value;
 
     if(file.checked && videofile == null){
-        alert('Please select a video file.');
+        showFailureAlert('Please select a video file.');
         return false;
     }
 
+    if(file.checked && videofile != null){
+        const fileSize = videofile.size / 1024 / 1024; // in MiB
+        if (fileSize >= 100) {
+            showFailureAlert("The video file can not exceed 100MB. Please upload another file.");
+            return;
+        }
+    }
+
     if(name.length == 0){
-        alert('Please enter conference name.');
+        showFailureAlert('Please enter conference name.');
         return false;
     }
 
     if(live.checked && event_time.length == 0){
-        alert('Please enter conference start date and time.');
+        showFailureAlert('Please enter conference start date and time.');
         return false;
     }
 
     if(youtube.checked && youtubeurl.length == 0){
-        alert('Please enter YouTube video ID.');
+        showFailureAlert('Please enter YouTube video ID.');
         return false;
     }
 
-    if(gcheck.checked && gid.length == 0){
-        alert('Please choose a group.');
+    if(communityCheck.checked && gid.length == 0){
+        showFailureAlert('Please choose a group.');
         return false;
     }
 
-    if(ccheck.checked && cohort.length == 0){
-        alert('Please choose a cohort.');
-        return false;
-    }
-
-    document.getElementById("gif").style.display = "block";
+    document.getElementById("bar").style.display = "block";
     return true;
 
 }
@@ -949,17 +532,42 @@ function getDate(ms){
 }
 
 
-
-function dismissLayouts(){
-    document.getElementById('messageBox').style.display='none';
-    document.getElementById('backgroundOverlay').style.display='none';
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
 }
 
-function openMessageBox(option){
-    dismissLayouts();
-    document.getElementById('messageBox').style.display='block';
-    document.getElementById('backgroundOverlay').style.display='block';
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
 }
+
+function confirmVideoDeletion(obj){
+    swal({
+        title: "Caution！",
+        text: "Are you sure delete this video？",
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            let confid = obj.id;
+            window.location.href = "/manager/delconf?conf_id=" + confid + "&branch=conferences";
+        }
+    });
+}
+
+
 
 </script>
 

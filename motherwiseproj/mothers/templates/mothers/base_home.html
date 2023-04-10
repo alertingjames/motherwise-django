@@ -11,7 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
@@ -21,6 +21,8 @@
     <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
     <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
     <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
@@ -39,13 +41,17 @@
         OneSignal.push(function() {
           OneSignal.getUserId(function(userId) {
 
-            console.log('OneSignal Player ID: ' + userId);
+            // console.log('OneSignal Player ID: ' + userId);
 
           });
         });
     </script>
 
 <style>
+
+input:focus, button:focus {
+    outline:none;
+}
 
 .dropdown-menu{
     background-color: #fff;
@@ -62,7 +68,7 @@
 #m2{
     background-color: #fff;
     padding:15px;
-    width:300px;
+    width:250px;
 }
 
 #m3{
@@ -151,6 +157,10 @@ div#list > div > div {
     object-fit:cover;
 }
 
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
 </style>
 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
@@ -200,12 +210,12 @@ div#list > div > div {
                             </form>
                         </li>
                         <li class="menu" style="margin-top:20px;">
-                            <h5><a href="javascript:void(0)" onclick="javascript:openCohortBox(); hideMenuBar();">
+                            <h5><a href="javascript:void(0)" onclick="javascript:openCohortBox();">
                                 <span class="fa fa-sitemap" style="font-size:16px; margin-right:15px;"></span>Search by Group</a>
                             </h5>
                         </li>
                         <li class="menu" style="margin-top:20px;">
-                            <h5><a href="javascript:void(0)" onclick="javascript:openGroupBox(); hideMenuBar();">
+                            <h5><a href="javascript:void(0)" onclick="javascript:openGroupBox();">
                                 <span class="fa fa-sitemap" style="font-size:16px; margin-right:15px;"></span>Search by Community</a>
                             </h5>
                         </li>
@@ -223,7 +233,7 @@ div#list > div > div {
 
                                     <button style="background-color:gray; width:100%; padding:8px; color:white; border:0; margin-bottom:2px;"
                                         onclick="if(document.getElementById('list2').innerHTML == ''){alert('No history browsing'); return;}
-                                            document.getElementById('notiLayout').style.display='block'; hideMenuBar();">Click here to browse history...</button>
+                                            document.getElementById('notiLayout').style.display='block';">Click here to browse history...</button>
 
                                 </div>
                             </div>
@@ -232,26 +242,26 @@ div#list > div > div {
                 </li>
 
                 <li style="margin-right:30px;">
-                    <a href="javascript:void(0)" onclick="javascript:openCohortBox(); hideMenuBar();">
+                    <a href="javascript:void(0)" onclick="javascript:openCohortBox();">
                         <h4 style=""><span class="fa fa-sitemap" style="margin-right:10px;"></span>Groups</h4>
                     </a>
                 </li>
 
                 <li style="margin-right:30px;">
-                    <a href="javascript:void(0)" onclick="javascript:openGroupBox(); hideMenuBar();">
+                    <a href="javascript:void(0)" onclick="javascript:openGroupBox();">
                         <h4><span class="fa fa-group" aria-hidden="true" style="margin-right:10px;"></span>Communities</h4>
                     </a>
                 </li>
 
                 <li style="margin-right:30px;">
                     <a href="/mothers/conferences">
-                        <h4><span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Conferences</h4>
+                        <h4><span class="glyphicon glyphicon-facetime-video" aria-hidden="true" style="margin-right:10px;"></span>Videos</h4>
                     </a>
                 </li>
 
                 <li style="margin-right:30px;">
-                    <a href="/mothers/posts">
-                        <h4><span class="fa fa-flag" aria-hidden="true" style="margin-right:10px;"></span>Posts</h4>
+                    <a href="/mothers/mineppppp">
+                        <h4><span class="fa fa-flag" aria-hidden="true" style="margin-right:10px;"></span>My Posts</h4>
                     </a>
                 </li>
 
@@ -291,6 +301,26 @@ div#list > div > div {
 
 <script>
 
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
+
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+</script>
+
+
+<script>
+
     function openMessageBox(){
         document.getElementById('backgroundOverlay').style.display='block';
         document.getElementById('messageBox').style.display='block';
@@ -302,14 +332,14 @@ div#list > div > div {
         document.getElementById('backgroundOverlay').style.display='block';
         document.getElementById('cohortBox').style.display='block';
         document.getElementById('groupBox').style.display='none';
-        document.getElementById('messageBox').style.display='none';
+        // document.getElementById('messageBox').style.display='none';
     }
 
     function openGroupBox(){
         {% if groups %}
         document.getElementById('backgroundOverlay').style.display='block';
         document.getElementById('groupBox').style.display='block';
-        document.getElementById('messageBox').style.display='none';
+        // document.getElementById('messageBox').style.display='none';
         document.getElementById('cohortBox').style.display='none';
         {% else %}
         alert('You aren\'t in any communities yet.');
@@ -334,13 +364,16 @@ div#list > div > div {
 
 <script>
     $(document).click(function(){
-        // hideMenuBar();
+        if(!$( this ).hasClass('dropdown-toggle')){
+            $('.navbar-collapse').collapse('hide');
+        }
     });
 
-    function hideMenuBar(){
-        // $(".dropdown-menu").hide();
-        $('.navbar-collapse').collapse('hide');
-    }
+    $('.navbar-nav li a').on('click', function(){
+        if(!$( this ).hasClass('dropdown-toggle')){
+            $('.navbar-collapse').collapse('hide');
+        }
+    });
 
 </script>
 

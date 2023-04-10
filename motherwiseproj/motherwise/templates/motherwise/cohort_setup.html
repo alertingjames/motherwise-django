@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<!-- Code By Webdevtrick ( https://webdevtrick.com )-->
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Group Names | MotherWise</title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+    <link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+    <link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+    <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+    <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+    <style>
+
+        /* Code By Webdevtrick ( https://webdevtrick.com ) */
+        @import url("https://fonts.googleapis.com/css?family=Raleway:300,800");
+        body { background:linear-gradient(0deg,rgba(0,0,0,0.5),rgba(0,0,0,0.5)), url('/static/images/cpb1.png') no-repeat center center fixed; background-size:cover;}
+        body h1 {text-align: center;font-family: "Raleway", sans-serif;color: white;font-size: 50px;font-weight: normal;}
+        body h5 {text-align: center;font-family: "Raleway", sans-serif;color: white;font-size: 20px;font-weight: normal;}
+        body .list {position: relative;width:450px;margin:0px auto;display: block;}
+        body .list ::-webkit-input-placeholder {color: rgba(255,255,255,0.8);}
+        body .list .input {outline: none;border: 1px solid white;background-color:rgba(0,0,0,0.2);color: white;height: 50px;width: 445px;padding-left: 10px;font-family: "Raleway", sans-serif;font-weight: 800;font-size: 16px;
+          margin-left: -5px;border-radius:5px; }
+        body .list span {position: absolute;right: 10px;top: 0;font-size: 30px;font-weight: 800;line-height: 1.8;cursor: pointer;transition: all 200ms;color: white;will-change: transform;}
+        body .list span:hover {transform: rotate(180deg);}
+        body ul {padding: 0px;}
+        body ul .draggable {will-change: transform;font-family: "Raleway", sans-serif;font-weight: 800;height: 50px;list-style-type: none;margin: 10px;background-color: white;color: #212121;width: 450px;line-height: 3.2;
+          padding-left: 10px;cursor: move;transition: all 200ms;user-select: none;margin: 10px auto;position: relative; border-radius:5px;}
+        /*body ul .draggable:after {content: 'drag me';right: 7px;font-size: 10px;position: absolute;cursor: pointer;line-height: 5;transition: all 200ms;transition-timing-function: cubic-bezier(0.48, 0.72, 0.62, 1.5);*/
+        /*    transform: translateX(120%);opacity: 0;}*/
+        /*body ul .draggable:hover:after {opacity: 1;transform: translate(0);}*/
+        .over {transform: scale(1.1, 1.1);}
+        .close {position: absolute;left: 32px;top: 32px;width: 32px;height: 32px;opacity: 0.6;}
+        .close:hover {opacity: 1;}
+        .close:before, .close:after {position: absolute;left: 15px;content: ' ';height: 33px;width: 2px;background-color: white;}
+        .close:before {transform: rotate(45deg);}
+        .close:after {transform: rotate(-45deg);}
+        body #form {width: 460px;margin-top:20px; margin: 20px auto 50px auto;}
+        body #form button { width:100%; height:50px; background-color:#0066cc; color:white; font-size:19px; border:0; }
+        body #form button:hover { background-color:#003399; }
+        body #progressbar { width:30px; height:30px; display:none; }
+        .del {position:absolute;right:10px;top:16px;width:20px;height:20px;opacity:0.6;cursor:pointer;}
+        .del:hover {opacity: 1;}
+        .del:before, .del:after {position:absolute;right:10px;content:' ';height:20px;width:2px;background-color:black;}
+        .del:before {transform: rotate(45deg);}
+        .del:after {transform: rotate(-45deg);}
+        @media(max-width:576px) { body h1 { margin-top:100px; } }
+    </style>
+
+</head>
+
+<body>
+
+    <a href="/manager/home" class="close"></a>
+
+    <h1>GROUP NAMES</h1>
+    <h5>You can rearrange the group names by dragging up or down</h5>
+
+    <ul>
+        {% if cohorts %}
+        {% for c in cohorts %}
+        <li class="draggable" draggable="true">
+            <span>{{c}}</span>
+            <i class="del" onclick="delItem(this)"></i>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+
+    <div class="list">
+        <input type="text" class="input" placeholder="Add a new group name"/>
+        <span class="add">+</span>
+    </div>
+
+    <form id="form" action="/motherwise/savecohortnames" method="post">
+        {% csrf_token %}
+        <input hidden name="cohorts" id="cohorts">
+        <center><img src="/static/images/progressbar.gif" id="progressbar"></center>
+        <button type="button" onclick="save()">Save</button>
+    </form>
+
+    <script>
+        function save() {
+            var form = document.getElementById("form");
+            var progressbar = document.getElementById("progressbar");
+            var cohortstrbox = document.getElementById("cohorts");
+            var listItens = document.querySelectorAll('.draggable');
+            if(listItens.length == 0) {
+                showFailureAlert("Please add categories.");
+                return;
+            }
+            var s = [];
+            for(var i=0;i<listItens.length;i++) {
+              let item = listItens[i];
+              s.push(item.querySelector("span").innerHTML);
+            }
+            cohortstrbox.value = s.join(",");
+            console.log(cohortstrbox.value)
+            progressbar.style.display = "block";
+            var xhr = new XMLHttpRequest();
+            var formData = new FormData(form);
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    progressbar.style.display = "none";
+                    if(xhr.response == "success"){
+                        showSuccessAlert("The post categories have been saved.");
+                    }else {
+                        showFailureAlert("Failed to save the categories.")
+                    }
+                }
+            };
+            xhr.open('POST', form.getAttribute('action'), true);
+            xhr.send(formData);
+        }
+        function showSuccessAlert(msg) {
+            swal({
+                title: "Success!",
+                text: msg,
+                icon: "success",
+                button: "OK",
+            })
+            .then((ok) => {
+                if (ok) {
+                    location.reload();
+                }
+            });
+        }
+        function showFailureAlert(msg) {
+            swal({
+                title: "Oops! We ran into an issue.",
+                text: msg,
+                icon: "warning",
+                button: "OK",
+                dangerMode: true,
+            });
+        }
+        function delItem(obj) {
+            let selector = ".draggable";
+            let item = findParentBySelector(obj, selector);
+            var ul = document.querySelector('ul');
+            ul.removeChild(item);
+            var listItens = document.querySelectorAll('.draggable');
+            var s = [];
+            for(var i=0;i<listItens.length;i++) {
+              let item = listItens[i];
+              s.push(item.querySelector("span").innerHTML);
+            }
+            var cohortstrbox = document.getElementById("cohorts");
+            cohortstrbox.value = s.join(",");
+            console.log(cohortstrbox.value)
+        }
+        function collectionHas(a, b) { //helper function (see below)
+            for(var i = 0, len = a.length; i < len; i ++) {
+                if(a[i] == b) return true;
+            }
+            return false;
+        }
+
+        function findParentBySelector(elm, selector) {
+            var all = document.querySelectorAll(selector);
+            var cur = elm.parentNode;
+            while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+                cur = cur.parentNode; //go up
+            }
+            return cur; //will return null if not found
+        }
+    </script>
+
+    <script  src="/static/js/v0/cohort_names.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

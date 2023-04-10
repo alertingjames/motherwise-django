@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
@@ -19,6 +19,8 @@
     <link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
     <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
     <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <style>
 
@@ -55,6 +57,14 @@ h4:hover{
     color:white;
     text-decoration:underline;
 }
+
+input:focus, button:focus {
+    outline:none;
+}
+
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
 
 </style>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
@@ -117,6 +127,26 @@ h4:hover{
 
 <script>
 
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
+
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+</script>
+
+
+<script>
+
     var openF = false;
 
     function changeNavbarBackgroundColor(){
@@ -133,17 +163,6 @@ h4:hover{
 
 </script>
 
-<script>
-    $(document).click(function(){
-        hideMenuBar();
-    });
-
-    function hideMenuBar(){
-        // $(".dropdown-menu").hide();
-        $('.navbar-collapse').collapse('hide');
-    }
-
-</script>
 
 {% block body %}
 {% endblock %}

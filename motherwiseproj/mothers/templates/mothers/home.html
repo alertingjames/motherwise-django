@@ -1,435 +1,100 @@
-{% extends 'mothers/base_home.html' %}
-{% block title %}Motherwise Network{% endblock %}
-{% block body %}
+<html>
 
-<br>
-<br>
+<head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<meta charset="utf-8">
+{% load static %}
+{% load tag_library %}
 
-<style>
-
-html, body{
-  /*background:linear-gradient(0deg,rgba(20,150,250,0.1),rgba(0,100,250,0.1),rgba(0,100,250,0.1)), url("/static/images/222.jpg") no-repeat center center fixed;*/
-  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/111.jpg') no-repeat center center fixed;
-  background-size:cover;
-}
-
-img {
-  border-radius: 5%;
-}
-
-#myBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  right: 15px;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-#myBtn:hover {
-  background-color: orange;
-}
-
-#admin{
-    display:none;
-}
-
-.info p {
-  text-align:center;
-  color: #999;
-  text-transform:none;
-  font-weight:600;
-  font-size:15px;
-  margin-top:2px
-}
-
-.info i {
-  color:#F6AA93;
-}
-
-#edit {
-  border-radius: 15px;
-  max-width:550px;
-  width:auto;
-  margin:auto;
-  background-color:rgba(255,255,255,0.1);
-  /*background-image: url("/static/images/pattern0.jpg");*/
-  /*background-size:cover;*/
-  overflow: hidden;
-  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
-}
-
-#edit:hover {
-  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.3);
-  background-color:rgba(255,255,255,0.2);
-  /*background-image: url("/static/images/pattern0.jpg");*/
-  /*background-size:cover;*/
-}
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-}
-
-form h1 {
-  font-size: 21px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  width: 100%;
-  height: 42px;
-  float: left;
-  padding: 0px 15px;
-  opacity: 0.8;
-  color:blue;
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.contentform {
-  padding: 10px 10px;
-}
-
-.useraddress{
-    color:white;
-}
-
-.useremail{
-    color:white;
-}
-
-.useraddress:hover{
-    color:white;
-}
-
-.useremail:hover{
-    color:white;
-}
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-
-label span {/* <-- style the artificial checkbox */
-  height: 15px;
-  width: 15px;
-  border: 1px solid black;
-  border-radius:50%;
-  background-color:transparent;
-  margin-right:3px;
-  display: inline-block;
-  position: relative;
-}
-
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  color:white;
-  position: absolute;
-  top: -5px;
-  left: 0;
-}
-
-.centered-and-cropped { object-fit: cover }
-
-.cohort-panel-button{
-    width:55px; height:55px; float:left; padding:8px; border-radius:5px;
-}
-
-.panel-button{
-    width:70px; height:70px; float:left; padding:13px; border-radius:5px; box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.8); display:none;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-.bouton-update{
-  background-color: #008CBA;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 12px 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-textarea {
-  border-radius: 5px;
-  border: 1px solid #EEE;
-  width: 100%;
-  height: 80px;
-  float: left;
-  padding: 10px 15px;
-  opacity: 0.8;
-  color:black;
-  text-align:left;
-}
-
-#cohortBox, #groupBox {
-  border-radius: 50px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  display:inline-block;
-  overflow:hidden;
-  opacity:0.95;
-  float: middle;
-}
-
-select {
-  width: 100%;
-  height: 42px;
-  border:0px;
-  outline:none;
-  padding: 0px 15px;
-  color:black;
-  text-align-last:center;
-}
-
-option{
-    text-align-last:center;
-}
-
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-label span {/* <-- style the artificial checkbox */
-  height: 25px;
-  width: 25px;
-  text-align:center;
-  /*padding-bottom:5px;*/
-  display: inline-block;
-  position: relative;
-  border:0;
-  border-radius:3px;
-}
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top:-10px;
-  font-size:32px;
-  left: 2px;
-}
-
-[type=checkbox]:checked + span:after {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top:-10px;
-  left: 2px;
-  font-size:32px;
-  color:yellow;
-}
-
-.button-text{
-    font-size:8px;
-    font-weight:30;
-    color:black;
-    padding:3px 0px 0px 0px;
-}
-
-#snackbar {
-    visibility: hidden;
-    min-width: 200px;
-    margin-left: -125px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
-    padding: 12px;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    bottom: 30px;
-    font-size: 17px;
-}
-
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
-}
-
-@-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
-}
-
-#notiLayout{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:10000;
-    display:none;
-}
-
-#notiForm {
-    max-width:500px;
-    width:auto;
-    height:85%;
-    margin-top: 3px;
-    margin-bottom: auto;
-    margin-left:auto;
-    margin-right:auto;
-    overflow-y: auto;
-}
-.contentform2 {
-    padding: 0px 5px 5px 5px;
-    float:middle;
-}
-.formcontent2 {
-    width:100%;
-    float:middle;
-    margin:auto;
-    box-sizing: border-box;
-}
-
-#chat_log2 {
-    width: 100%;
-    height: auto;
-    float: middle;
-    color:black;
-    overflow-y:auto;
-}
-
-div#list2 {
-    width: 100%;
-    height: auto;
-}
-
-div#list2 > div {
-    background:white;
-    background-size:cover;
-    padding:5px 10px 5px 10px;
-    margin-top: 1px;
-}
-
-div#list2 > div > div {
-    width: auto;
-    height: auto;
-    color: black;
-    word-wrap: break-word;
-}
-
-#notiForm::-webkit-scrollbar-track
-{
-	border: 1px solid gray;
-	background-color: #eee;
-	border-radius:30px;
-}
-
-#notiForm::-webkit-scrollbar
-{
-	width: 6px;
-	background-color: #eee;
-}
-
-#notiForm::-webkit-scrollbar-thumb
-{
-	background-color: gray;
-	border-radius:30px;
-}
-
-</style>
-
-<script>
-    var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
-                   navigator.userAgent &&
-                   navigator.userAgent.indexOf('CriOS') == -1 &&
-                   navigator.userAgent.indexOf('FxiOS') == -1;
-    if (isSafari) {
-        console.log("Safari, yeah!");
-    }
-    else{
-        history.pushState(null, null, location.href);
-        history.back();
-        history.forward();
-        window.onpopstate = function () { history.go(1); };
-    }
-</script>
-
-{% if note %}
-<script>alert("{{note}}");</script>
-{% endif %}
+<title>{% if cohort %}{{cohort}}{% elif group %}{{group.name}}{% else %}NETWORK{% endif %} MEMBERS | MotherWise Nest</title>
 
 <meta charset="UTF-8">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="../lib/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-<div onclick="showNotifications()" id="alert" style="font-size:25px; font-weight:300; color: black; text-align:center; box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.9);
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:3px; padding: 10px 15px 10px 15px;
-	transform:translate(-50%, -50%); width:300px; z-index:100; top:260px; display:none;">
+<link rel="stylesheet" href="/static/css/mothers/home.css">
+
+<script>
+
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
+
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function openSearchMenu() {
+        document.getElementById("sear-dropdown-menu").classList.toggle("show");
+    }
+    function openNotifMenu() {
+        document.getElementById("msg-dropdown-menu").classList.toggle("show");
+    }
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('#sear')) {
+            var dropdowns = document.getElementsByClassName("sear-dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+        if (!event.target.matches('#notif')) {
+            var dropdowns = document.getElementsByClassName("msg-dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+</script>
+
+</head>
+
+<body>
+
+<div onclick="showNotifications()" id="alert">
     <i class="fa fa-bell" style="font-size:20px; color:red;"/></i>
 	New Message!<br>
-	<div style="color:red; font-size:16px; margin-top:20px; margin-bottom:10px;">Click here to view.</div>
+	<div>Click here to view.</div>
 </div>
 
 
-<div id="tool_panel" style="position:fixed; right:20px; background-color:transparent; width:auto; min-width:250px; z-index:200; bottom:20px; display:inline-block;">
+<div id="tool_panel">
     <a href="javascript:void(0)" onclick="javascript:toChat('private_chat');">
         <img class="panel-button" id="chat" src="/static/images/ic_chat.png" style="margin-left:20px; background-color:green;">
     </a>
@@ -440,113 +105,160 @@ div#list2 > div > div {
 </div>
 
 
-<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">{% if cohort %}{{cohort}}{% elif group %}{{group.name}}{% else %}NETWORK{% endif %} MEMBERS</div>
+<div id="title">{% if cohort %}{{cohort}}{% elif group %}{{group.name}}{% else %}NETWORK{% endif %} MEMBERS</div>
 
 
 {% if members %}
-<form style="width:100%; height:auto;" action="/mothers/contact_selecteds/" method="post" enctype="multipart/form-data" id="form">
-    {% csrf_token %}
-    <div style="font-size:25px; font-weight:800;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%; margin-top:60px; padding-left:10px; padding-right:10px;">
-        Welcome To MotherWise Nest!
-        <div style="font-size:14px; font-weight:500; color:white; text-shadow:none;">Please connect, message, and meet the other members via Communities, Groups, Posts and Messages!</div>
+<div class="main">
+
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }" title="Back"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';" title="Home"></i>
+        <div style="flex-grow:1;"></div>
+        <div class="dropdown">
+            <i id="sear" class="fa fa-search" onclick="openSearchMenu()" title="Search"></i>
+            <div id="sear-dropdown-menu" class="sear-dropdown-content">
+                <a href="javascript:void(0)">
+                    <form id="s-form" method="post" action="/mothers/search_members/" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" value="" placeholder="Type a keyword...">
+                            <input hidden name="cohort" value="{{cohort}}">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" onclick="searchMember()"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </a>
+                {% if note %}
+                <a href="javascript:void(0)" onclick="viewAllMembersInGroup()">
+                    <div><i class="fa fa-chevron-left" aria-hidden="true"></i><div>Back to View All</div><i class="fa fa-angle-right" aria-hidden="true" style="visibility:hidden;"></i></div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="dropdown">
+            <i id="notif" class="fa fa-bell" onclick="openNotifMenu()" title="Notifications"></i>
+            <div id="msg-dropdown-menu" class="msg-dropdown-content">
+                <div id="chat_log">
+                    <div id="list">
+                        <button onclick="if(document.getElementById('list2').innerHTML == ''){alert('No history browsing'); return;}
+                                document.getElementById('notiLayout').style.display='block';">Click here to browse history...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div style="font-size:18px; font-weight:800;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%; margin-top:20px; padding-left:10px; padding-right:10px;">
-        {% if cohort %}{{cohort}}{% elif group %}{{group.name}}{% else %}NETWORK{% endif %} MEMBERS<br>
-        <img src="/static/images/logo.png" style="width:80px; height:80px; top:20px;">
+
+    <div class="ttl">
+        {% if cohort %}{{cohort}}{% elif group %}{{group.name}}{% else %}NETWORK{% endif %} MEMBERS
+        <div>Please connect, message, and meet the other members via Communities, Groups, Posts and Messages!</div>
     </div>
-    <div class="container-fluid" style="margin-top:2%;">
-        <div class="row">
-            {% for member in members %}
-            <div class="col-sm-3" style="padding-bottom:30px;" id="{{member.id}}">
-                <div style="width:100%; position:relative; display:inline-block;">
-                    <div id="edit" style="margin-top:80px;">
-                        <!--<input type="hidden" id="user_id" value="{{user_id}}">-->
-                        <div class="contentform">
-                            <div style="width:100%;">
 
-                                <div style="color: white; float:left; font-weight:600; font-size:25px; width:100%; text-align:center; margin-top:80px;">
-                                    <!--#04a2be-->
-                                    {% if member.cohort == 'admin' %}MotherWise Manager{% else %}{{member.name}}{% endif %}
-                                </div>
+    <center><img src="/static/images/progressbar.gif" class="top-progress"></center>
 
-                                <div style="padding-left:30px; padding-right:8px; color: white; font-weight:500; font-size:14px; width:100%; text-align:center;">
-                                    {% if member.admin_id != '0' %}
-                                        Member since <label style="font-weight:300;">{{member.registered_time}}</label>
-                                    {% else %}
-                                        <label style="font-weight:600; color:orange; opacity:0;">Manager</label>
-                                    {% endif %}
-                                </div>
+    <form action="/mothers/contact_selecteds/" method="post" enctype="multipart/form-data" id="form">
+        {% csrf_token %}
+        <div class="container-fluid" style="margin-top:5%;">
+            <div class="row">
+                {% for member in members %}
+                <div class="col-sm-3 aaa" id="{{member.id}}">
+                    <div class="bbb">
+                        <div id="profile-body">
+                            <!--<input type="hidden" id="user_id" value="{{user_id}}">-->
+                            <div class="contentform">
+                                <div style="width:100%;">
 
-                                <div style="padding-left:30px; padding-right:8px; color: white; font-weight:300; font-size:14px; width:100%; text-align:center;">
-                                    {% if member.admin_id != '0' %}{% if member.cohort %}{{member.cohort}}{% else %}--- No Group ---{% endif %}{% else %}Motherwise Community{% endif %}
-                                </div>
+                                    <div style="color: white; float:left; font-weight:600; font-size:25px; width:100%; text-align:center; margin-top:80px;">
+                                        <!--#04a2be-->
+                                        {% if member.cohort == 'admin' %}MotherWise Manager{% else %}{{member.name}}{% endif %}
+                                    </div>
 
-                                <div style="padding-left:30px; padding-right:8px; color: white; font-weight:500; font-size:16px; width:auto; text-align:left; display:none;">
-                                    <span class="glyphicon glyphicon-envelope" style="font-size:16px; margin-right:10px;"></span><a href="mailto:{{member.email}}" class="useremail">{{member.email}}</a>
-                                </div>
+                                    <div style="padding-left:30px; padding-right:8px; color: white; font-weight:500; font-size:14px; width:100%; text-align:center;">
+                                        {% if member.admin_id != '0' %}
+                                            Member since <label style="font-weight:300;">{{member.registered_time}}</label>
+                                        {% else %}
+                                            <label style="font-weight:600; color:orange; opacity:0;">Manager</label>
+                                        {% endif %}
+                                    </div>
 
-                                <div style="padding-left:29px; padding-right:8px; color: white; font-weight:500; font-size:16px; width:auto; text-align:left; display:none;">
-                                    <span class="glyphicon glyphicon-earphone" style="font-size:16px; margin-right:10px;"></span><a href="tel:{{member.phone_number}}">{{member.phone_number}}</a>
-                                </div>
+                                    <div style="padding-left:30px; padding-right:8px; color: white; font-weight:300; font-size:14px; width:100%; text-align:center;">
+                                        {% if member.admin_id != '0' %}{% if member.cohort %}{{member.cohort}}{% else %}--- No Group ---{% endif %}{% else %}Motherwise Community{% endif %}
+                                    </div>
 
-                                <div style="padding-left:28px; padding-right:8px; color: white; font-weight:500; font-size:16px; width:auto; text-align:left; height:1.5em; line-height: 1.5;">
-                                    <span class="glyphicon glyphicon-map-marker" style="font-size:18px; margin-right:3px;"></span>
-                                    {% if member.address %}
-                                        <a href="javascript:void(0);" class="useraddress">{{member.city}}</a>
-                                        <!--https://www.google.com/maps/search/?api=1&query={{member.address}}-->
-                                    {% else %}
-                                        --- --- ---
-                                    {% endif %}
-                                </div>
+                                    <div style="padding-left:30px; padding-right:8px; color: white; font-weight:500; font-size:16px; width:auto; text-align:left; display:none;">
+                                        <span class="glyphicon glyphicon-envelope" style="font-size:16px; margin-right:10px;"></span><a href="mailto:{{member.email}}" class="useremail">{{member.email}}</a>
+                                    </div>
 
-                                <div style="width:100%; text-align:right; margin-bottom:12px;">
-                                    <a href="/mothers/qqqqqqqqqqqq?user_id={{member.id}}" style="text-align:center; margin-left:15px;">
-                                        <span class="glyphicon glyphicon-flag" style="padding-right:0px; color:white; font-size:23px;"></span>
-                                    </a>
-                                    <!--<a href="/userfriends?member_id={{member.id}}" style="text-align:center; margin-left:15px;">-->
-                                    <!--    <span class="glyphicon glyphicon-user" style="padding-right:0px; color:white; font-size:23px;"></span>-->
-                                    <!--</a>-->
-                                    <a href="javascript:void(0)" style="text-align:center; margin-left:15px; margin-right:5px;" onclick="javascript:openMessageBox(this);" id="{{member.pk}}">
-                                        <input type="hidden" value="{{member.photo_url}}">
-                                        <span class="glyphicon glyphicon-comment" style="padding-right:0px; color:white; font-size:23px;"></span>
-                                    </a>
-                                    <a href="/mothers/to_private_chat?member_id={{member.pk}}" style="text-align:center; margin-left:15px; margin-top:-8px;">
-                                        <input type="hidden" value="{{member.photo_url}}">
-                                        <span class="fa fa-comments" style="padding-right:0px; color:white; font-size:25px;"></span>
-                                    </a>
-                                    <a href="javascript:void(0)" style="display:inline-block; border-radius:50px; text-align:center; margin-right:5px;">
-                                        <label style="color: #04a2be;">
-                                            <input type="checkbox" name="users[]" value="{{member.id}}" class="chx" style="width:0px; height:0px;" onchange="javascript:highlight(this);">
-                                            <span></span><i class="fa fa-user-plus" style="color:white; font-size:23px;"></i>
-                                        </label>
-                                    </a>
+                                    <div style="padding-left:29px; padding-right:8px; color: white; font-weight:500; font-size:16px; width:auto; text-align:left; display:none;">
+                                        <span class="glyphicon glyphicon-earphone" style="font-size:16px; margin-right:10px;"></span><a href="tel:{{member.phone_number}}">{{member.phone_number}}</a>
+                                    </div>
+
+                                    <div style="padding-left:28px; padding-right:8px; color: white; font-weight:500; font-size:16px; width:auto; text-align:left; height:1.5em; line-height: 1.5;">
+                                        {% if member.city %}
+                                            <span class="glyphicon glyphicon-map-marker" style="font-size:18px; margin-right:3px;"></span>
+                                            <a href="javascript:void(0);" class="useraddress">{{member.city}}</a>
+                                            <!--https://www.google.com/maps/search/?api=1&query={{member.address}}-->
+                                        {% else %}
+                                            --- --- ---
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="footer">
+
+                                        <div style="flex-grow:1;"></div>
+
+                                        <a href="/mothers/qqqqqqqqqqqq?user_id={{member.id}}" class="posts-btn">
+                                            <span class="glyphicon glyphicon-flag"></span>
+                                        </a>
+
+                                        <!--<a href="/userfriends?member_id={{member.id}}" style="text-align:center; margin-left:15px;">-->
+                                        <!--    <span class="glyphicon glyphicon-user" style="padding-right:0px; color:white; font-size:23px;"></span>-->
+                                        <!--</a>-->
+
+                                        <a href="javascript:void(0)" style="text-align:center; margin-left:15px; margin-right:5px;display:none;" onclick="javascript:openMessageBox(this);" id="{{member.pk}}">
+                                            <input type="hidden" value="{{member.photo_url}}">
+                                            <span class="glyphicon glyphicon-comment" style="padding-right:0px; color:white; font-size:23px;"></span>
+                                        </a>
+
+                                        <a href="/mothers/to_private_chat?member_id={{member.pk}}" class="chat-btn">
+                                            <input type="hidden" value="{{member.photo_url}}">
+                                            <span class="fa fa-comments"></span>
+                                        </a>
+
+                                        <a href="javascript:void(0)" style="display:inline-block; border-radius:50px; text-align:center; margin-right:5px;display:none;">
+                                            <label style="color: #04a2be;">
+                                                <input type="checkbox" name="users[]" value="{{member.id}}" class="chx" style="width:0px; height:0px;" onchange="javascript:highlight(this);">
+                                                <span></span><i class="fa fa-user-plus" style="color:white; font-size:23px;"></i>
+                                            </label>
+                                        </a>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div style="position:absolute; top:10px; width:100%;">
+                        <center>
+                            <a href="{% if member.photo_url %}{{member.photo_url}}{% elif member.cohort == 'admin' %}/static/images/logo.jpg{% else %}/static/images/ic_profile.png{% endif %}" target="_blank">
+                                <img src="{% if member.photo_url %}{{member.photo_url}}{% elif member.cohort == 'admin' %}/static/images/logo.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="centered-and-cropped"
+                                    style="border-radius:50%; border:0px solid #fff; width:150px; height:150px; background: #E5F2FA; margin-right:16px;">
+                                    <!--#E5F2FA-->
+                            </a>
+                        </center>
+                    </div>
+                    <br>
                 </div>
-                <div style="position:absolute; top:10px; width:100%;">
-                    <center>
-                        <a href="{% if member.photo_url %}{{member.photo_url}}{% elif member.cohort == 'admin' %}/static/images/logo.jpg{% else %}/static/images/ic_profile.png{% endif %}" target="_blank">
-                            <img src="{% if member.photo_url %}{{member.photo_url}}{% elif member.cohort == 'admin' %}/static/images/logo.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="centered-and-cropped"
-                                style="border-radius:50%; border:0px solid #fff; width:150px; height:150px; background: #E5F2FA; margin-right:16px;">
-                                <!--#E5F2FA-->
-                        </a>
-                    </center>
-                </div>
-                <br>
+
+                {% endfor %}
+
+                <input type="hidden" id="msg" name="message" value="">
+                <input type="hidden" id="option" name="option" value="">
+
             </div>
-            {% endfor %}
-
-            <input type="hidden" id="msg" name="message" value="">
-            <input type="hidden" id="option" name="option" value="">
-
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 <div id="messageBox" style="font-size:16px; font-weight:300; color: black;
 	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
@@ -603,52 +315,21 @@ div#list2 > div > div {
     </div>
 </div>
 
-<div id="cohortBox" style="font-size:16px; font-weight:300; color: black;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
-	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
-    <img style="width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;" class="centered-and-cropped" src="/static/images/ic_profile.png">
-    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;"
+<div id="cohortBox">
+    <img class="centered-and-cropped box-u-p" src="/static/images/ic_profile.png">
+    <span class="fa fa-close btn-close"
         onclick="javascript:document.getElementById('cohortBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
-    <div style="width:100%; display:inline-block;">
+    <div class="box-body">
         <div>
             <div style="font-size:16px; font-weight:600; color: black; text-align:center; width:100%;">CONNECT WITH A GROUP</div><br>
             <form action="/mothers/do_cohort/" method="post" enctype="multipart/form-data" style="width:100%;" id="cohortform">
                 {% csrf_token %}
-                <div class="form-group" id="cohortBox">
+                <div class="form-group" id="cohort-field">
                     <select name="cohort" required id="cohort2" style="width:100%; color:black;">
                         <option value="">Please choose a group</option>
-                        <option value="E81">E81</option>
-                        <option value="E83">E83</option>
-                        <option value="E84">E84</option>
-                        <option value="E86">E86</option>
-                        <option value="E87">E87</option>
-                        <option value="S82">S82</option>
-                        <option value="S85">S85</option>
-                        <option value="S88">S88</option>
-                        <option value="E(v)89">E(v)89</option>
-                        <option value="E(v)90">E(v)90</option>
-                        <option value="S(v)91">S(v)91</option>
-                        <option value="E(v)92">E(v)92</option>
-                        <option value="E(v)93">E(v)93</option>
-                        <option value="E(v)94">E(v)94</option>
-                        <option value="S(v)95">S(v)95</option>
-                        <option value="E(v)96">E(v)96</option>
-                        <option value="E(v)97">E(v)97</option>
-                        <option value="S(v)98">S(v)98</option>
-                        <option value="E(v)99">E(v)99</option>
-                        <option value="E(v)100">E(v)100</option>
-                        <option value="S(v)101">S(v)101</option>
-                        <option value="E(v)102">E(v)102</option>
-                        <option value="E(v)103">E(v)103</option>
-                        <option value="S(v)104">S(v)104</option>
-                        <option value="E(v)105">E(v)105</option>
-                        <option value="E(v)106">E(v)106</option>
-                        <option value="S(v)107">S(v)107</option>
-                        <option value="E(v)108">E(v)108</option>
-                        <option value="E(v)109">E(v)109</option>
-                        <option value="S(v)110">S(v)110</option>
-                        <option value="MotherWise Alumni">MotherWise Alumni</option>
-                        <option value="MotherWise Team">MotherWise Team</option>
+                        {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
                     </select>
     			</div>
 
@@ -664,7 +345,7 @@ div#list2 > div > div {
                                 <label class="button-text">Members</label>
                             </div>
                         </a>
-                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');">
+                        <a href="javascript:void(0)" onclick="javascript:doCohort('video');" style="visibility:hidden;">
                             <div style="display:inline-block; text-align:center;">
                                 <img class="cohort-panel-button" src="/static/images/ic_video.png" style="margin-left:10px; background-color:red;"><br>
                                 <label class="button-text" style="margin-left:5px;">Video</label>
@@ -692,9 +373,7 @@ div#list2 > div > div {
 </div>
 
 
-<div id="groupBox" style="font-size:16px; font-weight:300; color: black;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
-	transform:translate(-50%, -50%); min-width:300px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
+<div id="groupBox">
     <img style="width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;" class="centered-and-cropped" src="/static/images/ic_profile.png">
     <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;"
         onclick="javascript:document.getElementById('groupBox').style.display='none'; document.getElementById('backgroundOverlay').style.display='none';"></span>
@@ -703,7 +382,7 @@ div#list2 > div > div {
             <div style="font-size:16px; font-weight:600; color: black; text-align:center; width:100%;">CONNECT WITH A COMMUNITY</div><br>
             <form action="/mothers/do_group/" method="post" enctype="multipart/form-data" style="width:100%;" id="groupform">
                 {% csrf_token %}
-                <div class="form-group" id="groupBox">
+                <div class="form-group" id="group-field">
                     <select name="groupid" required id="groupid" style="width:100%; color:black;">
                     </select>
                     <script>
@@ -736,7 +415,7 @@ div#list2 > div > div {
                                 <label class="button-text">Members</label>
                             </div>
                         </a>
-                        <a href="javascript:void(0)" onclick="javascript:doGroup('video');">
+                        <a href="javascript:void(0)" onclick="javascript:doGroup('video');" style="visibility:hidden;">
                             <div style="display:inline-block; text-align:center;">
                                 <img class="cohort-panel-button" src="/static/images/ic_video.png" style="margin-left:10px; background-color:red;"><br>
                                 <label class="button-text" style="margin-left:5px;">Video</label>
@@ -817,9 +496,9 @@ div#list2 > div > div {
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
-<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<button onclick="topFunction()" id="upBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
 
-<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+<div class="trans-section">
     <div id="google_translate_element" style="float:left;"></div>
 </div>
 <script type="text/javascript">
@@ -828,20 +507,31 @@ div#list2 > div > div {
     }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+    $( document ).ready(function() {
+        $('#google_translate_element').bind('DOMSubtreeModified', function() {
+            var val = $(this);
+            var strlang = "" + val[0].innerText + "";
+            var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+            if(toolBar !== undefined) {
+                toolBar.style.display  = 'none';
+                document.body.style.top = '0px';
+            }
+        });
+    });
+</script>
 
 <script>
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
-    if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-        document.getElementById("myBtn").style.display = "block";
+    if (document.body.scrollTop > 160 || document.documentElement.scrollTop > 160) {
+        document.getElementById("upBtn").style.display = "block";
         document.getElementById("title").style.display = "block";
-        document.getElementById('navbar').style.backgroundColor = "rgba(0,0,0,0.7)";
     } else {
-        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("upBtn").style.display = "none";
         document.getElementById("title").style.display = "none";
-        // document.getElementById('navbar').style.backgroundColor = "transparent";
     }
 }
 
@@ -984,8 +674,10 @@ notiref.on('child_added', function(snapshot) {
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
     var sender_photo = key.sender_photo;
-    if (sender_photo.length > 0) img.src = sender_photo;
+
+    if (sender_photo.length > 0 && isValidImage(sender_photo)) img.src = sender_photo;
     else img.src = "/static/images/ic_profile.png";
+
     img.style.width = "40";
     img.style.height = "40";
     img.style.borderRadius = "50%";
@@ -1256,8 +948,10 @@ gref.on('child_added', function(snapshot) {
     li.style.textAlign = 'left';
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
-    if (key2.sender_photo.length > 0) img.src = key2.sender_photo;
+
+    if (key2.sender_photo.length > 0 && isValidImage(key2.sender_photo)) img.src = key2.sender_photo;
     else img.src = "/static/images/ic_profile.png";
+
     img.style.width = "40";
     img.style.height = "40";
     img.classList.add("cropping");
@@ -1307,8 +1001,10 @@ cref.on('child_added', function(snapshot) {
     li.style.textAlign = 'left';
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
-    if (key2.sender_photo.length > 0) img.src = key2.sender_photo;
+
+    if (key2.sender_photo.length > 0 && isValidImage(key2.sender_photo)) img.src = key2.sender_photo;
     else img.src = "/static/images/ic_profile.png";
+
     img.style.width = "40";
     img.style.height = "40";
     img.classList.add("cropping");
@@ -1413,8 +1109,10 @@ notifRef.on('child_added', function(snapshot) {
     li.style.textAlign = 'left';
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
-    if (key2.senderPhoto.length > 0) img.src = key2.senderPhoto;
+
+    if (key2.senderPhoto.length > 0 && isValidImage(key2.senderPhoto)) img.src = key2.senderPhoto;
     else img.src = "/static/images/manager.jpg";
+
     img.style.width = "40";
     img.style.height = "40";
     img.style.borderRadius = "50%";
@@ -1460,8 +1158,10 @@ notiref2.on('child_added', function(snapshot) {
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
     var sender_photo = key.sender_photo;
-    if (sender_photo.length > 0) img.src = sender_photo;
+
+    if (sender_photo.length > 0 && isValidImage(sender_photo)) img.src = sender_photo;
     else img.src = "/static/images/ic_profile.png";
+
     img.style.width = "40";
     img.style.height = "40";
     img.style.borderRadius = "50%";
@@ -1489,9 +1189,66 @@ notiref2.on('child_added', function(snapshot) {
 });
 
 
+document.getElementById("s-form").querySelector("input[name='q']").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("s-form").querySelector("button").click();
+  }
+});
+
+function searchMember() {
+    let q = document.getElementsByName("q")[0];
+    if(q.value.length == 0) {
+        showFailureAlert("Please enter a keyword.");
+        return;
+    }
+    let form = document.getElementById("s-form");
+    let topProg = document.getElementsByClassName("top-progress")[0];
+    topProg.style.display = "block";
+    form.submit();
+}
+
+function viewAllMembersInGroup() {
+    let topProg = document.getElementsByClassName("top-progress")[0];
+    topProg.style.display = "block";
+    let form = document.getElementById("coh-form");
+    form.submit();
+}
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+
 </script>
 
-{% endblock %}
+<form id="coh-form" action="/mothers/do_cohort/" method="post" hidden>
+    {% csrf_token %}
+    <input hidden name="cohort" value="{{cohort}}">
+    <input hidden id="cohort_option" name="option" value="members">
+    <input hidden id="cohort_conf_code" name="code">
+</form>
+
+
+
+</body>
+
+</html>
 
 
 

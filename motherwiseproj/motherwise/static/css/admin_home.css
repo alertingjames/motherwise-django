@@ -1,0 +1,142 @@
+
+.dropdown {position:relative;display:inline-block;}
+.dropdown-content {display:none;position:absolute;background-color:#f9f9f9;min-width:160px;box-shadow:0px 8px 16px 0px rgba(0,0,0,0.2);z-index:1;}
+.dropdown:hover .dropdown-content {display:block;}
+.cohort_edit { position:absolute; right:0; margin-left:8px;cursor:pointer;font-size:16px;color:gray; }
+.cohort_edit:hover { color:red; }
+#cohortEditBox { font-size:16px; font-weight:300; color: black; z-index:999; position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 20px; transform:translate(-50%, -50%);
+    min-width:300px; max-width:600px; width:auto; top:320px; display:none;}
+#uimg {width:50px; height:50px; float:left; border-radius:50%; margin-right:10px;}
+.cohort_frame {color:black; font-size:14px;}
+.desc {padding:15px;text-align:center;}
+.header {background-image:linear-gradient(0deg,rgba(0,0,0,0.8),rgba(0,0,0,0.8)) no-repeat center center fixed;background-size:cover;text-align:center;height:70px;}
+.header1 {background-image:linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2)), url("/static/images/222.jpg") no-repeat center center fixed;background-size:cover;text-align:center;width:100%;height:300px;}
+.manage {border-radius:10%;}
+.table-owner {/*box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);*/width:100%;background-color:white;overflow-x:hidden;}
+.table-owner table { overflow-x:auto;width:100%;white-space:nowrap;display:block; }
+.table-owner1 {width:100%;background-color:white;overflow-x:auto;position:relative;margin-top:0px;display:none;}
+.table>tbody>tr>td{vertical-align:middle;text-align:middle;}
+table td, table th {color:#2b686e;padding:10px;border:1px solid white;text-align:center;vertical-align:middle;}
+table td {text-align:center;vertical-align:middle;}
+table td:last-child {font-size:0.95em;line-height:1.4;text-align:center;}
+table th {background-color:#04a2be;font-weight:520;color:white;text-align:center;vertical-align:middle;}
+table tr:nth-child(2n) {background-color:white;border:1px solid #327a81;}
+table tr:nth-child(2n+1) {background-color:#edf7f8;border:1px solid white;}
+#myBtn {display:none;position:fixed;bottom:20%;right:15px;z-index:99;border:none;outline:none;background-color:rgba(0,0,0,0.3);color:white;cursor:pointer;padding:15px;border-radius:50%;}
+#myBtn:hover {background-color:orange;}
+.owneraddress{color:black;}
+.owneraddress:hover{color:blue;}
+.hyperlink{color:black;font-size:25px;}
+.hint0{color:blue;font-size:12px;display:block;}
+.hint{color:blue;font-size:12px;display:none;}
+.hyperlink:hover .hint0 {display:none;}
+.hyperlink:hover .hint {display:inline-block;}
+.subscription {color:black;white-space:pre-wrap;/* CSS3 */white-space:-moz-pre-wrap;/* Firefox */white-space:-pre-wrap;/* Opera <7 */white-space:-o-pre-wrap;/* Opera 7 */word-wrap:break-word;/* IE */}
+.btn-subscr {color:black;text-decoration: underline;font-size:12px;}
+.btn-subscr:hover {color:red;}
+.centered-and-cropped { object-fit:cover }
+.show {z-index:1000;position:absolute;background-color:#ffffff;border:2px solid orange;box-shadow:5px 5px 0 rgba(0, 0, 0, 0.25);padding:10px;border-radius:20px;display:block;font-size:20px;margin:0;list-style-type:none;
+    list-style:none;}
+.hide {display:none;}
+.show li{ list-style: none; }
+.show a { border: 0 !important; text-decoration: none; }
+.show a:hover { text-decoration: underline !important; }
+label input {display:none;/* <-- hide the default checkbox */}
+label span {/* <-- style the artificial checkbox */height:15px;width:15px;border-radius:50%;border:1px solid black;background-color:transparent;margin-right:3px;display:inline-block;position:relative;}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */content:'\2714';color:white;position:absolute;top:-5px;left:0;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+.bouton-update{background-color:#008CBA;color:#FFF;text-align:center;width:100%;border:0;padding:12px 18px;border-radius:50px;cursor:pointer;font-size:16px;}
+textarea {border-radius:5px;border:1px solid #EEE;width:100%;height:80px;float:left;padding:10px 15px;opacity:0.8;color:black;text-align:left;}
+.form-group {overflow:hidden;width:100%;}
+label.cameraButton {display:inline-block;font-size:14px;font-weight:300;color:black;width:100%;height:auto;text-align:center;text-decoration:underline;}
+/* Look like a clicked/depressed button */
+label.cameraButton:active {border-color:#CCC #EEE #EEE #CCC;}
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input[accept*="image"] {display:none;}
+input {border-radius:50px;border:1px solid #ccc;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
+#cohortSelBox {border-radius:50px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;display:inline-block;overflow:hidden;opacity:0.95;float:middle;}
+select {width:100%;height:42px;border-radius:50px;border:1px solid #ccc;padding:0px 15px;color:black;text-align-last:center;}
+input:focus {outline:0;border:2px solid rgba(0,0,0,0.8);}
+select:focus {outline:0;border:2px solid rgba(0,0,0,0.8);}
+label input {display:none;/* <-- hide the default checkbox */}
+label span {/* <-- style the artificial checkbox */height:25px;width:25px;text-align:center;padding-bottom:5px;display:inline-block;position:relative;border:0;border-radius:3px;}
+[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */content:'\2714';position:absolute;top:0;font-size:20px;left:3px;}
+[type=checkbox]:checked + span:after {/* <-- style its checked state..with a ticked icon */content:'\2714';position:absolute;top:0;left:3px;font-size:20px;color:red;}
+.panel-button{width:70px;height:70px;float:left;padding:13px;border-radius:5px;box-shadow:0px 0px 20px rgba(0, 0, 0, 0.7);display:none;}
+.cohort-panel-button{width:55px;height:55px;float:left;padding:8px;border-radius:5px;}
+.button-text{font-size:8px;font-weight:30;color:black;padding:3px 0px 0px 0px;}
+.cropping{object-fit:cover;}
+#snackbar {visibility:hidden;min-width:200px;margin-left:-125px;background-color:#333;color:#fff;text-align:center;border-radius:2px;padding:12px;position:fixed;z-index:1;left:50%;bottom:30px;font-size:17px;}
+#snackbar.show {visibility:visible;-webkit-animation:fadein 0.5s, fadeout 0.5s 2.5s;animation:fadein 0.5s, fadeout 0.5s 2.5s;}
+@-webkit-keyframes fadein {from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}
+@keyframes fadein {from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}
+@-webkit-keyframes fadeout {from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;}}
+@keyframes fadeout {from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;}}
+#notiLayout{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;z-index:10031;display:none;}
+#notiForm {max-width:500px;width:auto;height:85%;margin-top:3px;margin-bottom: auto;margin-left:auto;margin-right:auto;overflow-y:auto;}.contentform2 {padding:0px 5px 5px 5px;float:middle;}
+.formcontent2 {width:100%;float:middle;margin:auto;box-sizing:border-box;}
+#chat_log2 {width:100%;height:auto;float:middle;color:black;overflow-y:auto;}
+div#list2 {width:100%;height:auto;}
+div#list2 > div {background:white;background-size:cover;padding:5px 10px 5px 10px;margin-top:1px;}
+div#list2 > div > div {width:auto;height:auto;color:black;word-wrap:break-word;}
+#notiForm::-webkit-scrollbar-track{border:1px solid gray;background-color:#eee;border-radius:30px;}
+#notiForm::-webkit-scrollbar{width:6px;background-color:#eee;}
+#notiForm::-webkit-scrollbar-thumb{background-color:gray;border-radius:30px;}
+.user-sel-check { display:inline-block; border-radius:50px; background-color:#cce4ff; }
+.user-sel-check:hover { background-color:#99caff; }
+.reinv { border:0;padding:6px 12px;color:rgba(255,0,0,0.5);font-style:italic;font-size:12px;background:transparent;text-decoration:underline; }
+.reinv:hover { color:red;font-style:normal; }
+
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
+.email { color:#ccc;font-style:italic; }
+.email:hover { color:blue;font-style:normal; }
+#gif { position:fixed; left:50%; float:middle; border-radius: 1px; width:80px; height:auto; transform:translate(-50%, -50%); width:auto; z-index:2000; top:120px; display: none; }
+#logo { width:80px;height:auto;border-radius:50%;margin-top:100px;margin-left:10px;z-index:2;position:fixed;display:none; }
+#messageBox { font-size:16px;font-weight:300; color:black;position:fixed;left:50%;float:middle;background-color:white;border-radius:10px;padding:8px 15px 15px 15px;transform:translate(-50%, -50%);min-width:300px;
+    max-width:600px; width:auto;z-index:10000; top:320px;display:none; }
+#cohortBox { font-size:16px;font-weight:300;color: black;z-index:999;position:fixed;left:50%;float:middle;background-color:white;border-radius:10px;padding:20px;transform:translate(-50%, -50%);min-width:300px;
+    max-width:600px;width:auto;top:320px;display:none; }
+.ll { width:50px;height:50px;float:left;border-radius:50%;margin-right:10px; }
+#messageBox3 { font-size:16px;font-weight:300;color:black;z-index:999;position:fixed;left:50%;float:middle;background-color:white;border-radius:10px;padding:8px 15px 15px 15px;transform:translate(-50%, -50%);
+    min-width:300px;max-width:600px;width:auto;top:320px;display:none; }
+#messageBox2 { font-size:16px;font-weight:300;color:black;position:fixed;bottom:2%;margin-left:5%;right:5%;background-color:white;border-radius:10px;padding:8px 15px 15px 15px;min-width:300px;max-width:600px;width:auto;
+    z-index:999;display:none; }
+#msg_logo { width:50px;height:50px;float:left; }
+
+#chat_log {width:100%;height:auto;max-height:300px;float:middle;color:black;overflow-y:auto;}
+div#list {width:100%;height:auto;}
+div#list > div {background:white;background-size:cover;padding:5px 10px 5px 10px;margin-top:1px;border-bottom:1px solid #eee;}
+div#list > button { background-color:rgba(0,0,0,0.8);width:100%;padding:12px;color:#0099ff; border:0;margin-bottom:2px; }
+div#list > button:hover { color:#33adff;text-decoration:underline; }
+div#list > div > div {width:auto;height:auto;color:black;word-wrap:break-word;}
+#chat_log::-webkit-scrollbar-track{border:1px solid gray;background-color:#eee;border-radius:30px;}
+#chat_log::-webkit-scrollbar{width:6px;background-color:#eee;}
+#chat_log::-webkit-scrollbar-thumb{background-color:gray;border-radius:30px;}
+.cropping{object-fit:cover;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

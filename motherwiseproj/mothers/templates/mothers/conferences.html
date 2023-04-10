@@ -1,426 +1,194 @@
-{% extends 'mothers/base_conference.html' %}
-{% block title %}Conferences{% endblock %}
-{% block body %}
+<html lang="en">
 
-<br>
+<head>
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="../lib/w3.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta charset="UTF-8">
+<title>Motherwise Nest | Videos</title>
+{% load static %}
+{% load tag_library %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
-  <script>
-      WebFont.load({
-      google: {
-      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
-    }
-    });
-</script>
+<script type="text/javascript" src="/static/js/radialprogress.js"></script>
 
 <style>
 
-html, body{
-  background: linear-gradient(0deg,rgba(20,150,250,0.5),rgba(0,100,250,0.5)), url("/static/images/chatpagebackground.jpg") no-repeat center center fixed;
-  background-size:cover;
+@font-face {
+   font-family: lemon;
+   src: url('/static/fonts/lemon.ttf');
 }
-
-img {
-  height: 80px;
-  width: 80px;
-}
-
-.topBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-.topBtn:hover {
-  background-color: orange;
-}
-
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.conf-form {
-  max-width:600px;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:3px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.conf-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 50px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:black;
-  text-align:left;
-}
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.bouton-update{
-  background-color: #0077b3;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 12px 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-select {
-  background:transparent;
-  border: 1.5px solid rgba(255,255,255,0.5);
-  border-radius:3px;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:white;
-  text-align-last:center;
-}
-
-option{
-    color:black;
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
-/* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-
-.cropping{
-    object-fit:cover;
-}
-
-/* The container */
-.container {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  color:white;
-  text-shadow: 2px 2px 4px gray;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Hide the browser's default radio button */
-.container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* Create a custom radio button */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-  background-color: red;
-}
-
-/* When the radio button is checked, add a blue background */
-.container input:checked ~ .checkmark {
-  background-color: orange;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
- 	top: 6px;
-	left: 6px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
-}
-
-::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-}
-
-/* optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-label.fileBtn {
-  display: inline-block;
-  /* Styles to make it look like a button */
-  padding: 0.5em;
-  border: 0;
-  border-radius:8px;
-  font-size:16px;
-  color:white;
-  width:auto;
-  text-align:center;
-  text-decoration: underline;
-}
-
-/* Look like a clicked/depressed button */
-label.fileBtn:active {
-  border-color: #CCC #EEE #EEE #CCC;
-}
-
-/* This is the part that actually hides the 'Choose file' text box for camera inputs */
-label.fileBtn input[accept*="video"] {
-  display: none;
-}
-
-iframe{
-    background-image: url("/static/images/video/youtube-backg.png");
+html, body {
+    background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/vb.png') no-repeat center center fixed;
     background-size:cover;
 }
-
-video{
-    background-image: url("/static/images/video/videobackg.jpg");
-    background-size:cover;
+img {height:80px;width:80px;}
+.topBtn {display: none;position: fixed;bottom: 20%;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+.topBtn:hover {background-color: orange;}
+form h1 {font-size: 25px;background: #327a81 none repeat scroll 0% 0%;color: rgb(255, 255, 255);padding: 19px 22px;border-radius: 5px 5px 0px 0px;margin: auto;text-shadow: none;text-align:left}
+#conf-form { width:100%;height:auto;padding-bottom:15%;overflow:auto; }
+.conf-form { max-width:100%;width:auto;margin:auto;border-radius:5px;margin-bottom:5px;background-color:rgba(0,0,0,0.1);padding:20px;background-size:cover;overflow:hidden; }
+.conf-form:hover { background:rgba(0,0,0,0.3); }
+p span {color: #F00;}
+p {margin: 0px;font-weight: 200;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius: 50px;border: 1px solid #eee;margin-bottom: 15px;margin-right:auto;width: 100%;height: 42px;opacity:0.95;float: middle;padding: 0px 15px;color:black;text-align:left;}
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{background-color: #0077b3;color: #FFF;text-align: center;width: 100%;border:0;padding: 12px 18px;border-radius: 50px;cursor: pointer;font-size: 16px;}
+select {background:transparent;border: 1.5px solid rgba(255,255,255,0.5);border-radius:3px;margin-bottom: 15px;margin-right:auto;width: 100%;height: 42px;opacity:0.95;float: middle;
+padding: 0px 15px;color:white;text-align-last:center;}
+option{color:black;}
+::-webkit-scrollbar {width: 0px; background: transparent;}
+::-webkit-scrollbar-thumb {background: #FF0000;}
+.cropping{object-fit:cover;}
+.container1 {display: block;position:relative;padding-left:25px;margin-bottom:12px;cursor:pointer;font-size:18px;color:white;text-shadow: 2px 2px 4px gray;-webkit-user-select: none;
+-moz-user-select: none;-ms-user-select: none;user-select: none;}
+.container1 input {position: absolute;opacity: 0;cursor: pointer;}
+.checkmark {position: absolute;top: 0;left: 0;height: 20px;width: 20px;background-color: white;border-radius: 50%;}
+.container1:hover input ~ .checkmark {background-color: red;}
+.container1 input:checked ~ .checkmark {background-color: orange;}
+.checkmark:after {content: "";position: absolute;display: none;}
+.container1 input:checked ~ .checkmark:after {display: block;}
+.container1 .checkmark:after {top: 6px;left: 6px;width: 8px;height: 8px;border-radius: 50%;background: white;}
+::-webkit-scrollbar {width: 0px;background: transparent;  /* optional: just make scrollbar invisible */}
+::-webkit-scrollbar-thumb {background: #FF0000;}
+label.fileBtn {display: inline-block;padding: 0.5em;border: 0;border-radius:8px;font-size:16px;color:white;width:auto;text-align:center;text-decoration: underline;}
+label.fileBtn:active {border-color: #CCC #EEE #EEE #CCC;}
+label.fileBtn input[accept*="video"] {display: none;}
+iframe{background-image: url("/static/images/video/youtube-backg.png");background-size:cover;}
+video{background-image: url("/static/images/video/videobackg.jpg");background-size:cover;}
+.formcontent {width:100%;float:middle;margin:auto;box-sizing: border-box;padding: 10px;}
+.contentform {float:middle;margin:auto;}
+#youtubeurl::placeholder {color: white;opacity: 1;}
+#youtubeurl:-ms-input-placeholder { /* Internet Explorer 10-11 */color: white;}
+#youtubeurl::-ms-input-placeholder { /* Microsoft Edge */color: white;}
+#youtubeurl{background-color:transparent;color:white;}
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+.container2 {display:block;position:relative;padding-left:25px;margin-bottom:12px;cursor: pointer;font-size:18px;color:white;text-shadow:2px 2px 4px gray;-webkit-user-select:none;
+-moz-user-select: none;-ms-user-select: none;user-select: none;}
+.container2 input {position: absolute;opacity: 0;cursor: pointer;}
+.checkmark2 {position: absolute;top: 0;left: 0;height: 20px;width: 20px;background-color: white;border-radius: 50%;}
+.container2:hover input ~ .checkmark2 {background-color: red;}
+.container2 input:checked ~ .checkmark2 {background-color: orange;}
+.checkmark2:after {content: "";position: absolute;display: none;}
+.container2 input:checked ~ .checkmark2:after {display: block;}
+.container2 .checkmark2:after {top: 6px;left: 6px;width: 8px;height: 8px;border-radius: 50%;background: white;}
+#title {font-size:30px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle;transform:translate(-50%, -50%);
+    width:100%;z-index:100;margin-top:50px;display:none;}
+#title0 {font-size:70px;font-weight:800;margin-bottom:30px;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%;font-family:lemon;}
+#name, #fromdateBox {border-radius:3px;}
+#bar {margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);z-index:99999;}
+.logo { margin-top:-15px; }
+.conf-body { width:100%; height:auto; padding-top:20px; }
+@media(max-width:576px) {
+    #title { margin-top:80px; }
+    .conf-body { padding-top:50px; }
 }
-
-.formcontent {
-  width:100%;
-  float:middle;
-  margin:auto;
-  box-sizing: border-box;
-  padding: 10px;
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+input:focus, button:focus { outline:none; }
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;}
+.header #back, .header #home {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-left:15px;color:black;font-size:18px;
+    cursor:pointer;}
+.header #back:hover, .header #home:hover {background-color:white;}
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
 }
-
-.contentform {
-  float:middle;
-  margin:auto;
-}
-
-#youtubeurl::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: white;
-  opacity: 1; /* Firefox */
-}
-
-#youtubeurl:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: white;
-}
-
-#youtubeurl::-ms-input-placeholder { /* Microsoft Edge */
-  color: white;
-}
-
-#youtubeurl{
-    background-color:transparent;
-    color:white;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.6);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-
-/* The container */
-.container2 {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  color:white;
-  text-shadow: 2px 2px 4px gray;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Hide the browser's default radio button */
-.container2 input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* Create a custom radio button */
-.checkmark2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: white;
-  border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container2:hover input ~ .checkmark2 {
-  background-color: red;
-}
-
-/* When the radio button is checked, add a blue background */
-.container2 input:checked ~ .checkmark2 {
-  background-color: orange;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark2:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container2 input:checked ~ .checkmark2:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container2 .checkmark2:after {
- 	top: 6px;
-	left: 6px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
-}
-
 
 </style>
 
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/mothers/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 1000);-->
-<!--</script>-->
+</head>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+<body>
 
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+<script>
+    WebFont.load({
+        google: {
+            families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
+    });
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
 
-<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:105px; display:none;">CONFERENCES</div>
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    document.addEventListener("visibilitychange", event => {
+        if (document.visibilityState == "visible") {
+            console.log("tab is active")
+            firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+            firebase.database().ref('gmusers' + group + '/' + sender_email).push().set({
+                sender_name: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                sender_id: sender_id
+            });
+        } else {
+            console.log("tab is inactive")
+            try {
+                firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+            }
+            catch(err) {
 
-<div style="width:100%; height:auto; margin-top:10px;">
+            }
+        }
+    });
+</script>
 
-    <div style="font-size:25px; font-weight:800; margin-bottom:30px; font-family:verdana; margin-top:25px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">CONFERENCES</div>
+<div id="bar" style="display:none;"></div>
+
+<script>
+var bar=new RadialProgress(document.getElementById("bar"),{colorBg:"rgba(0,0,0,0)",colorFg:"#0066ff",thick:8,round:true,indeterminate:true,animationSpeed:0.5});
+</script>
+
+<div id="title">Network Videos</div>
+
+<div class="conf-body">
+
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';"></i>
+    </div>
+
+    <div id="title0"><img src="/static/images/logo.png" class="logo">Network Videos</div>
 
     <div class="container-fluid" style="margin-top:2%;">
 
         <div class="row">
-            <div class="col-sm-3" style="text-align:center; margin-bottom:20px;">
-
-                <div style="width:auto; text-align:center; font-size:22px; font-family:verdana; font-weight:600; color:white; margin-bottom:30px;">
-                    {{note}}
-                </div>
+            <div class="col-sm-4" style="text-align:center; margin-bottom:20px;">
 
             </div>
 
-            <div class="col-sm-6" style="margin-bottom:30px;">
+            <div class="col-sm-4" style="margin-bottom:30px;">
 
                 {% if confs %}
-                    <div style="width:100%; height:auto; padding-bottom:15%; overflow:auto;" id="conf-form">
+                    <div id="conf-form">
                         {% for conf in confs %}
                         <div class="conf-form">
                             <div class="contentform">
@@ -428,7 +196,7 @@ video{
                                     <div style="padding:10px; float:left; position:relative;">
                                         <a href="#">
                                             <img src="{% if conf.type == 'live' %}/static/images/video/live-icon.jpg{% elif conf.type == 'file' %}/static/images/video/video-icon.jpg{% elif conf.type == 'youtube' %}/static/images/video/youtube-icon.jpg{% else %}{% endif %}"
-                                                style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                                                style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
                                         </a>
                                     </div>
                                     <a href="javascript:void(0);" style="flex-grow:1;" onclick="javascript:openCodeBox(this);" id="{{conf.pk}}">
@@ -436,16 +204,15 @@ video{
                                         <input type="hidden" id="conf_group_id" value="{{conf.group_id}}">
                                         <input type="hidden" id="conf_cohort" value="{{conf.cohort}}">
                                         <input type="hidden" id="conf_code" value="{{conf.code}}">
-                                        <div style="padding-left:8px; margin-top:10px; color: white; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div style="padding-left:8px; margin-top:10px; color:white; width:100%; font-size:17px; text-align:left; word-wrap: break-word;">
                                             {{conf.name}}<br>
                                             {% if conf.event_time %}
-                                            <div style="display:flex; margin-top:3px; float:left; margin-right:15px;"><div style="font-size:12px;">Start At:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.event_time}}</div></div>
-                                            <div style="display:flex; margin-top:3px; float:left; margin-right:15px;"><div style="font-size:12px;">Created:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.created_time}}</div></div>
+                                            <div style="display:flex; margin-top:3px; margin-right:15px;"><div style="font-size:14px;">Start At:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.event_time}}</div></div>
+                                            <div style="display:flex; margin-top:3px; margin-right:15px;"><div style="font-size:14px;"></div><div style="font-size:12px; flex-grow:1;">{{conf.created_time}}</div></div>
                                             {% else %}
-                                            <div style="display:flex; margin-top:3px; float:left; margin-right:15px;"><div style="font-size:12px;">Created:</div><div style="font-size:12px; flex-grow:1; margin-left:10px;">{{conf.created_time}}</div></div>
+                                            <div style="display:flex; margin-top:3px; margin-right:15px;"><div style="font-size:14px;"></div><div style="font-size:12px; flex-grow:1;">{{conf.created_time}}</div></div>
                                             {% endif %}
-                                            <br>
-                                            <div style="font-size:14px; font-weight:600; color:yellow; float:left;">{{conf.gname}}</div>
+                                            <div style="font-size:16px; font-weight:600; color:yellow; text-align:left;">{{conf.gname}}</div>
                                         </div>
                                     </a>
                                 </div>
@@ -461,14 +228,14 @@ video{
                         <div style="width:100%; text-align:center;">
                             <br>
                             <br>
-                            <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No conference found...</h4>
+                            <h4 style="color:rgba(255,255,255,0.7); margin: 30px;">No video found...</h4>
                         </div>
 
                 {% endif %}
 
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-sm-4">
 
 
 
@@ -520,6 +287,19 @@ video{
     }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+    $( document ).ready(function() {
+        $('#google_translate_element').bind('DOMSubtreeModified', function() {
+            var val = $(this);
+            var strlang = "" + val[0].innerText + "";
+            var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+            if(toolBar !== undefined) {
+                toolBar.style.display  = 'none';
+                document.body.style.top = '0px';
+            }
+        });
+    });
+</script>
 
 <script>
 // When the user scrolls down 20px from the top of the document, show the button
@@ -626,7 +406,9 @@ function entryConference(cd){
 </script>
 
 
-{% endblock %}
+</body>
+
+</html>
 
 
 

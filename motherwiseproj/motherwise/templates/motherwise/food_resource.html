@@ -1,0 +1,743 @@
+{% extends 'motherwise/base_FR.html' %}
+{% block title %}Food Resources{% endblock %}
+{% block body %}
+
+{% load tag_library %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+
+<script src="/static/reactions/jquery-2.1.4.js"></script>
+<script src="/static/reactions/jquery-ui_1.12.1_.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+<script>
+    WebFont.load({
+        google: {
+            families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
+    });
+</script>
+
+<style>
+
+html, body{
+  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/111.jpg') no-repeat center center fixed;
+  background-size:cover;
+}
+.body { margin-left:auto;margin-right:auto;max-width:650px; }
+.topBtn {display: none;position: fixed;bottom: 20%;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+.topBtn:hover {background-color:orange;}
+.postform {background-color:rgba(255,255,255,0.1); border-radius:10px; margin:10px 0px 10px 0px; box-shadow:0 0 30px rgba(0,0,0,0.3);}
+.postform:hover {background-color:rgba(0,0,0,0.1); box-shadow:0 0 50px rgba(0,0,0,0.8); transform: scale(1.02);transition:0.3s;}
+.contentform {padding: 10px;}
+.no-result {font-size:20px;font-weight:300;color:rgba(255,255,255,0.6);text-align:center;position:fixed;left:50%;float:middle;padding:10px 15px 10px 15px;
+    transform:translate(-50%, -50%);width:auto;z-index:100;top:350px;display:none;}
+.text {overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;white-space:pre-line;color:rgba(255,255,255,0.8);/*word-break: break-all;*/
+    display:-webkit-box;-webkit-line-clamp: 50;/* number of lines to show */-webkit-box-orient:vertical;}
+.member-name {padding-left:10px;margin-top:15px;color:rgba(255,255,255,0.8);float:left;font-size:14px;text-align:left;word-wrap:break-word;}
+.member-name > div {font-size:11px;color:rgba(255,255,255,0.8);}
+.post-photo {width:60px;height:60px;border-radius:50%;object-fit:cover;}
+.action-btn {color:rgba(255,255,255,0.6);margin:10px;font-size:18px;}
+.action-btn:hover {color:rgba(255,255,255,0.8);}
+.post-title{ font-size:20px;color:white;font-weight:800;text-transform:uppercase; }
+.post-group{ font-size:14px;color:rgba(255,255,255,0.8); }
+.post-location{ font-size:14px;color:rgba(255,255,255,0.8);font-weight:550; }
+.post-time { font-size:12px;color:rgba(255,255,255,0.8); }
+.post-picture { width:100%;height:auto;object-fit:contain; }
+.post-content{color:rgba(255,255,255,0.8) !important;text-decoration:none !important;text-align:left;padding:5px 20px 20px 30px;}
+.post-actions {color:rgba(255,255,255,0.8);float:left;font-weight:500;font-size:18px;text-align:center;margin:0px 0px 15px 10px;display:flex;}
+.post-actions span { margin-right:5px; }
+.post-detail-btn {color:rgba(255,255,255,0.6);text-align:center;margin-left:15px;margin-right:15px;}
+.post-detail-btn > span {padding-right:0px; color:rgba(255,255,255,0.6);font-size:16px;}
+.post-detail-btn > span:hover {color:rgba(255,255,255,0.8);}
+.post-header { width:100%;padding-bottom:3px;display:flex;margin-bottom:-25px; }
+.post-photo-section {padding:10px;float:left;position:relative;}
+.post-footer {width:100%;display:inline-block;}
+.post-detail-section {text-align:right;float:right;margin-bottom:10px;}
+#title0 { font-size:35px;font-weight:800;margin-top:50px;margin-bottom:10px;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;width:100%;text-transform:uppercase; }
+#title { font-size:25px;font-weight:800;color:#F7D479;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);text-align:center;position:fixed;left:50%;float:middle; text-transform:uppercase;
+    transform:translate(-50%, -50%);width:100%;z-index:100;top:110px;display:none;}
+#gif {glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display:none;}
+#gif1 {width:30px;height:30px;margin-right:5px;}
+.logo {position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%; visibility:hidden;}
+#postcreateform {border-radius:10px; background-color:rgba(255,255,255,0.2); width: 100%; height:auto; margin-bottom:30px; display:none;}
+.contentform {padding: 10px;}
+textarea {width:100%; height:100px; min-height:100px; max-height:400px; border:1px solid #ccc; padding:15px; border-radius:5px;}
+textarea:focus { outline:0; border:2px solid rgba(0,0,0,0.8); }
+p span { font-size:13px;font-weight:400;font-style:italic; }
+p i { color:#F00; }
+p { margin:0px;font-weight:600;line-height:2;color:rgba(0,0,0,0.8); }
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input { border-radius:5px;border:1px solid #eee;width:100%;height:42px;float:left;padding:0px 15px;color:black; }
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update{ background-color:#0099cc;color:#FFF;text-align:center;width:100%;border:0;padding:10px 15px;border-radius:5px;cursor:pointer;font-size:16px;font-weight:600; }
+select {border-radius:5px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
+select:focus { outline:0;border:1.5px solid rgba(0,0,0,0.8);}
+.post-create-close {color:white; font-size:20px; float:right; margin:10px; cursor:pointer;}
+.notify-members-section {width:100%; margin:0px 0px 10px 0px; border-radius:3px; border:2px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;}
+.notify-members-section > a {width:100%; display:flex; text-align:center; color:white; font-size:16px; font-weight:500; text-decoration: none;}
+.max-2lines {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.singleline {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
+.post-link-image {width:100%;height:100px;object-fit:cover;}
+.icon-frame {width:15px;height:15px;margin-right:3px;}
+.icon-site-link {flex-grow:1;font-size:11px;color:rgba(255,255,0,0.6);}
+.new-post-link-image {width:100px;height:80px;object-fit:cover;}
+#arrow2 {color:white}
+.top {width:25px;height:25px;margin-top:5px;}
+.postform::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: white;border-radius:10px;}
+.postform::-webkit-scrollbar{width: 8px;background: gray;border-radius:10px;}
+.postform::-webkit-scrollbar-thumb{background: gray;width: 8px;border-radius:10px;}
+#uform::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: white;border-radius:10px;}
+#uform::-webkit-scrollbar{width: 3px;background: gray;border-radius:10px;}
+#uform::-webkit-scrollbar-thumb{background: gray;width: 3px;border-radius:10px;}
+.text {overflow: hidden;text-overflow: ellipsis;word-wrap: break-word;white-space: pre-line;display: -webkit-box;-webkit-line-clamp: 50; /* number of lines to show */-webkit-box-orient: vertical;}
+label input {display:none;}
+label span {height: 25px;width: 25px;text-align:center;padding-bottom:6px;display: inline-block;position: relative;border:1px solid white;border-radius:3px;}
+[type=checkbox]:checked + span:before {content: '\2714';position: absolute;top:0;font-size:20px;left: 3px;}
+[type=checkbox]:checked + span:after {content: '\2714';position: absolute;top:0;left: 3px;font-size:20px;color:yellow;}
+#post-create-btn {position:fixed;right:0px;bottom:50px;background:#8600b3;border-radius:50px 0px 0px 50px;z-index:100;color:white;padding:10px 20px;text-decoration:none;}
+.text-center { text-align:center; }
+.flex-grow-1 { flex-grow:1; }
+.form-group > ul { list-style-type:square;color:rgba(255,255,255,0.8);font-size:16px;margin:15px 20px 0px 40px; }
+.form-group > ul li { margin-bottom:6px; }
+#title0 i { margin-left:10px;cursor:pointer;color:white;font-size:25px; }
+#newFRBox { font-size:16px;font-weight:300;color:black;position:absolute;left:50%;float:middle;background-color:white;border-radius:10px;padding:15px 25px 0px 25px;transform:translate(-50%, -42%);min-width:450px;
+    max-width:600px;z-index:10000;top:400px;display:none; }
+#newFRBox .form-group { margin-bottom:20px; }
+.ll { width:50px;height:50px;float:left;border-radius:50%;margin-right:10px; }
+#backgroundOverlay{background-color:rgba(0,0,0,0.6);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+#progressbar { width:30px;height:30px;display:none;margin-bottom:15px; }
+.submit { width:60%;margin-bottom:20px; }
+.btn-box-close { font-size:20px;float:right;margin-top:5px;cursor:pointer;color:gray;transition:.5s; }
+.btn-box-close:hover { color:black; }
+#box-ttl { font-size:22px;font-weight:800;color:black;text-align:center;width:100%; }
+#FRForm { padding-left:25px;padding-right:25px;max-height:70vh;overflow-y:auto; }
+#FRForm input { border-radius:0px;border-bottom:1.5px solid rgba(0,0,0,0.8);width:100%;height:42px;float:left;padding:0px 15px;color:black; }
+#FRForm textarea { width:100%;min-height:100px; }
+
+#FRForm::-webkit-scrollbar-track{-webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);background-color:#F5F5F5;border-radius:10px;}
+#FRForm::-webkit-scrollbar {width:10px;background-color:#F5F5F5;}
+#FRForm::-webkit-scrollbar-thumb {background-color:#AAA;border-radius:10px;background-image:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0.5) 25%,transparent 25%,transparent 50%,rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.5) 75%,transparent 75%,transparent)}
+#image-container { position:relative;display:none; }
+#image-container #output { width:auto;height:30px;margin-right:15px;border-radius:5px; }
+#image-container #close-btn { position:absolute;top:0;right:0;font-size:16px;cursor:pointer; }
+#file-btn { margin-top:3px;margin-right:25px;font-size:16px;color:rgba(0,153,51,0.8);font-weight:400; }
+#file-btn > i {font-size:22px;color:rgba(0,153,51,0.8);}
+#file-btn > i:hover { color:green; }
+#item-prog { width:20px;height:20px;display:none;margin-left:5px;margin-right:5px; }
+.search-section { margin-bottom:40px; }
+.search-section > div { display:flex;max-width:450px;margin-left:auto;margin-right:auto; }
+.search-section > div > i { font-size:20px;margin-top:8px;margin-right:-30px;color:rgba(255,255,255,0.7); }
+.search-section > div > input { border:0;border-bottom:1.5px solid rgba(255,255,255,0.7);background:transparent;color:white;border-radius:0;font-size:16px;padding-left:50px; }
+
+@media(max-width:576px) { #title0 { margin-top:30px; } .post-container { margin-left:10px;margin-right:10px; } .post-header { margin-bottom:0px; } }
+@media(min-width:600px) { #newFRBox { width:600; } }
+
+</style>
+
+
+<!--<script>-->
+<!--	history.pushState(null, null, location.href);-->
+<!--    history.back();-->
+<!--    history.forward();-->
+<!--    window.onpopstate = function () { history.go(1); };-->
+<!--</script>-->
+
+<div id="no_result" class="no-result">
+    No post found ...
+</div>
+
+<img src="/static/images/processing.gif" id="gif">
+
+<img src="/static/images/logo.png" class="logo">
+
+<div id="title">FOOD RESOURCES</div>
+
+<div style="width:100%; height:auto;">
+
+    <div id="title0">FOOD RESOURCES<i class="fa fa-plus-circle" title="Add Resource" onclick="openNewResourceBox()"></i></div>
+
+    <div class="search-section">
+        <div>
+            <i class="fa fa-search"></i>
+            <input type="text" id="search-input" placeholder="Search..." onkeyup="filter()" onchange="clear()">
+        </div>
+    </div>
+
+    <div class="body">
+        <div>
+            <div class="post-container" id="post-container">
+                {% if resources %}
+                    {% for res in resources %}
+                        <div class="postform" id="{{res.id}}">
+                            <div class="contentform">
+                                <div class="post-header">
+                                    <div class="post-photo-section">
+                                        <a href="{% if res.image_url %}{{res.image_url}}{% else %}javascript:void(0){% endif %}">
+                                            <img src="{% if res.image_url %}{{res.image_url}}{% else %}/static/images/frlogo.png{% endif %}" class="post-photo">
+                                        </a>
+                                    </div>
+
+                                    <div class="flex-grow-1"></div>
+
+                                    {% if 'top' in res.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
+                                    <a href="/motherwise/restoplevelsetup?res_id={{res.id}}">
+                                        {% if 'top' in res.status %}<span class="fa fa-level-down action-btn"></span>
+                                        {% else %}<span class="fa fa-level-up action-btn"></span>
+                                        {% endif %}
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="openResourceEditBox(this)">
+                                        <span class="fa fa-pencil action-btn"></span>
+                                    </a>
+                                    <img src="/static/images/progressbar.gif" id="item-prog">
+                                    <a href="javascript:void(0)" onclick="confirmDeletion('{{res.id}}')">
+                                        <span class="fa fa-trash action-btn"></span>
+                                    </a>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <div class="text post-title">{{res.title}}</div>
+                                    <div class="post-time">{{res.posted_time}}</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <ul>
+                                        {% if res.group %}<li>{{res.group}}</li>{% endif %}
+                                        {% if res.location %}<li>{{res.location}}</li>{% endif %}
+                                        {% if res.daily_meal %}<li>{{res.daily_meal}}</li>{% endif %}
+                                    </ul>
+                                </div>
+
+                                {% if res.content %}
+                                <div class="form-group">
+                                    <div class="text post-content">{{res.content}}</div>
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            <input hidden id="fr-title" value="{{res.title}}">
+                            <input hidden id="fr-category" value="{{res.category}}">
+                            <input hidden id="fr-group" value="{{res.group}}">
+                            <input hidden id="fr-location" value="{{res.location}}">
+                            <input hidden id="fr-daily-meal" value="{{res.daily_meal}}">
+                            <input hidden id="fr-link" value="{{res.link}}">
+                            <input hidden id="fr-lat" value="{{res.lat}}">
+                            <input hidden id="fr-lng" value="{{res.lng}}">
+                            <input hidden id="fr-image" value="{{res.image_url}}">
+                            <input hidden id="fr-desc" value="{{res.content}}">
+
+                        </div>
+                        <br>
+                    {% endfor %}
+
+                {% else %}
+                    <script>document.getElementById('no_result').style.display = 'block';</script>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var list = document.getElementById("post-container");
+    var lis = list.querySelectorAll( "#post-container > div" );
+    var prods = [];
+    var prods2 = [];
+    for(var i=0; i<lis.length; i++){
+       prods.push(lis[i]);
+       prods2.push(lis[i]);
+    }
+    function filter(){
+        var keyword = document.getElementById("search-input").value;
+        if(keyword.length > 0){
+            list.innerHTML = "";
+            for(var i=0; i<prods.length; i++){
+                var FR_title = prods[i].querySelector("input[id='fr-title']");
+                if(FR_title.value.toLowerCase().includes(keyword.toLowerCase())){
+                    list.appendChild(prods[i]);
+                }
+                else {
+                    var FR_location = prods[i].querySelector("input[id='fr-location']");
+                    if(FR_location.value.toLowerCase().includes(keyword.toLowerCase())){
+                        list.appendChild(prods[i]);
+                    }
+                }
+            }
+        }else {
+            list.innerHTML = "";
+            for(var i=0; i<prods2.length; i++){
+                list.appendChild(prods2[i]);
+            }
+        }
+        if(list.innerHTML == "") {
+            document.getElementById('no_result').style.display = 'block';
+        }else {
+            document.getElementById('no_result').style.display = 'none';
+        }
+    }
+
+    function clear() {
+        var keyword = document.getElementById("search-input").value;
+        if(keyword.length == 0){
+            list.innerHTML = "";
+            for(var i=0; i<prods2.length; i++){
+                list.appendChild(prods2[i]);
+            }
+        }
+    }
+</script>
+
+
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+<div id="newFRBox">
+    <img class="ll centered-and-cropped" src="/static/images/frlogo.png">
+    <span class="fa fa-close btn-box-close"
+        onclick="javascript:dismissLayouts();"></span>
+    <div style="width:100%; display:inline-block;">
+        <div>
+            <div id="box-ttl">ADD NEW RESOURCE</div><br>
+            <form action="/motherwise/FRupload/" method="post" enctype="multipart/form-data" style="width:100%;" id="FRForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <p>Title <i>*</i></p>
+                    <input type="text" name="res-title" id="res-title" placeholder="Resource Title">
+    			</div>
+    			<div class="form-group">
+    			    <p>Location <i>*</i> <span>(ex. Rocky Mountain)</span> </p>
+    				<input type="text" name="res-location" id="res-location" placeholder="Location">
+    			</div>
+    			<div class="form-group">
+    			    <p>Organization </p>
+                    <input type="text" name="res-group" id="res-group" placeholder="Organization">
+    			</div>
+    			<div class="form-group">
+    			    <p>Meal Rate <span>(ex. more than 17,800 meals every day)</span> </p>
+    				<input type="text" name="res-meals" id="res-meals" placeholder="Meal Rate">
+    			</div>
+    			<div class="form-group">
+    			    <p>Web Link <span>(ex. https://www.foodbankrockies.org)</span> </p>
+    				<input type="text" name="res-link" id="res-link" placeholder="Web Link">
+    			</div>
+    			<div class="form-group">
+    			    <p>Resource Image </p>
+                    <label id="file-btn">
+                        <i class="fa fa-paperclip"></i>
+                        <input type="file" name="image" style="display:none;" id="file" accept="image/*"/>&nbsp;&nbsp;Pick...
+                    </label>
+                    <div id="image-container">
+                        <img id="output">
+                        <i class="fa fa-times-circle" id="close-btn"></i>
+                    </div>
+                    <script>
+                        function readFile() {
+                            if (this.files) {
+                                var file = this.files[0];
+                                var picReader = new FileReader();
+                                picReader.addEventListener("load",function(event){
+                                    document.getElementById("output").src = event.target.result;
+                                    document.getElementById("image-container").style.display = "inline-block";
+                                });
+
+                                //Read the image
+                                picReader.readAsDataURL(file);
+                            }
+                        }
+                        document.getElementById("file").addEventListener("change", readFile);
+                        document.getElementById("close-btn").addEventListener("click", function(){
+                            document.getElementById("image-container").style.display = "none";
+                            document.getElementById("file").value = "";
+                        });
+                    </script>
+                </div>
+    			<div class="form-group">
+    			    <p>Description </p>
+    			    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+    				<textarea name="res-desc" id="res-desc" placeholder="Write something here..." rows="10"></textarea>
+    				<script>autosize(document.getElementById("res-desc"));</script>
+    			</div>
+    			<input hidden name="rid" id="rid" value="0">
+            </form>
+            <div class="form-group" style="margin-top:30px;">
+    			<center>
+    			    <img src="/static/images/progressbar.gif" id="progressbar">
+                    <button type="button" class="submit bouton-update" onclick="uploadResourceChanges()">Submit</button>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
+</div>
+
+<input type="hidden" id="me_email" value="{{me.email}}">
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" class="topBtn" id="topBtn" style="right:15px;"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 120 || document.documentElement.scrollTop > 120) {
+        document.getElementById("topBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("navbar").style.backgroundColor = "rgba(0,0,0,0.7)";
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("topBtn").style.display = "none";
+        // document.getElementById("navbar").style.backgroundColor = "transparent";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+
+function dismissLayouts() {
+    document.getElementById('newFRBox').style.display='none';
+    document.getElementById('backgroundOverlay').style.display='none';
+}
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.postform #date').each(function(i) {
+            this.innerHTML = getDate(parseInt(this.innerHTML));
+        });
+   });
+});
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+       color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+var y = document.getElementsByClassName("text");
+var i;
+for (i = 0; i < y.length; i++) {
+  y[i].innerHTML = urlify(y[i].innerHTML);
+}
+
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '" style="color:yellow; word-break: break-all;">' + url + '</a>';
+    });
+}
+
+
+</script>
+
+<script>
+
+{% if pst %}
+ScrollTo({{pst.pk}});
+{% endif %}
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.postform .text').each(function(i) {
+            const response = this.innerHTML
+            const decoded = response
+              .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+              .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+            this.innerHTML = decoded;
+        });
+   });
+});
+
+
+function confirmDeletion(postid) {
+    var msg = "Are you sure you want to delete this resource？";
+    swal({
+        title: "Warning！",
+        text: msg,
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            document.getElementById("item-prog").style.display = "block";
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("item-prog").style.display = "none";
+                    let result = xhr.response;
+                    if (result == "success") {
+                        location.reload();
+                    } else {
+                        showFailureAlert("Failed to delete this resource.");
+                    }
+                }
+            };
+            xhr.open('GET', '/motherwise/FRdelete?rid=' + postid, true);
+            xhr.send('');
+        }
+    });
+}
+
+
+var isMobile;
+console.log(window.innerWidth)
+if(window.innerWidth <= 576) {
+    isMobile = true;
+} else {
+    isMobile = false;
+}
+
+function checkUI(x) {
+    if (x.matches) {
+
+    } else {
+
+    }
+}
+
+var x = window.matchMedia("(max-width: 576px)")
+// checkUI(x)
+x.addListener(checkUI)
+
+
+function openNewResourceBox() {
+    let form = document.getElementById("FRForm");
+    let inputs = form.querySelectorAll("input");
+    for(var i=0; i<inputs.length; i++) {
+        var input = inputs[i];
+        input.value = "";
+    }
+    document.getElementById("res-desc").value = "";
+    document.getElementById("rid").value = "0";
+    document.getElementById("image-container").style.display = "none";
+    document.getElementById("box-ttl").innerHTML = "ADD NEW RESOURCE";
+    document.getElementById('newFRBox').style.display='block';
+    document.getElementById('backgroundOverlay').style.display='block';
+}
+
+
+function openResourceEditBox(obj) {
+    let selector = ".postform";
+    let parentElem = findParentBySelector(obj, selector);
+    let frtitlebox = parentElem.querySelector("#fr-title");
+    let frcategorybox = parentElem.querySelector("#fr-category");
+    let frgroupbox = parentElem.querySelector("#fr-group");
+    let frlocationbox = parentElem.querySelector("#fr-location");
+    let frlatbox = parentElem.querySelector("#fr-lat");
+    let frlngbox = parentElem.querySelector("#fr-lng");
+    let frdailymealbox = parentElem.querySelector("#fr-daily-meal");
+    let frlinkbox = parentElem.querySelector("#fr-link");
+    let frimagebox = parentElem.querySelector("#fr-image");
+    let frdescbox = parentElem.querySelector("#fr-desc");
+
+    if(frimagebox.value.length > 0) {
+        document.getElementById("output").src = frimagebox.value;
+        document.getElementById("image-container").style.display = "inline-block";
+    } else document.getElementById("image-container").style.display = "none";
+    document.getElementById("res-title").value = frtitlebox.value;
+    document.getElementById("res-group").value = frgroupbox.value;
+    document.getElementById("res-location").value = frlocationbox.value;
+    document.getElementById("res-meals").value = frdailymealbox.value;
+    document.getElementById("res-link").value = frlinkbox.value;
+    document.getElementById("res-desc").value = frdescbox.value;
+    document.getElementById("rid").value = parentElem.id;
+
+    document.getElementById("box-ttl").innerHTML = "EDIT RESOURCE"
+    document.getElementById('newFRBox').style.display='block';
+    document.getElementById('backgroundOverlay').style.display='block';
+}
+
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+function uploadResourceChanges() {
+    if(document.getElementById("res-title").value.length == 0) {
+        showFailureAlert("Please enter the title of resource.");
+        return;
+    }
+    if(document.getElementById("res-location").value.length == 0) {
+        showFailureAlert("Please the location of resource.");
+        return;
+    }
+    let progressbar = document.getElementById("progressbar");
+    progressbar.style.display = "block";
+    let form = document.getElementById("FRForm");
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            progressbar.style.display = "none";
+            let result = xhr.response;
+            if(result == "success") {
+                dismissLayouts();
+                location.reload();
+            }else {
+                showFailureAlert("Failed to upload the resource data.");
+            }
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

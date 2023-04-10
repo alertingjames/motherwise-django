@@ -1,0 +1,791 @@
+<html lang="en">
+
+<head>
+
+<title>Create New Post | Motherwise Nest</title>
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load static %}
+{% load tag_library %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+<script>
+    WebFont.load({
+        google: {
+            families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
+    });
+</script>
+
+<style>
+
+html, body { background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/cpb1.png') no-repeat center center fixed; background-size:cover;}
+.main { width:100%;padding-top:5%;margin-bottom:2% auto; }
+#form {width:100%;height:auto;overflow:hidden;}
+.ttl {color:#F7D479;font-size:30px;font-weight:800;text-shadow:2px 2px 0px rgba(0, 0, 0, 0.7);}
+p span {color: #F00;}
+p { margin:0px;font-weight:600;line-height:2;color:#fff;text-align:left; }
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+.form-group {overflow:hidden;width:100%;}
+.contentform {padding:30px;float:middle;margin:auto;}
+.formcontent {width:100%;float:middle;margin:auto;box-sizing: border-box;padding: 0px;}
+input {border-radius: 5px;border: 1px solid #eee;width:100%;height: 42px;float: left;padding: 0px 15px;color:black;text-align:left;}
+select {border-radius:5px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
+select:focus { outline:0;border:1.5px solid rgba(0,0,0,0.8);}
+select option { color:rgb(246, 250, 0);background-color:rgb(5, 26, 1);font-size:16px; }
+select:invalid,
+select option[value=""] {
+  color: #999999;
+}
+textarea {width:100%; height:100px; min-height:100px; max-height:400px; border:1px solid #ccc; padding:15px; border-radius:5px;}
+textarea:focus { outline:0; border:2px solid rgba(0,0,0,0.8); }
+#progressbar, #progressbar2 {width:30px; height:30px; display:none;}
+/*link properties*/
+.max-2lines {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.singleline {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
+.post-link-image {width:100%;height:100px;object-fit:cover;}
+.icon-frame {width:15px;height:15px;margin-right:3px;}
+.icon-site-link {flex-grow:1;font-size:11px;color:rgba(255,255,0,0.6);}
+.new-post-link-image {width:100px;height:80px;object-fit:cover;}
+#gif1 {width:30px;height:30px;margin-right:5px;}
+#message {width:100%; height:200px; max-height:500px; border:1.5px solid white; padding:15px; border-radius:5px; font-size:18px;}
+#message:focus {outline:0;border:1.5px solid orange;}
+.bouton-update{background-color:#008CBA;color:#FFF;text-align:center;width:100%;height:45px;border:0;padding:12px 18px;border-radius:50px;cursor:pointer;font-size:18px;}
+/* The container */
+.container {display:block;position:relative;padding-left:35px;margin-bottom:12px;cursor:pointer;font-size:18px;color:white;-webkit-user-select:none;
+    -moz-user-select:none;-ms-user-select:none;user-select:none;}
+/* Hide the browser's default checkbox */
+.container input {position:absolute;opacity: 0;cursor: pointer;height: 0;width: 0;}
+/* Create a custom checkbox */
+.checkmark {position: absolute;top: 0;left: 0;height: 25px;width: 25px;background-color: #eee;}
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {background-color: #ccc;}
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {background-color: #2196F3;}
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {content: "";position: absolute;display: none;}
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {display: block;}
+/* Style the checkmark/indicator */
+.container .checkmark:after {left: 9px;top: 5px;width: 5px;height: 10px;border: solid white;border-width: 0 3px 3px 0;-webkit-transform: rotate(45deg);-ms-transform: rotate(45deg);transform: rotate(45deg);}
+#include-emails {position:fixed; float:right; z-index:1000000000; right:0; top:0; width:400px; height:100%; display:none; background:#0059b3;transform: translateX(100%);-webkit-transform: translateX(100%);}
+.slide-rin {animation: slide-rin 0.5s forwards;-webkit-animation: slide-rin 0.5s forwards;}
+.slide-rout {animation: slide-rout 0.5s forwards;webkit-animation: slide-rout 0.5s forwards;}
+@keyframes slide-rin {100% { transform: translateX(0%); }}
+@-webkit-keyframes slide-rin {100% { -webkit-transform: translateX(0%); }}
+@keyframes slide-rout {0% { transform: translateX(0%); }100% { transform: translateX(100%); }}
+@-webkit-keyframes slide-rout {0% { -webkit-transform: translateX(0%); }100% { -webkit-transform: translateX(100%); }}
+.btn-include { padding:10px 20px;background-color:transparent;color:white;border:1.5px solid white;border-radius:50px;float:right; }
+.btn-include:hover { background-color:#0059b3;border:1.5px solid #0059b3; }
+.btn-include:focus { background-color:#0059b3; }
+.btn-include i:first-child { margin-right:10px; }
+.btn-include i:last-child { margin-left:10px; }
+#backgroundOverlay{background-color:rgba(0,0,0,0.4);position:fixed;top:0;left:0;right:0;bottom:0;display:none;}
+#search {float:left; margin-left:10px; background:transparent; border:0; padding:3px 6px; font-size:16px; color:white; height:auto; width:300px;}
+#search:focus { outline:0;}
+#search::placeholder {color:white;opacity:0.7;}
+#search:-ms-input-placeholder { color: white;opacity: 0.7;}
+#search::-ms-input-placeholder { color: white;opacity: 0.7;}
+.user-form {max-width:100%;width:auto;margin:auto;margin-bottom:2px;overflow:hidden;background:#0059b3;cursor:pointer;}
+.user-form:hover {background:#004280;}
+.ulist {width:100%;max-height:80%; padding-top:5px; padding-bottom:10px; overflow:auto;}
+.ulist::-webkit-scrollbar {width:6px;}
+.ulist::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3);border-radius:10px;}
+.ulist::-webkit-scrollbar-thumb {border-radius:10px;-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.8);}
+.u-img {border-radius:50%; height:35px; width:35px; object-fit:cover;}
+.checkbox {display:none;}
+.check-span {height:25px;width:25px;text-align:center;padding-bottom:6px;display:inline-block;position:relative;border:2px solid white;}
+.checkbox:checked + span:before {content:'\2714';position:absolute;top:0;font-size:20px;left:3px;}
+.checkbox:checked + span:after {content:'\2714';position:absolute;top:0;left:3px;font-size:20px;color:red;}
+#included {color:yellow;font-size:16px;}
+.fa-times-thin:before {content:'\00d7';}
+
+#google_translate_element {display:inline-block; width:auto; border-radius:30px; z-index:9999; bottom:15px; left:1%; position:fixed;}
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;}
+.header #back, .header #home {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-left:15px;color:black;font-size:18px;
+    cursor:pointer;}
+.header #back:hover, .header #home:hover {background-color:white;}
+button:focus { outline:none;border:0; }
+input:focus, textarea:focus { outline:none;border:1px solid red; }
+.fieldset-container { margin-left:auto;margin-right:auto;padding:0px 10px 0px 10px;max-width:600px; }
+fieldset { width:100%;border:2px solid white;text-align:center; }
+@media (max-width:576px) { .main { padding-top:20%; } }
+
+</style>
+
+</head>
+
+<body>
+
+<div class="main">
+
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }"></i>
+        <i id="home" class="fa fa-home" onclick="{% if me.cohort == 'admin' %}window.location.href='/nest/manager/';{% else %}window.location.href='/mothers/zzzzz/';{% endif %}"></i>
+    </div>
+
+    <div class="fieldset-container">
+        <fieldset>
+            <legend><label class="ttl">Create New Post</label></legend>
+            <form id="form" action="{% if opt == 'admin' %}/manager/newpost/{% else %}/mothers/newpost/{% endif %}" method="post" enctype="multipart/form-data">
+            	{% csrf_token %}
+                <div class="contentform">
+            		<div class="formcontent">
+            			<div class="form-group">
+            			    <p>Post Title <span>*</span></p>
+                            <input type="text" name="title" id="post-title" placeholder="Enter a title">
+                    	</div>
+                    	<div class="form-group">
+                    	    <p>Categories (Optional)</p>
+                            <select name="category" required id="category" style="color:black;appearance:none;">
+                                <option value="" style="color:gray;">Choose a category-----</option>
+                                {% if comida %}
+                                <option value="Food Resource" selected>Food Resource</option>
+                                {% else %}
+                                {% for c in categories %}
+                                <option value="{{c}}">{{c}}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                    	</div>
+                    	<div class="form-group">
+                    	    <p>Description <span>*</span></p>
+                    		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+                                integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+                            <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                            <textarea rows="5" name="content" id="textarea" placeholder="Write something here..." onblur="checkLinks(this)"></textarea>
+                            <script>autosize(document.getElementById("textarea"));</script>
+                        </div>
+                        <center>
+                            <div id="prev-progress" style="display:none;margin-bottom:20px;">
+                                <img src="/static/images/progressbar.gif" id="gif1"><span style="color:rgba(255,153,255,1.0);font-size:14px;">link preview loading...</span>
+                            </div>
+                        </center>
+                        <div id="post-link-frame" style="display:none;"></div>
+
+                        <div class="form-group" style="width:auto; margin-bottom:10px;">
+                            <p>Images (Optional)</p>
+            			    <center>
+                                <img src="" style="width:auto; height:40px; margin-top:8px; display:none;" id="output">
+                            </center>
+                            <div id="image-panel" class="form-group" style="display:none;">
+                                <center>
+                                    <div style="width:100%; text-align:center; max-height:80px;">
+                                        <output id="divv" class="dragscroll" style="white-space: nowrap; overflow-y: hidden; overflow: auto; cursor: grab; cursor : -o-grab; cursor : -moz-grab; cursor : -webkit-grab;">
+                                        </output>
+                                    </div>
+                                </center>
+            		        </div>
+            		        <button type="button" id="emoji-btn" style="background:transparent; border:0; float:left;">
+            		            <i class="fa fa-smile-o" style="font-size:25px; color:white;"></i>
+            		        </button>
+            			    <label style="float:left; margin-left:20px;">
+            			        <i class="fa fa-paperclip" style="font-size:25px; color:white;"></i>
+            			        <span style="color:white; font-size:16px; margin-left:10px;">You can attach 1+ images by CTRL + selection.</span>
+                                <input type="file" name="pictures" style="display:none;" value="http://lorempixel.com/100/100/people/9" id="picture" accept="image/*" multiple/>
+                            </label>
+                            <script>
+                                function readFile() {
+                                    if (this.files) {
+                                        var output = document.getElementById("divv");
+                                        output.innerHTML = "";
+                                        var files = this.files;  console.log(files.length);
+                                        document.getElementById("image-panel").style.display = "block";
+                                        for(var i = 0; i< files.length; i++)
+                                        {
+                                            var file = files[i];
+                                            //Only pics
+                                            if(!file.type.match('image'))
+                                              continue;
+                                            var picReader = new FileReader();
+                                            picReader.addEventListener("load",function(event){
+                                                var picFile = event.target;
+
+                                                document.getElementById("output").src = event.target.result;
+
+                                                var div = document.createElement("div");
+                                                div.classList.add("slide");
+                                                div.innerHTML = "<img src='" + picFile.result + "'" +
+                                                        "title='" + picFile.name + "'" + " style=" + "'width:auto; height:80px; float:left;'" + "/>";
+
+                                                div.addEventListener("click", function() {
+                                                    document.getElementById("output").src =  picFile.result;
+                                                });
+                                                output.insertBefore(div,null);
+                                            });
+
+                                             //Read the image
+                                            picReader.readAsDataURL(file);
+                                        }
+                                    }
+                                }
+                                document.getElementById("picture").addEventListener("change", readFile);
+                            </script>
+
+                            <script src="/static/emoji1/fgEmojiPicker.js"></script>
+                            <script>
+                                const emojiPicker = new FgEmojiPicker({
+                                    trigger: ['#emoji-btn'],
+                                    position: ['top', 'right'],
+                                    preFetch: true,
+                                    insertInto: document.querySelector('textarea#textarea'),
+                                    emit(obj, triggerElement) {
+                                        console.log(obj, triggerElement);
+                                    }
+                                });
+                            </script>
+                        </div>
+
+                        <input hidden name="selections" id="selections">
+
+            			<div class="form-group" style="display:none;">
+                            <div style="color:white;font-size:16px;text-align:left;">Schedule the post </div>
+                            <div style="color:white;font-size:12px;text-align:left;margin-bottom:5px;">(If you set up a schedule, the post will be activated at that date time.)</div>
+                            <input type="datetime-local" placeholder="Choose a date and time..." onchange="setSchedule(this)">
+                        </div>
+                        <input type="hidden" name="scheduled_time" id="scheduled_time">
+
+                        <script>
+                            function setSchedule(obj) {
+                                document.getElementById("scheduled_time").value = obj.value.replace("T","-").replace(":","-");
+                            }
+                        </script>
+
+                        <br>
+
+                        <div class="form-group">
+                            <button type="button" class="btn-include" onclick="javascript:showNotififiedMemberListBox();">
+                                <i class="fa fa-bell" aria-hidden="true"></i> Select Users to be Notified <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <br>
+
+                        <center><img src="/static/images/progressbar.gif" id="progressbar"></center>
+
+                        <div class="form-group">
+                			<center>
+                                <button type="button" onclick="submitPost()" class="bouton-update">SUBMIT</button>
+                            </center>
+                        </div>
+            	    </div>
+            	</div>
+            </form>
+        </fieldset>
+    </div>
+
+</div>
+
+
+<div id="include-emails">
+    <div style="padding:20px;color:white;">
+        <span  class="fa fa-times-thin fa-2x" style="width:25px; height:25px; float:right;" onclick="javascript:dismissUserListBox();"></span>
+        <div style="width:100%;">
+            <center>
+                <h5>Select users you want to notify</h5>
+                <a href="javascript:void(0)" id="included">Selected： </a>
+            </center>
+            <center><img src="/static/images/progressbar.gif" id="progressbar2"></center>
+            <br>
+            <div style="text-align:center; display:inline-block;">
+                <div style="display:inline-block;">
+                    <div>
+                        <i class="fa fa-search" style="font-size:20px; float:left; color:white;"></i>
+                        <input type="text" placeholder="Search..." autocomplete="off" id="search" onkeyup="filter()" onchange="clear()">
+                    </div><br>
+                    <div style="background:white; height:1px; margin-top:10px;"></div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <form id="user-list">
+                {% if users %}
+                <div class="ulist">
+                    <div id="uform">
+                        {% for user in users %}
+                        <div class="user-form" onclick="highlight(this)">
+                            <div style="padding:10px;">
+                                <div style="padding-bottom:3px; display:flex;" >
+                                    <div style="float:left; position:relative;">
+                                        <img src="{% if user.photo_url %}{{user.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}" class="u-img">
+                                    </div>
+                                    <div style="flex-grow:1;">
+                                        <div style="padding-left:15px;color:white;float:left;">
+                                            <div style="font-weight:600;font-size:16px;text-align:left; word-wrap:break-word;text-overflow:ellipsis;">{{user.name}}</div>
+                                            <div style="font-size:14px;float:left;margin-right:10px;word-break:break-all;">{{user.username}}</div>
+                                        </div>
+                                    </div>
+                                    <div style="background-color:transparent;">
+                                        <label style="">
+                                            <input type="checkbox" class="checkbox" name="selusers[]" value="{{user.id}}" disabled>
+                                            <span class="check-span"></span>
+                                        </label>
+                                    </div>
+                                    <input hidden id="uname" value="{{user.name}}">
+                                    <input hidden id="uemail" value="{{user.email}}">
+                                    <input hidden id="uusername" value="{{user.username}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {%else %}
+                <div style="width:100%; height:200px; text-align:center;">
+                    <h5 style="color:rgba(255,255,255,0.7); margin: 15px;">No users found...</h5>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="backgroundOverlay" onclick="dismissUserListBox();"></div>
+
+<div id="google_translate_element"></div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+<script>
+
+var ulist = document.getElementById("uform");
+var ulis = ulist.querySelectorAll( "#uform > div" );
+var uobjs = [];
+var uobjs2 = [];
+for(var i=0; i<ulis.length; i++){
+    uobjs.push(ulis[i]);
+    uobjs2.push(ulis[i]);
+}
+
+
+function filter(){
+    var keyword = document.getElementById("search").value;
+    if(keyword.length > 0){
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs.length; i++){
+            var member_name = uobjs[i].querySelector("input[id='uname']");
+            if(member_name.value.toLowerCase().includes(keyword.toLowerCase())){
+                ulist.appendChild(uobjs[i]);
+            }
+            else {
+                var member_email = uobjs[i].querySelector("input[id='uemail']");
+                if(member_email.value.toLowerCase().includes(keyword.toLowerCase())){
+                    ulist.appendChild(uobjs[i]);
+                }else {
+                    var member_username = uobjs[i].querySelector("input[id='uusername']");
+                    if(member_username.value.toLowerCase().includes(keyword.toLowerCase())){
+                        ulist.appendChild(uobjs[i]);
+                    }
+                }
+            }
+        }
+    }else{
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs2.length; i++){
+            ulist.appendChild(uobjs2[i]);
+        }
+    }
+}
+
+
+
+function clear(){
+    var keyword = document.getElementById("search").value;
+    if(keyword.length == 0){
+        // alert('clear?');
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs2.length; i++){
+            ulist.appendChild(uobjs2[i]);
+        }
+    }
+}
+
+
+var viewOption = "all";
+
+function viewIncludedEmails() {
+    if(viewOption == "included") {
+        viewOption = "all";
+        showExCounts();
+    }else {
+        viewOption = "included";
+        document.getElementById("included").innerHTML = "Show All";
+    }
+
+    uincludedemails(viewOption);
+}
+
+
+function uincludedemails(option){
+    if(option == "included"){
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs.length; i++){
+            var notice_included = uobjs[i].querySelector("input[id='uincluded']");
+            if(notice_included.value.toLowerCase().includes("yes")){
+                ulist.appendChild(uobjs[i]);
+            }
+        }
+    }else{
+        ulist.innerHTML = "";
+        for(var i=0; i<uobjs2.length; i++){
+            ulist.appendChild(uobjs2[i]);
+        }
+    }
+}
+
+
+</script>
+
+
+<script>
+
+var inusers_count = 0;
+
+function showNotififiedMemberListBox(){
+    var includedbox = document.getElementById("included");
+    includedbox.innerHTML = "Selected： " + String(inusers_count);
+    document.getElementById("backgroundOverlay").style.display = "block";
+    setTimeout(function(){
+        document.getElementById("include-emails").style.display = "block";
+        document.getElementById("include-emails").setAttribute('class', 'slide-rin');
+    }, 30);
+}
+
+function dismissUserListBox(){
+    document.getElementById("include-emails").setAttribute('class', 'slide-rout');
+    setTimeout(function() {
+        document.getElementById("include-emails").style.display="none";
+        document.getElementById("backgroundOverlay").style.display = "none";
+    }, 400);
+}
+
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+
+function highlight(obj){
+    var includedbox = document.getElementById("included");
+    var checkbox = obj.querySelector("input[type='checkbox']");
+    checkbox.checked = !checkbox.checked;
+    if(checkbox.checked){
+        obj.style.backgroundColor = "#004280";
+        inusers_count += 1;
+    }else {
+        obj.style.backgroundColor = "#0059b3";
+        inusers_count -= 1;
+    }
+    includedbox.innerHTML = "Selected： " + String(inusers_count);
+}
+
+
+var progressbar = document.getElementById("progressbar");
+
+function submitPost() {
+    if (document.getElementById("post-title").value.length == 0) {
+        showFailureAlert("Please enter the post title.");
+        return;
+    }
+    if (document.getElementById("textarea").value.length == 0) {
+        showFailureAlert("Please enter the post description.");
+        return;
+    }
+    if(progressbar.style.display == "block")return;
+    var selectedUsers = [];
+    var chxs = document.getElementsByName("selusers[]");
+    for(var i=0;i<chxs.length;i++) {
+        let chx = chxs[i];
+        if(chx.checked) {
+            selectedUsers.push(chx.value);
+        }
+    }
+    document.getElementById("selections").value = selectedUsers.toString();
+    // console.log(document.getElementById("selections").value)
+    progressbar.style.display = "block";
+    var form = document.getElementById("form");
+    var xhr = new XMLHttpRequest();
+    var formData = new FormData(form);
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            progressbar.style.display = "none";
+            if(xhr.response == "success"){
+                showSuccessAlert("The post is done successfully.");
+            }
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+}
+
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    })
+    .then((ok) => {
+        if (ok) {
+            const channel = new BroadcastChannel("mw_post");
+		    channel.postMessage({ token:"{{token}}" });
+            window.close();
+        }
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+
+function checkLinks(obj){
+    var progressbar = document.getElementById("prev-progress");
+    var container = document.getElementById("post-link-frame");
+    container.innerHTML = "";
+    if(obj.value.length == 0 || !obj.value.includes("http")) {
+        container.style.display = "none";
+        return;
+    }
+    progressbar.style.display = "block";
+    var formdata = new FormData();
+    formdata.append("content", obj.value);
+    var xhr = new XMLHttpRequest(formdata);
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var data = xhr.responseText;
+            console.log('LINK RESP: ' + data);
+            let jsonData = JSON.parse(data);
+            if(jsonData['result'] == 'success') {
+                data = jsonData['data'];
+                for(var i=0; i<data.length; i++){
+                    let title = data[i].title;
+                    let description = data[i].description;
+                    let image_url = data[i].image_url;
+                    let icon_url = data[i].icon_url;
+                    let site_url = data[i].site_url;
+
+                    if(container.style.display == "none") container.style.display = "block";
+                    var formgroupbox = document.createElement("div");
+                    formgroupbox.classList.add("form-group");
+                    var row = document.createElement("div");
+                    row.style.display = "flex";
+                    row.style.cursor = "pointer";
+                    row.addEventListener('click', function(e) {
+                        window.open(site_url);
+                    });
+                    formgroupbox.append(row);
+                    if(image_url.length > 0){
+                        var imageframe = document.createElement("div");
+                        var imagebox = document.createElement("img");
+                        imagebox.classList.add("new-post-link-image");
+                        imagebox.src = image_url;
+                        imageframe.append(imagebox);
+                        row.append(imageframe);
+
+                        var bodybox = document.createElement("div");
+                        bodybox.style.flexGrow = "1";
+                        bodybox.style.paddingLeft = "5px";
+                        bodybox.style.textAlign = "left";
+
+                        var titlebox = document.createElement("label");
+                        titlebox.style.color = "white";
+                        titlebox.style.fontSize = "16px";
+                        titlebox.classList.add("max-2lines");
+                        titlebox.innerHTML = title;
+                        bodybox.append(titlebox);
+
+                        if(description.length > 0) {
+                            var descbox = document.createElement("div");
+                            descbox.classList.add("singleline");
+                            descbox.style.fontSize = "14px";
+                            descbox.style.color = "rgba(255,255,255,0.8)";
+                            descbox.innerHTML = description;
+                            bodybox.append(descbox);
+                        }
+
+                        var linkframe = document.createElement("div");
+                        linkframe.style.display = "flex";
+                        if(icon_url.length > 0) {
+                            var iconbox = document.createElement("img");
+                            iconbox.classList.add("icon-frame");
+                            iconbox.src = icon_url;
+                            linkframe.append(iconbox);
+                        }
+                        var linkbox = document.createElement("div");
+                        linkbox.classList.add("icon-site-link");
+                        linkbox.classList.add("singleline");
+                        linkbox.innerHTML = site_url;
+                        linkframe.append(linkbox);
+                        bodybox.append(linkframe);
+                        row.append(bodybox);
+                    }else {
+                        var bodybox = document.createElement("div");
+                        // bodybox.classList.add("col-sm-12");
+                        bodybox.style.textAlign = "left";
+
+                        var titlebox = document.createElement("label");
+                        titlebox.style.color = "white";
+                        titlebox.style.fontSize = "16px";
+                        titlebox.classList.add("max-2lines");
+                        titlebox.innerHTML = title;
+                        bodybox.append(titlebox);
+
+                        if(description.length > 0) {
+                            let descbox = document.createElement("div");
+                            descbox.classList.add("singleline");
+                            descbox.style.fontSize = "14px";
+                            descbox.style.color = "rgba(255,255,255,0.8)";
+                            descbox.innerHTML = description;
+                            bodybox.append(descbox);
+                        }
+
+                        var linkframe = document.createElement("div");
+                        linkframe.style.display = "flex";
+                        if(icon_url.length > 0) {
+                            var iconbox = document.createElement("img");
+                            iconbox.classList.add("icon-frame");
+                            iconbox.src = icon_url;
+                            linkframe.append(iconbox);
+                        }
+                        var linkbox = document.createElement("div");
+                        linkbox.classList.add("icon-site-link");
+                        linkbox.classList.add("singleline");
+                        linkbox.innerHTML = site_url;
+                        linkframe.append(linkbox);
+                        bodybox.append(linkframe);
+                        row.append(bodybox);
+                    }
+                    container.append(formgroupbox);
+                }
+            }
+            progressbar.style.display = "none";
+        }
+    };
+    xhr.open('POST', '/mothers/bbbbb', true);
+    xhr.send(formdata);
+
+}
+
+
+
+</script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

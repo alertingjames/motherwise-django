@@ -38,6 +38,8 @@ from time import gmtime, strftime
 import time
 from xlrd import XLRDError
 
+from django.db.models import Q
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.sessions.backends.db import SessionStore
@@ -48,13 +50,23 @@ from django import forms
 import sys
 from django.core.cache import cache
 import random
+import emoji
+
+from linkpreview import link_preview
+import favicon
+import certifi
+import ssl
+from bs4 import BeautifulSoup
+from urllib.request import Request, urlopen
+from selenium import webdriver
 
 from pbsonesignal import PybossaOneSignal
 
 from pyfcm import FCMNotification
 
-from motherwise.models import Member, Contact, Group, GroupMember, GroupConnect, Post, Comment, PostPicture, PostLike, Notification, Received, Sent, Replied, Conference, Report
-# from motherwise.serializers import
+from motherwise.models import Member, Contact, Group, GroupMember, GroupConnect, Post, PostUrlPreview, Comment, PostPicture, PostLike, Notification, Received, Sent, Replied, Conference, Report, PostCategory
+from motherwise.models import Cohort, CommentLike
+from motherwise.serializers import PostSerializer, CommentSerializer
 
 import pyrebase
 
@@ -92,7 +104,7 @@ def index(request):
             elif member.address == '' or member.city == '':
                 return  render(request, 'mothers/location_picker.html', {'address':member.address})
             else:
-                return redirect('/mothers/home')
+                return redirect('/mothers/zzzzz')
     except KeyError:
         print('no session')
     return render(request, 'mothers/login.html')
@@ -117,9 +129,7 @@ def adminsignuppage(request):
 def adminloginpage(request):
     return render(request, 'motherwise/admin.html')
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def adminSignup(request):
     if request.method == 'POST':
@@ -165,32 +175,39 @@ def adminhome(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     members = Member.objects.filter(admin_id=adminID).order_by('-id')
     for member in members:
         if member.registered_time != '':
             member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y")
-    users, range = get_all_member_data(members)
+
+    users = members[:25]
+    first_page = 1
+    last_page = int(members.count() / 25)
+    if members.count() % 25 > 0: last_page += 1
+    s = 1
+    e = 7
+    if e > last_page: e = last_page
 
     groups = Group.objects.filter(member_id=admin.pk).order_by('-id')
 
-    return render(request, 'motherwise/adminhome.html', {'me':admin,'users':users, 'range': range, 'current': 1, 'groups':groups})
+    return render(request, 'motherwise/adminhome2.html', {'me':admin, 'users':users, 'range':range(s, e + 1), 'current':'1', 'groups':groups, 'cohorts':cohorts, 'last_page':str(last_page)})
 
 
 def get_all_member_data(members):
-    i = 0
-    memberList = []
-    for member in members:
-        i = i + 1
-        if i <= 25:
-            memberList.append(member)
-    r = int(members.count() / 25)
-    m = members.count() % 25
-    if m > 0:
-        r = r + 2
-    else:
-        r = r + 1
+    memberList = members[:25]
+    first_page = 1
+    last_page = int(members.count() / 25)
+    if members.count() % 25 > 0: last_page += 1
+    s = 1
+    e = 7
+    if e > last_page: e = last_page
 
-    return memberList, range(r)
+    return memberList, range(s, e + 1), last_page
 
 
 
@@ -201,9 +218,7 @@ def adminlogout(request):
     return render(request, 'motherwise/admin.html')
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def adminLogin(request):
     if request.method == 'POST':
@@ -343,7 +358,7 @@ def import_member_data(request):
                     member.admin_id = adminID
                     member.name = name
                     member.email = email
-                    member.password = generateRandomPassword()
+                    member.password = 'mama'
                     member.phone_number = str(phone_number).replace('.0','').strip()
                     # group_number = str(group_number).replace('.0','')
                     # try:
@@ -369,7 +384,7 @@ def import_member_data(request):
                     message = 'Dear ' + member.name + ',<br><br>Welcome to \"The Nest\": MotherWise\'s virtual community!<br><br>The Nest is an opportunity to connect and reconnect with other MotherWise families.<br>'
                     message = message + 'You can post articles, share pregnancy and new baby tips, watch videos, and chat directly with other moms. You\'ll also stay up-to-date on all the new programs and special events MotherWise has to offer!<br><br>'
                     message = message + settings.URL + '/nest/mothers' + '<br><br>We are providing you with your initial login information as follows:<br><br>'
-                    message = message + 'E-mail: ' + member.email + ' (your email)<br>Password: ' + member.password + groupText + '<br><br>'
+                    message = message + 'E-mail: ' + member.email + ' (your email)<br><div style="color:white;background:black;padding:6px 10px 6px 10px;text-align:center;display:inline-block;margin:8px 0px 8px 0px;">Password: mama</div>' + groupText + '<br><br>'
 
                     message = message + '***By signing up to The Nest, you are agreeing to not engage in any type of: ***<br>'
                     message = message + '        · hate speech<br>'
@@ -383,6 +398,9 @@ def import_member_data(request):
 
                     message = message + '   E-mail: ' + 'motherwisecolorado@gmail.com' + '<br>   Phone number: ' + '720-504-4624<br><br>'
                     message = message + '<a href=\'' + settings.URL + '/nest/mothers' + '\' target=\'_blank\'>Join website</a><br><br>'
+                    message = message + 'You can download and install the MotherWise mobile apps here:<br><br>'
+                    message = message + '<a href="https://play.google.com/store/apps/details?id=com.app.motherwise"><img src="https://www.vacay.company/static/images/playstore.png" style="width:150px;"></a>' + '<br>'
+                    message = message + '<a href="https://apps.apple.com/us/app/id1530809402#?platform=iphone"><img src="https://www.vacay.company/static/images/appstore.png" style="width:150px;"></a>' + '<br><br>'
                     message = message + 'Sincerely<br><br>MotherWise Team'
 
                     message = message + '<br><br>'
@@ -395,7 +413,7 @@ def import_member_data(request):
                     message2 = 'Querida ' + member.name + ',<br><br>¡Bienvenida al \"Nido\": la comunidad virtual de MotherWise!<br><br>El Nido es una oportunidad para conectarse y reconectarse con otras madres de MotherWise.<br>'
                     message2 = message2 + 'Puede publicar artículos, compartir consejos sobre embarazo y nuevos bebés, ver videos y chatear directamente con otras madres. ¡También se mantendrá al tanto sobre todos los nuevos programas y eventos especiales que MotherWise tiene para ofrecer!<br><br>'
                     message2 = message2 + settings.URL + '/nest/mothers' + '<br><br>Le proporcionamos su información de inicio de la siguiente manera:<br><br>'
-                    message2 = message2 + 'Correo electrónico: ' + member.email + ' (Tu correo electrónico)<br>Contraseña: ' + member.password + groupText2 + '<br><br>'
+                    message2 = message2 + 'Correo electrónico: ' + member.email + ' (Tu correo electrónico)<br><div style="color:white;background:black;padding:6px 10px 6px 10px;text-align:center;display:inline-block;margin:8px 0px 8px 0px;">Contraseña: mama</div>' + groupText2 + '<br><br>'
 
                     message2 = message2 + '***Al suscribirse al Nido, acepta no participar en ningún tipo de: ***<br>'
                     message2 = message2 + '        · El discurso del odio<br>'
@@ -408,6 +426,9 @@ def import_member_data(request):
 
                     message2 = message2 + '   Correo electrónico: ' + 'motherwisecolorado@gmail.com' + '<br>   Número de teléfono: ' + '720-504-4624<br><br>'
                     message2 = message2 + '<a href=\'' + settings.URL + '/nest/mothers' + '\' target=\'_blank\'>Unirse al sitio web</a><br><br>'
+                    message2 = message2 + 'puede descargar e instalar las aplicaciones móviles de MotherWise aquí:<br><br>'
+                    message2 = message2 + '<a href="https://play.google.com/store/apps/details?id=com.app.motherwise"><img src="https://www.vacay.company/static/images/playstore.png" style="width:150px;"></a>' + '<br>'
+                    message2 = message2 + '<a href="https://apps.apple.com/us/app/id1530809402#?platform=iphone"><img src="https://www.vacay.company/static/images/appstore.png" style="width:150px;"></a>' + '<br><br>'
                     message2 = message2 + 'Sinceramente,<br><br>el Equipo de MotherWise'
 
                     from_email = admin.email
@@ -430,9 +451,7 @@ def import_member_data(request):
             return render(request, 'motherwise/upload_form_member.html', {'note': 'invalid_file'})
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def add_member(request):
     if request.method == 'POST':
@@ -458,7 +477,7 @@ def add_member(request):
         member.admin_id = adminID
         member.name = name
         member.email = email
-        member.password = generateRandomPassword()
+        member.password = 'mama'
         member.phone_number = str(phone_number).replace('.0','')
         member.cohort = cohort
         member.lat = '0'
@@ -476,7 +495,7 @@ def add_member(request):
         message = 'Dear ' + member.name + ',<br><br>Welcome to \"The Nest\": MotherWise\'s virtual community!<br><br>The Nest is an opportunity to connect and reconnect with other MotherWise families.<br>'
         message = message + 'You can post articles, share pregnancy and new baby tips, watch videos, and chat directly with other moms. You\'ll also stay up-to-date on all the new programs and special events MotherWise has to offer!<br><br>'
         message = message + settings.URL + '/nest/mothers' + '<br><br>We are providing you with your initial login information as follows:<br><br>'
-        message = message + 'E-mail: ' + member.email + ' (your email)<br>Password: ' + member.password + groupText + '<br><br>'
+        message = message + 'E-mail: ' + member.email + ' (your email)<br><div style="color:white;background:black;padding:6px 10px 6px 10px;text-align:center;display:inline-block;margin:8px 0px 8px 0px;">Password: mama</div>' + groupText + '<br><br>'
 
         message = message + '***By signing up to The Nest, you are agreeing to not engage in any type of: ***<br>'
         message = message + '        · hate speech<br>'
@@ -490,6 +509,9 @@ def add_member(request):
 
         message = message + '   E-mail: ' + 'motherwisecolorado@gmail.com' + '<br>   Phone number: ' + '720-504-4624<br><br>'
         message = message + '<a href=\'' + settings.URL + '/nest/mothers' + '\' target=\'_blank\'>Join website</a><br><br>'
+        message = message + 'You can download and install the MotherWise mobile apps here:<br><br>'
+        message = message + '<a href="https://play.google.com/store/apps/details?id=com.app.motherwise"><img src="https://www.vacay.company/static/images/playstore.png" style="width:150px;"></a>' + '<br>'
+        message = message + '<a href="https://apps.apple.com/us/app/id1530809402#?platform=iphone"><img src="https://www.vacay.company/static/images/appstore.png" style="width:150px;"></a>' + '<br><br>'
         message = message + 'Sincerely<br><br>MotherWise Team'
 
         message = message + '<br><br>'
@@ -502,7 +524,7 @@ def add_member(request):
         message2 = 'Querida ' + member.name + ',<br><br>¡Bienvenida al \"Nido\": la comunidad virtual de MotherWise!<br><br>El Nido es una oportunidad para conectarse y reconectarse con otras madres de MotherWise.<br>'
         message2 = message2 + 'Puede publicar artículos, compartir consejos sobre embarazo y nuevos bebés, ver videos y chatear directamente con otras madres. ¡También se mantendrá al tanto sobre todos los nuevos programas y eventos especiales que MotherWise tiene para ofrecer!<br><br>'
         message2 = message2 + settings.URL + '/nest/mothers' + '<br><br>Le proporcionamos su información de inicio de la siguiente manera:<br><br>'
-        message2 = message2 + 'Correo electrónico: ' + member.email + ' (Tu correo electrónico)<br>Contraseña: ' + member.password + groupText2 + '<br><br>'
+        message2 = message2 + 'Correo electrónico: ' + member.email + ' (Tu correo electrónico)<br><div style="color:white;background:black;padding:6px 10px 6px 10px;text-align:center;display:inline-block;margin:8px 0px 8px 0px;">Contraseña: mama</div>' + groupText2 + '<br><br>'
 
         message2 = message2 + '***Al suscribirse al Nido, acepta no participar en ningún tipo de: ***<br>'
         message2 = message2 + '        · El discurso del odio<br>'
@@ -515,6 +537,9 @@ def add_member(request):
 
         message2 = message2 + '   Correo electrónico: ' + 'motherwisecolorado@gmail.com' + '<br>   Número de teléfono: ' + '720-504-4624<br><br>'
         message2 = message2 + '<a href=\'' + settings.URL + '/nest/mothers' + '\' target=\'_blank\'>Unirse al sitio web</a><br><br>'
+        message2 = message2 + 'puede descargar e instalar las aplicaciones móviles de MotherWise aquí:<br><br>'
+        message2 = message2 + '<a href="https://play.google.com/store/apps/details?id=com.app.motherwise"><img src="https://www.vacay.company/static/images/playstore.png" style="width:150px;"></a>' + '<br>'
+        message2 = message2 + '<a href="https://apps.apple.com/us/app/id1530809402#?platform=iphone"><img src="https://www.vacay.company/static/images/appstore.png" style="width:150px;"></a>' + '<br><br>'
         message2 = message2 + 'Sinceramente,<br><br>el Equipo de MotherWise'
 
         from_email = admin.email
@@ -578,9 +603,7 @@ def generateRandomPassword():
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def delete_member(request):
     if request.method == 'GET':
@@ -592,7 +615,9 @@ def delete_member(request):
 
         if members.count() > 0:
             member = members[0]
-            if member.photo_url != '' and '/static/images/ic_profile.png' not in member.photo_url:
+            if member.filename != '':
+                fs.delete(member.filename)
+            elif member.photo_url != '' and '/static/images/ic_profile.png' not in member.photo_url:
                 fname = member.photo_url.replace(settings.URL + '/media/', '')
                 fs.delete(fname)
             member.delete()
@@ -659,24 +684,17 @@ def active_members(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
-    members = Member.objects.filter(admin_id=adminID).order_by('-id')
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
+    members = Member.objects.filter(Q(admin_id=adminID) & ~Q(registered_time='')).order_by('-id')
     for member in members:
         if member.registered_time != '':
             member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y")
-    i = 0
-    memberList = []
-    for member in members:
-        i = i + 1
-        if i <= 25:
-            if member.registered_time != '':
-                memberList.append(member)
-    r = int(len(memberList) / 25)
-    m = len(memberList) % 25
-    if m > 0:
-        r = r + 2
-    else:
-        r = r + 1
-    return render(request, 'motherwise/adminhome.html', {'me':admin,'users':memberList, 'range': range(r), 'current': 1, 'title':'Active members'})
+    users, range, last_page = get_all_member_data(members)
+    return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':users, 'cohorts':cohorts, 'range': range, 'current': '1', 'last_page':str(last_page), 'title':'Active members'})
 
 
 def inactive_members(request):
@@ -691,29 +709,20 @@ def inactive_members(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
-    members = Member.objects.filter(admin_id=adminID).order_by('-id')
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
+    members = Member.objects.filter(admin_id=adminID, registered_time='').order_by('-id')
     for member in members:
         if member.registered_time != '':
             member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y")
-    i = 0
-    memberList = []
-    for member in members:
-        i = i + 1
-        if i <= 25:
-            if member.registered_time == '':
-                memberList.append(member)
-    r = int(len(memberList) / 25)
-    m = len(memberList) % 25
-    if m > 0:
-        r = r + 2
-    else:
-        r = r + 1
-    return render(request, 'motherwise/adminhome.html', {'me':admin,'users':memberList, 'range': range(r), 'current': 1, 'title':'Inactive members'})
+    users, range, last_page = get_all_member_data(members)
+    return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':users, 'cohorts':cohorts, 'range': range, 'current': '1', 'last_page':str(last_page), 'title':'Inactive members'})
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def message_to_selected_members(request):
 
@@ -733,6 +742,11 @@ def message_to_selected_members(request):
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
 
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
+
         try:
             option = request.POST.get('option','')
             if option == 'private_chat':
@@ -750,7 +764,7 @@ def message_to_selected_members(request):
                 if len(memberList) > 0:
                     request.session['selected_option'] = option
                     request.session['selected_member_list'] = memberIdList
-                    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+                    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts, 'cohorts':cohorts})
                 else:
                     return redirect('/manager/home')
 
@@ -830,17 +844,24 @@ def message_to_selected_members(request):
                 snt.save()
 
                 title = 'MotherWise Community: The Nest'
-                subject = 'You\'ve received a message from MotherWise Community: The Nest'
-                msg = 'Dear ' + member.name + ', You\'ve received a message from MotherWise Community: The Nest. The message is as following:<br><br>'
+                subject = 'You\'ve received a message in the Nest.(has recibido un mensaje en el Nest.)'
+                msg = 'Dear ' + member.name + ', You\'ve received a message in the Nest. The message is as following:<br><br>'
                 msg = msg + message
                 msg = msg + '<br><br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>'
+
+                title2 = 'Comunidad MotherWise: el Nest'
+                msg2 = member.name + ', has recibido un mensaje en el Nest. el mensaje es el siguiente:<br><br>'
+                msg2 = msg2 + message
+                msg2 = msg2 + '<br><br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>'
 
                 from_email = admin.email
                 to_emails = []
                 to_emails.append(member.email)
-                send_mail_message(from_email, to_emails, title, subject, msg)
+                send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                 msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+                msg = msg + '\n\n'
+                msg = msg + member.name + ', has recibido un mensaje en el Nest.\nel mensaje es el siguiente:\n' + message
 
                 ##########################################################################################################################################################################
 
@@ -872,9 +893,9 @@ def message_to_selected_members(request):
                     send_push(playerIDList, msg, url)
 
         members = Member.objects.filter(admin_id=adminID).order_by('-id')
-        users, range = get_all_member_data(members)
+        users, range, last_page = get_all_member_data(members)
 
-        return render(request, 'motherwise/adminhome.html', {'me':admin,'users':users, 'range': range, 'current': 1, 'notify':'message_sent'})
+        return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':users, 'cohorts':cohorts, 'range': range, 'last_page':str(last_page), 'current': '1', 'notify':'message_sent'})
 
     else:
         try:
@@ -886,6 +907,11 @@ def message_to_selected_members(request):
 
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
+
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
 
         memberIdList = []
         try:
@@ -909,7 +935,7 @@ def message_to_selected_members(request):
 
         if len(memberList) > 0:
             if selectedOption == 'private_chat':
-                return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+                return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
             elif selectedOption == 'group_chat':
                 groups = Group.objects.filter(member_id=admin.pk).order_by('-id')
                 for group in groups:
@@ -957,6 +983,11 @@ def to_page(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     i = 0
     if page == 'all_members':
         if int(index) == 1:
@@ -966,13 +997,15 @@ def to_page(request):
         for user in users:
             if user.registered_time != '':
                 user.registered_time = datetime.datetime.fromtimestamp(float(int(user.registered_time)/1000)).strftime("%b %d, %Y")
-        for user in users:
-            i = i + 1
-            if i > 25 * (int(index) - 1) and i <= 25 * int(index):
-                userList.append(user)
-        r = int(users.count() / 25)
-        r = r + 2
-        return render(request, 'motherwise/adminhome.html', {'users':userList, 'range': range(r), 'current': index})
+        userList = users[(int(index) - 1) * 25 : int(index) * 25 - 1]
+        first_page = 1
+        last_page = int(users.count() / 25)
+        if users.count() % 25 > 0: last_page += 1
+        s = int(index) - 3
+        if s < 1: s = 1
+        e = int(index) + 3
+        if e > last_page: e = last_page
+        return render(request, 'motherwise/adminhome2.html', {'users':userList, 'cohorts':cohorts, 'range':range(s, e + 1), 'current':index, 'last_page':str(last_page)})
 
     elif page == 'active_members':
         if int(index) == 1:
@@ -982,14 +1015,15 @@ def to_page(request):
         for user in users:
             if user.registered_time != '':
                 user.registered_time = datetime.datetime.fromtimestamp(float(int(user.registered_time)/1000)).strftime("%b %d, %Y")
-        for user in users:
-            i = i + 1
-            if i > 25 * int(index - 1) and i <= 25 * int(index):
-                if user.registered_time != '':
-                    userList.append(user)
-        r = int(users.count() / 25)
-        r = r + 2
-        return render(request, 'motherwise/adminhome.html', {'users':userList, 'range': range(r), 'current': index})
+        userList = users[(int(index) - 1) * 25 : int(index) * 25 - 1]
+        first_page = 1
+        last_page = int(users.count() / 25)
+        if users.count() % 25 > 0: last_page += 1
+        s = int(index) - 3
+        if s < 1: s = 1
+        e = int(index) + 3
+        if e > last_page: e = last_page
+        return render(request, 'motherwise/adminhome2.html', {'users':userList, 'cohorts':cohorts, 'range':range(s, e + 1), 'current':index, 'last_page':str(last_page)})
 
     elif page == 'inactive_members':
         if int(index) == 1:
@@ -999,14 +1033,15 @@ def to_page(request):
         for user in users:
             if user.registered_time != '':
                 user.registered_time = datetime.datetime.fromtimestamp(float(int(user.registered_time)/1000)).strftime("%b %d, %Y")
-        for user in users:
-            i = i + 1
-            if i > 25 * int(index - 1) and i <= 25 * int(index):
-                if user.registered_time == '':
-                    userList.append(user)
-        r = int(users.count() / 25)
-        r = r + 2
-        return render(request, 'motherwise/adminhome.html', {'users':userList, 'range': range(r), 'current': index})
+        userList = users[(int(index) - 1) * 25 : int(index) * 25 - 1]
+        first_page = 1
+        last_page = int(users.count() / 25)
+        if users.count() % 25 > 0: last_page += 1
+        s = int(index) - 3
+        if s < 1: s = 1
+        e = int(index) + 3
+        if e > last_page: e = last_page
+        return render(request, 'motherwise/adminhome2.html', {'users':userList, 'cohorts':cohorts, 'range':range(s, e + 1), 'current':index, 'last_page':str(last_page)})
 
 
 def to_previous(request):
@@ -1057,20 +1092,12 @@ def to_next(request):
         count = users.count()
 
     elif page == 'active_members':
-        users = Member.objects.filter(admin_id=admin.pk).order_by('-id')
-        userList = []
-        for user in users:
-            if user.registered_time != '':
-                userList.append(user)
-        count = len(userList)
+        users = Member.objects.filter(Q(admin_id=admin.pk) & ~Q(registered_time='')).order_by('-id')
+        count = users.count()
 
     elif page == 'inactive_members':
-        users = Member.objects.filter(admin_id=admin.pk).order_by('-id')
-        userList = []
-        for user in users:
-            if user.registered_time == '':
-                userList.append(user)
-        count = len(userList)
+        users = Member.objects.filter(admin_id=admin.pk, registered_time='').order_by('-id')
+        count = users.count()
 
     r = int(count / 25)
     m = count % 25
@@ -1083,9 +1110,7 @@ def to_next(request):
     return redirect('/to_page?index=' + str(index) + '&page=' + page)
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def do_cohort(request):
 
@@ -1112,25 +1137,27 @@ def do_cohort(request):
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
 
-        members = Member.objects.filter(admin_id=adminID).order_by('-id')
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
+
+        members = Member.objects.filter(Q(admin_id=adminID) & Q(cohort=cohort) & ~Q(registered_time='')).order_by('-id')
         for member in members:
             if member.registered_time != '':
                 member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y")
-        i = 0
+
         memberList = []
         memberIdList = []
-        for member in members:
-            i = i + 1
-            if i <= 25:
-                if member.cohort.lower() == cohort.lower() and member.registered_time != '':
-                    memberList.append(member)
-                    memberIdList.append(member.pk)
-        r = int(len(memberList) / 25)
-        m = len(memberList) % 25
-        if m > 0:
-            r = r + 2
-        else:
-            r = r + 1
+
+        memberList = members[:25]
+        for m in memberList: memberIdList.append(m.pk)
+        first_page = 1
+        last_page = int(members.count() / 25)
+        if members.count() % 25 > 0: last_page += 1
+        s = 1
+        e = 7
+        if e > last_page: e = last_page
 
         if len(memberList) == 0:
             return render(request, 'motherwise/result.html',
@@ -1138,8 +1165,10 @@ def do_cohort(request):
 
         request.session['selected_member_list'] = memberIdList
         request.session['selected_option'] = option
+        request.session['last_page'] = str(last_page)
+
         if option == 'members':
-            return render(request, 'motherwise/adminhome.html', {'me':admin,'users':memberList, 'range': range(r), 'current': 1, 'cohort': cohort})
+            return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':memberList, 'cohorts':cohorts, 'range': range(s, e + 1), 'current': 1, 'cohort': cohort, 'last_page':str(last_page)})
         elif option == 'video':
             return redirect('/manager/open_conference?group_id=0&cohort=' + cohort)
         elif option == 'group_chat':
@@ -1168,7 +1197,7 @@ def do_cohort(request):
             return render(request, 'motherwise/groups.html', {'members':memberList, 'group':latest_group, 'groups': groups, 'group_members':latestGroupMemberList, 'recents':recents})
         elif option == 'private_chat':
             contacts = update_admin_contact(admin, "")
-            return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+            return render(request, 'motherwise/chat.html', {'members':memberList, 'cohorts':cohorts, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
 
     else:
         try:
@@ -1180,6 +1209,11 @@ def do_cohort(request):
 
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
+
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
 
         memberIdList = []
         try:
@@ -1202,7 +1236,7 @@ def do_cohort(request):
 
         if len(memberList) > 0:
             if selectedOption == 'private_chat':
-                return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+                return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
             elif selectedOption == 'group_chat':
                 groups = Group.objects.filter(member_id=admin.pk).order_by('-id')
                 for group in groups:
@@ -1228,14 +1262,14 @@ def do_cohort(request):
                         recents.append(group)
                 return render(request, 'motherwise/groups.html', {'members':memberList, 'group':latest_group, 'groups': groups, 'group_members':latestGroupMemberList, 'recents':recents})
             elif selectedOption == 'members':
-                r = int(len(memberList) / 25)
-                m = len(memberList) % 25
-                if m > 0:
-                    r = r + 2
-                else:
-                    r = r + 1
+                last_page = 7
+                try: last_page = int(request.session['last_page'])
+                except: pass
+                s = 1
+                e = 7
+                if e > last_page: e = last_page
                 cohort = memberList[0].cohort
-                return render(request, 'motherwise/adminhome.html', {'me':admin,'users':memberList, 'range': range(r), 'current': 1, 'cohort': cohort})
+                return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':memberList, 'cohorts':cohorts, 'range': range(s, e + 1), 'current': '1', 'last_page':str(last_page), 'cohort': cohort})
             elif selectedOption == 'video':
                 cohort = memberList[0].cohort
                 return redirect('/manager/open_conference?group_id=0&cohort=' + cohort)
@@ -1246,9 +1280,7 @@ def do_cohort(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def search_members(request):
     if request.method == 'POST':
@@ -1262,14 +1294,19 @@ def search_members(request):
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
 
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
+
         search_id = request.POST.get('q', None)
 
         memberList = []
 
         members = Member.objects.filter(admin_id=adminID).order_by('-id')
         memberList = get_filtered_members_data(members, search_id)
-        users, range = get_member_data(memberList)
-        return render(request, 'motherwise/adminhome.html', {'me':admin,'users':users, 'range': range, 'current': 1, 'title':'Searched by ' + search_id})
+        users, range, last_page = get_member_data(memberList)
+        return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':users, 'cohorts':cohorts, 'range': range, 'current': '1', 'last_page':str(last_page), 'title':'Searched by ' + search_id})
 
 
 
@@ -1298,24 +1335,23 @@ def get_filtered_members_data(members, keyword):
     return memberList
 
 
-def get_member_data(memblist):
+def get_member_data(members):
     import datetime
     i = 0
     memberList = []
-    for member in memblist:
+    for member in members:
         if member.registered_time != '':
             member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y")
-        i = i + 1
-        if i <= 25:
-            memberList.append(member)
-    r = int(len(memblist) / 25)
-    m = len(memblist) % 25
-    if m > 0:
-        r = r + 2
-    else:
-        r = r + 1
 
-    return memberList, range(r)
+    memberList = members[:25]
+    first_page = 1
+    last_page = int(len(members) / 25)
+    if len(members) % 25 > 0: last_page += 1
+    s = 1
+    e = 7
+    if e > last_page: e = last_page
+
+    return memberList, range(s, e + 1), last_page
 
 
 
@@ -1421,9 +1457,8 @@ def resetpassword(request):
     return render(request, 'motherwise/resetpwd.html', {'email':email})
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def admin_rstpwd(request):
     if request.method == 'POST':
@@ -1442,9 +1477,8 @@ def admin_rstpwd(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def send_cohort_message(request):
 
@@ -1461,6 +1495,11 @@ def send_cohort_message(request):
 
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
+
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
 
         cohort = request.POST.get('cohort', '')
         message = request.POST.get('message', '')
@@ -1488,18 +1527,25 @@ def send_cohort_message(request):
             snt.noti_id = notification.pk
             snt.save()
 
-            title = 'You\'ve received a message from MotherWise Community: The Nest'
-            subject = 'From MotherWise Community: The Nest'
-            msg = 'Dear ' + member.name + ',<br><br>'
+            title = 'You\'ve received a message in the Nest'
+            subject = 'From MotherWise Community: The Nest (de la comunidad MotherWise: el Nest)'
+            msg = 'Dear ' + member.name + ', You\'ve received a message in the Nest. The message is as following:<br><br>'
             msg = msg + message
             msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Community'
+
+            title2 = 'has recibido un mensaje en el Nest.'
+            msg2 = member.name + ', has recibido un mensaje en el Nest. el mensaje es el siguiente:<br><br>'
+            msg2 = msg2 + message
+            msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>comunidad MotherWise: el Nest'
 
             from_email = admin.email
             to_emails = []
             to_emails.append(member.email)
-            send_mail_message(from_email, to_emails, title, subject, msg)
+            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
             msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+            msg = msg + '\n\n'
+            msg = member.name + ', has recibido un mensaje en el Nest.\nel mensaje es el siguiente:\n' + message
 
             ##########################################################################################################################################################################
 
@@ -1534,9 +1580,9 @@ def send_cohort_message(request):
         for member in members:
             if member.registered_time != '':
                 member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y")
-        users, range = get_all_member_data(members)
+        users, range, last_page = get_all_member_data(members)
 
-        return render(request, 'motherwise/adminhome.html', {'me':admin,'users':users, 'range': range, 'current': 1, 'notify':'message_sent'})
+        return render(request, 'motherwise/adminhome2.html', {'me':admin,'users':users, 'cohorts':cohorts, 'range': range, 'last_page':str(last_page), 'current': '1', 'notify':'message_sent'})
 
 
 def admin_switch_chat(request):
@@ -1552,6 +1598,11 @@ def admin_switch_chat(request):
 
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
+
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
 
     members = Member.objects.filter(id=member_id)
     if members.count() == 0:
@@ -1593,7 +1644,7 @@ def admin_switch_chat(request):
         return render(request, 'motherwise/result.html', {'response': 'The member doesn\'t exist.'})
 
     if selectedOption == 'private_chat':
-        return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+        return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
     else:
         return redirect('/manager/home')
 
@@ -1617,6 +1668,11 @@ def admin_to_chat(request):
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
 
+        c = Cohort.objects.filter(admin_id=admin.pk).first()
+        cohorts = []
+        if c is not None:
+            if c.cohorts != '': cohorts = c.cohorts.split(',')
+
         members = Member.objects.filter(email=email)
         if members.count() == 0:
             return redirect('/manager/home')
@@ -1627,7 +1683,7 @@ def admin_to_chat(request):
         memberList = []
         memberList.insert(0, member)
 
-        return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+        return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
 
     else:
         return redirect('/manager/home')
@@ -1681,6 +1737,11 @@ def admin_switch_to_cohort(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     members = Member.objects.filter(admin_id=adminID).order_by('-id')
     memberList = []
     memberIdList = []
@@ -1697,13 +1758,11 @@ def admin_switch_to_cohort(request):
 
     contacts = update_admin_contact(admin, "")
 
-    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def create_group(request):
 
@@ -1793,9 +1852,7 @@ def get_group_color():
     return color
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def message_to_group(request):
 
@@ -1890,10 +1947,19 @@ def message_to_group(request):
                             msg = msg + 'These communities are ways you can share similar interests and get to know your Nest Family. Have fun!\n'
                             msg = msg + 'Click on this link to join: ' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\n\nMotherWise Team'
 
-                            notification.message = msg
+                            msg2 = member.name + ',\n\nha recibido una invitación para:' + group.name + ' de la comunidad MotherWise.\n\nNombre de la comunidad: ' + group.name + '\n\n'
+                            # msg2 = msg2 + 'So you can see that community in your account and connect it to became a member of the community, attending all the events from it.\n'
+                            msg2 = msg2 + 'No tienes que hacer nada, ya estás incluido. La próxima vez que inicie sesión, simplemente haga clic en el icono "Comunidades" y verá esta opción.\n'
+                            msg2 = msg2 + 'Desde allí, verá a los miembros, verá qué videos se han publicado, participará en un chat grupal y enviará mensajes privados.\n'
+                            msg2 = msg2 + 'Estas comunidades son formas en las que puede compartir intereses similares y conocer a su familia Nest. ¡Divertirse!\n'
+                            msg2 = msg2 + 'Haga clic en este enlace para unirse: ' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\n\nEquipo MotherWise'
+
+                            notification.message = msg + '\n\n' + msg2
                             notification.save()
 
                             ##########################################################################################################################################################################
+
+                            msg = msg + '\n\n' + msg2
 
                             db = firebase.database()
                             data = {
@@ -1980,19 +2046,26 @@ def message_to_group(request):
                         snt.noti_id = notification.pk
                         snt.save()
 
-                        title = 'You\'ve received a message from MotherWise Community: The Nest'
-                        subject = 'From MotherWise Community: The Nest'
-                        msg = 'Dear ' + member.name + ',<br><br>'
+                        title = 'You\'ve received a message in the Nest'
+                        subject = 'From MotherWise Community: The Nest (de la comunidad MotherWise.)'
+                        msg = 'Dear ' + member.name + ', You\'ve received a message in the Nest. The message is as following:<br><br>'
                         msg = msg + message
                         msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
+
+                        title2 = 'has recibido un mensaje en el Nest.'
+                        msg2 = member.name + ', has recibido un mensaje en el Nest. el mensaje es el siguiente:<br><br>'
+                        msg2 = msg2 + message
+                        msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
 
                         from_email = admin.email
                         to_emails = []
                         to_emails.append(member.email)
-                        send_mail_message(from_email, to_emails, title, subject, msg)
+                        send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                         msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+                        msg2 = member.name + ', has recibido un mensaje en el Nest.\nel mensaje es el siguiente:\n' + message
 
+                        msg = msg + '\n\n' + msg2
                         ##########################################################################################################################################################################
 
                         db = firebase.database()
@@ -2227,6 +2300,11 @@ def open_group_chat(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     memberList = []
     group = None
     groups = Group.objects.filter(member_id=admin.pk, id=group_id).order_by('-id')
@@ -2248,7 +2326,7 @@ def open_group_chat(request):
             memberIdList.append(memb.pk)
         request.session['selected_member_list'] = memberIdList
 
-        return render(request, 'motherwise/group_chat.html', {'me':admin, 'members':memberList, 'group':group})
+        return render(request, 'motherwise/group_chat.html', {'me':admin, 'members':memberList, 'cohorts':cohorts, 'group':group})
     else:
         return redirect('/manager/home')
 
@@ -2265,6 +2343,11 @@ def group_cohort_chat(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     members = Member.objects.filter(admin_id=admin.pk, cohort=cohort).order_by('-id')
     for member in members:
         member.username = '@' + member.email[0:member.email.find('@')]
@@ -2280,7 +2363,7 @@ def group_cohort_chat(request):
             memberIdList.append(memb.pk)
     request.session['selected_member_list'] = memberIdList
 
-    return render(request, 'motherwise/group_chat.html', {'me':admin, 'members':memberList, 'cohort':cohort})
+    return render(request, 'motherwise/group_chat.html', {'me':admin, 'members':memberList, 'cohorts':cohorts, 'cohort':cohort})
 
 
 
@@ -2334,18 +2417,26 @@ def group_chat_message(request):
                         snt.noti_id = notification.pk
                         snt.save()
 
-                        title = 'You\'ve received a message from MotherWise Community: The Nest'
-                        subject = 'From MotherWise Community: The Nest'
-                        msg = 'Dear ' + member.name + ',<br><br>'
+                        title = 'You\'ve received a message in the Nest'
+                        subject = 'From MotherWise Community: The Nest (de la comunidad MotherWise: The Nest)'
+                        msg = 'Dear ' + member.name + ', You\'ve received a message in the Nest. The message is as following:<br><br>'
                         msg = msg + message
                         msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
+
+                        title2 = 'has recibido un mensaje en el Nest.'
+                        msg2 = member.name + ', has recibido un mensaje en el Nest. el mensaje es el siguiente:<br><br>'
+                        msg2 = msg2 + message
+                        msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
 
                         from_email = admin.email
                         to_emails = []
                         to_emails.append(member.email)
-                        send_mail_message(from_email, to_emails, title, subject, msg)
+                        send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                         msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+                        msg2 = member.name + ', has recibido un mensaje en el Nest.\nel mensaje es el siguiente:\n' + message
+
+                        msg = msg + msg2
 
                         ##########################################################################################################################################################################
 
@@ -2402,19 +2493,25 @@ def group_chat_message(request):
                 snt.noti_id = notification.pk
                 snt.save()
 
-                title = 'You\'ve received a message from MotherWise Community: The Nest'
-                subject = 'From MotherWise Community: The Nest'
-                msg = 'Dear ' + member.name + ',<br><br>'
+                title = 'You\'ve received a message in the Nest'
+                subject = 'From MotherWise Community: The Nest (de la comunidad MotherWise: The Nest)'
+                msg = 'Dear ' + member.name + ', You\'ve received a message in the Nest. The message is as following:<br><br>'
                 msg = msg + message
                 msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
+
+                title2 = 'has recibido un mensaje en el Nest.'
+                msg2 = member.name + ', has recibido un mensaje en el Nest. el mensaje es el siguiente:<br><br>'
+                msg2 = msg2 + message
+                msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
 
                 from_email = admin.email
                 to_emails = []
                 to_emails.append(member.email)
-                send_mail_message(from_email, to_emails, title, subject, msg)
+                send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                 msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
-
+                msg2 = member.name + ', has recibido un mensaje en el Nest.\nel mensaje es el siguiente:\n' + message
+                msg = msg + '\n\n' + msg2
                 ##########################################################################################################################################################################
 
                 db = firebase.database()
@@ -2469,6 +2566,11 @@ def group_private_chat(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     members = Member.objects.filter(email=email)
     if members.count() == 0:
         return redirect('/manager/home')
@@ -2485,7 +2587,7 @@ def group_private_chat(request):
     request.session['selected_option'] = 'private_chat'
     request.session['selected_member_list'] = memberIdList
 
-    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
 
 
 
@@ -2502,6 +2604,11 @@ def admin_delete_contact(request):
 
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
+
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
 
     members = Member.objects.filter(id=member_id)
     if members.count() > 0:
@@ -2525,7 +2632,7 @@ def admin_delete_contact(request):
 
     contacts = update_admin_contact(admin, "")
 
-    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'friend':memberList[0], 'contacts':contacts})
+    return render(request, 'motherwise/chat.html', {'members':memberList, 'me': admin, 'cohorts':cohorts, 'friend':memberList[0], 'contacts':contacts})
 
 
 def admin_delete_group(request):
@@ -2583,34 +2690,75 @@ def to_posts(request):
     list3 = []
     list4 = []
 
-    allPosts = Post.objects.all().order_by('-id')
+    uitype = ''
+    if request.user_agent.is_mobile:
+        uitype = 'mobile'
+
+    allPosts = Post.objects.filter(sch_status='').order_by('-id')
     i = 0
+    itop = 1
     for post in allPosts:
         post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
         i = i + 1
-        pls = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk)
-        if pls.count() > 0:
-            post.liked = 'yes'
-        else: post.liked = 'no'
+        pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+        if pl is not None: post.liked = pl.status
+        else: post.liked = ''
 
-        comments = Comment.objects.filter(post_id=post.pk)
+        comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
         post.comments = str(comments.count())
         likes = PostLike.objects.filter(post_id=post.pk)
-        post.likes = str(likes.count())
+        post.reactions = str(likes.count())
+        post.content = emoji.emojize(post.content)
 
         members = Member.objects.filter(id=post.member_id)
         if members.count() > 0:
             memb = members[0]
             if int(memb.admin_id) == admin.pk or memb.pk == admin.pk:
+                prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+
+                comments1 = comments[:5]
+                commentlist = []
+                for comment in comments1:
+                    cm = Member.objects.filter(id=comment.member_id).first()
+                    if cm is not None:
+                        comment.comment_text = emoji.emojize(comment.comment_text)
+                        commentlist.append( { 'comment':comment, 'member':cm } )
+
                 data = {
                     'member':memb,
-                    'post': post
+                    'post': post,
+                    'prevs': prevs,
+                    'comments': commentlist,
+                    'pc-cnt': str(comments.count()),
                 }
 
-                if i % 4 == 1: list1.append(data)
-                elif i % 4 == 2: list2.append(data)
-                elif i % 4 == 3: list3.append(data)
-                elif i % 4 == 0: list4.append(data)
+                if uitype == 'mobile':
+                    if 'top' in post.status:
+                        list1.insert(0,data)
+                    else:
+                        if i % 4 == 1: list1.append(data)
+                        elif i % 4 == 2: list2.append(data)
+                        elif i % 4 == 3: list3.append(data)
+                        elif i % 4 == 0: list4.append(data)
+                else:
+                    if 'top' in post.status:
+                        if itop == 1:
+                            list1.insert(0,data)
+                            itop = 2
+                        elif itop == 2:
+                            list2.insert(0,data)
+                            itop = 3
+                        elif itop == 3:
+                            list3.insert(0,data)
+                            itop = 4
+                        elif itop == 4:
+                            list4.insert(0,data)
+                            itop = 1
+                    else:
+                        if i % 4 == 1: list1.append(data)
+                        elif i % 4 == 2: list2.append(data)
+                        elif i % 4 == 3: list3.append(data)
+                        elif i % 4 == 0: list4.append(data)
 
     pst = None
     try:
@@ -2622,7 +2770,12 @@ def to_posts(request):
     except KeyError:
         print('no key')
 
-    return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'users':userList, 'pst':pst})
+    categories = []
+    pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+    if pc is not None:
+        if pc.categories != '': categories = pc.categories.split(',')
+
+    return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'users':userList, 'pst':pst, 'categories':categories})
 
 
 
@@ -2632,6 +2785,109 @@ def my_posts(request):
 
     try:
         if request.session['adminID'] == '' or request.session['adminID'] == 0:
+            return render(request, 'motherwise/admin.html')
+    except KeyError:
+        print('no session')
+        return render(request, 'motherwise/admin.html')
+
+    adminID = request.session['adminID']
+    admin = Member.objects.get(id=adminID)
+
+    uitype = ''
+    if request.user_agent.is_mobile:
+        uitype = 'mobile'
+
+    users = Member.objects.filter(admin_id=admin.pk).order_by('-id')
+    userList = []
+    for user in users:
+        if user.registered_time != '':
+            user.username = '@' + user.email[0:user.email.find('@')]
+            userList.append(user)
+
+    list1 = []
+    list2 = []
+    list3 = []
+    list4 = []
+
+    posts = Post.objects.filter(member_id=admin.pk).order_by('-id')
+
+    i = 0
+    itop = 1
+    for post in posts:
+        post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+
+        pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+        if pl is not None: post.liked = pl.status
+        else: post.liked = ''
+
+        comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+        post.comments = str(comments.count())
+        likes = PostLike.objects.filter(post_id=post.pk)
+        post.reactions = str(likes.count())
+        post.content = emoji.emojize(post.content)
+
+        prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+
+        comments1 = comments[:5]
+        commentlist = []
+        for comment in comments1:
+            cm = Member.objects.filter(id=comment.member_id).first()
+            if cm is not None:
+                comment.comment_text = emoji.emojize(comment.comment_text)
+                commentlist.append( { 'comment':comment, 'member':cm } )
+
+        i = i + 1
+
+        data = {
+            'member':admin,
+            'post': post,
+            'prevs': prevs,
+            'comments': commentlist,
+            'pc-cnt': str(comments.count()),
+        }
+
+        if uitype == 'mobile':
+            if 'top' in post.status:
+                list1.insert(0,data)
+            else:
+                if i % 4 == 1: list1.append(data)
+                elif i % 4 == 2: list2.append(data)
+                elif i % 4 == 3: list3.append(data)
+                elif i % 4 == 0: list4.append(data)
+        else:
+            if 'top' in post.status:
+                if itop == 1:
+                    list1.insert(0,data)
+                    itop = 2
+                elif itop == 2:
+                    list2.insert(0,data)
+                    itop = 3
+                elif itop == 3:
+                    list3.insert(0,data)
+                    itop = 4
+                elif itop == 4:
+                    list4.insert(0,data)
+                    itop = 1
+            else:
+                if i % 4 == 1: list1.append(data)
+                elif i % 4 == 2: list2.append(data)
+                elif i % 4 == 3: list3.append(data)
+                elif i % 4 == 0: list4.append(data)
+
+    categories = []
+    pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+    if pc is not None:
+        if pc.categories != '': categories = pc.categories.split(',')
+
+    return render(request, 'motherwise/post.html', {'me':admin, 'member':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'users':userList, 'categories':categories})
+
+
+
+
+def member_posts(request):
+    import datetime
+    try:
+        if request.session['adminID'] == 0:
             return render(request, 'motherwise/admin.html')
     except KeyError:
         print('no session')
@@ -2652,36 +2908,99 @@ def my_posts(request):
     list3 = []
     list4 = []
 
-    posts = Post.objects.filter(member_id=admin.pk).order_by('-id')
+    uitype = ''
+    if request.user_agent.is_mobile:
+        uitype = 'mobile'
 
+    user_id = request.GET['user_id']
+
+    member = Member.objects.filter(id=user_id).first()
+
+    uposts = Post.objects.filter(member_id=user_id, sch_status='').order_by('-id')
     i = 0
-    for post in posts:
+    itop = 1
+    for post in uposts:
         post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+        i = i + 1
+        pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+        if pl is not None: post.liked = pl.status
+        else: post.liked = ''
 
-        comments = Comment.objects.filter(post_id=post.pk)
+        comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
         post.comments = str(comments.count())
         likes = PostLike.objects.filter(post_id=post.pk)
-        post.likes = str(likes.count())
+        post.reactions = str(likes.count())
+        post.content = emoji.emojize(post.content)
 
-        i = i + 1
+        members = Member.objects.filter(id=post.member_id)
+        if members.count() > 0:
+            memb = members[0]
+            if int(memb.admin_id) == admin.pk or memb.pk == admin.pk:
+                prevs = PostUrlPreview.objects.filter(post_id=post.pk)
 
-        data = {
-            'member':admin,
-            'post': post
-        }
+                comments1 = comments[:5]
+                commentlist = []
+                for comment in comments1:
+                    cm = Member.objects.filter(id=comment.member_id).first()
+                    if cm is not None:
+                        comment.comment_text = emoji.emojize(comment.comment_text)
+                        commentlist.append( { 'comment':comment, 'member':cm } )
 
-        if i % 4 == 1: list1.append(data)
-        elif i % 4 == 2: list2.append(data)
-        elif i % 4 == 3: list3.append(data)
-        elif i % 4 == 0: list4.append(data)
+                data = {
+                    'member':memb,
+                    'post': post,
+                    'prevs': prevs,
+                    'comments': commentlist,
+                    'pc-cnt': str(comments.count()),
+                }
 
-    return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'search':'My', 'users':userList})
+                if uitype == 'mobile':
+                    if 'top' in post.status:
+                        list1.insert(0,data)
+                    else:
+                        if i % 4 == 1: list1.append(data)
+                        elif i % 4 == 2: list2.append(data)
+                        elif i % 4 == 3: list3.append(data)
+                        elif i % 4 == 0: list4.append(data)
+                else:
+                    if 'top' in post.status:
+                        if itop == 1:
+                            list1.insert(0,data)
+                            itop = 2
+                        elif itop == 2:
+                            list2.insert(0,data)
+                            itop = 3
+                        elif itop == 3:
+                            list3.insert(0,data)
+                            itop = 4
+                        elif itop == 4:
+                            list4.insert(0,data)
+                            itop = 1
+                    else:
+                        if i % 4 == 1: list1.append(data)
+                        elif i % 4 == 2: list2.append(data)
+                        elif i % 4 == 3: list3.append(data)
+                        elif i % 4 == 0: list4.append(data)
+
+    pst = None
+    try:
+        post_id = request.GET['post_id']
+        posts = Post.objects.filter(id=post_id)
+        if posts.count() > 0:
+            pst = posts[0]
+            pst.posted_time = datetime.datetime.fromtimestamp(float(int(pst.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+    except KeyError:
+        print('no key')
+
+    categories = []
+    pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+    if pc is not None:
+        if pc.categories != '': categories = pc.categories.split(',')
+
+    return render(request, 'motherwise/post.html', {'me':admin, 'member':member, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'users':userList, 'pst':pst, 'categories':categories})
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
 @api_view(['GET', 'POST'])
 def create_post(request):
     if request.method == 'POST':
@@ -2690,6 +3009,7 @@ def create_post(request):
         category = request.POST.get('category', '')
         content = request.POST.get('content', '')
         ids = request.POST.getlist('users[]')
+        scheduled_time = request.POST.get('scheduled_time', '')
 
         try:
             if request.session['adminID'] == '' or request.session['adminID'] == 0:
@@ -2705,12 +3025,23 @@ def create_post(request):
         post.member_id = admin.pk
         post.title = title
         post.category = category
-        post.content = content
+        post.content = emoji.demojize(content)
         post.picture_url = ''
         post.comments = '0'
         post.likes = '0'
+        post.loves = '0'
+        post.haha = '0'
+        post.wow = '0'
+        post.sad = '0'
+        post.angry = '0'
+        post.reactions = '0'
+        post.scheduled_time = scheduled_time
         post.posted_time = str(int(round(time.time() * 1000)))
+        if len(ids) > 0: post.notified_members = ",".join(str(i) for i in ids)
+        if scheduled_time != '': post.sch_status = 'scheduled'
         post.save()
+
+        createPostUrlPreview(post)
 
         fs = FileSystemStorage()
         i = 0
@@ -2724,76 +3055,143 @@ def create_post(request):
             postPicture = PostPicture()
             postPicture.post_id = post.pk
             postPicture.picture_url = settings.URL + uploaded_url
+            postPicture.filename = filename
             postPicture.save()
 
 
-        for member_id in ids:
-            members = Member.objects.filter(id=int(member_id))
-            if members.count() > 0:
-                member = members[0]
+        if post.scheduled_time == '':
 
-                title = 'MotherWise Community: The Nest'
-                subject = 'You\'ve received a post from MotherWise Community: The Nest'
-                msg = 'Dear ' + member.name + ', You\'ve received a post from MotherWise Community: The Nest.<br><br>'
-                msg = msg + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>View the post</a>'
+            for member_id in ids:
+                members = Member.objects.filter(id=int(member_id))
+                if members.count() > 0:
+                    member = members[0]
 
-                from_email = admin.email
-                to_emails = []
-                to_emails.append(member.email)
-                send_mail_message(from_email, to_emails, title, subject, msg)
+                    title = 'MotherWise Community: The Nest'
+                    subject = 'You\'ve received a post in the Nest (has recibido una publicación en el Nest)'
+                    msg = 'Dear ' + member.name + ', You\'ve received a post from MotherWise Community: The Nest.<br><br>'
+                    msg = msg + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>View the post</a>'
 
-                msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\n\n'
-                msg = msg + 'Click on this link to view the post: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
+                    title2 = 'comunidad MotherWise: el Nest'
+                    msg2 = member.name + ', has recibido una publicación en el Nest.<br><br>'
+                    msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>ver la publicación</a>'
 
-                notification = Notification()
-                notification.member_id = member.pk
-                notification.sender_id = admin.pk
-                notification.message = msg
-                notification.notified_time = str(int(round(time.time() * 1000)))
-                notification.save()
+                    from_email = admin.email
+                    to_emails = []
+                    to_emails.append(member.email)
+                    send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
-                rcv = Received()
-                rcv.member_id = member.pk
-                rcv.sender_id = admin.pk
-                rcv.noti_id = notification.pk
-                rcv.save()
+                    msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\n\n'
+                    msg = msg + 'Click on this link to view the post: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
 
-                snt = Sent()
-                snt.member_id = member.pk
-                snt.sender_id = admin.pk
-                snt.noti_id = notification.pk
-                snt.save()
+                    msg2 = member.name + ', has recibido una publicación en el Nest.\n\n'
+                    msg2 = msg2 + 'haga clic en este enlace para ver la publicación: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
 
-                ##########################################################################################################################################################################
+                    msg = msg + '\n\n' + msg2
 
-                db = firebase.database()
-                data = {
-                    "msg": msg,
-                    "date":str(int(round(time.time() * 1000))),
-                    "sender_id": str(admin.pk),
-                    "sender_name": admin.name,
-                    "sender_email": admin.email,
-                    "sender_photo": admin.photo_url,
-                    "role": "admin",
-                    "type": "post",
-                    "id": str(post.pk),
-                    "mes_id": str(notification.pk)
-                }
+                    notification = Notification()
+                    notification.member_id = member.pk
+                    notification.sender_id = admin.pk
+                    notification.message = msg
+                    notification.notified_time = str(int(round(time.time() * 1000)))
+                    notification.save()
 
-                db.child("notify").child(str(member.pk)).push(data)
-                db.child("notify2").child(str(member.pk)).push(data)
+                    rcv = Received()
+                    rcv.member_id = member.pk
+                    rcv.sender_id = admin.pk
+                    rcv.noti_id = notification.pk
+                    rcv.save()
 
-                sendFCMPushNotification(member.pk, admin.pk, msg)
+                    snt = Sent()
+                    snt.member_id = member.pk
+                    snt.sender_id = admin.pk
+                    snt.noti_id = notification.pk
+                    snt.save()
 
-                #################################################################################################################################################################################
+                    ##########################################################################################################################################################################
 
-                if member.playerID != '':
-                    playerIDList = []
-                    playerIDList.append(member.playerID)
-                    url = '/mothers/notifications?noti_id=' + str(notification.pk)
-                    send_push(playerIDList, msg, url)
+                    db = firebase.database()
+                    data = {
+                        "msg": msg,
+                        "date":str(int(round(time.time() * 1000))),
+                        "sender_id": str(admin.pk),
+                        "sender_name": admin.name,
+                        "sender_email": admin.email,
+                        "sender_photo": admin.photo_url,
+                        "role": "admin",
+                        "type": "post",
+                        "id": str(post.pk),
+                        "mes_id": str(notification.pk)
+                    }
+
+                    db.child("notify").child(str(member.pk)).push(data)
+                    db.child("notify2").child(str(member.pk)).push(data)
+
+                    sendFCMPushNotification(member.pk, admin.pk, msg)
+
+                    #################################################################################################################################################################################
+
+                    if member.playerID != '':
+                        playerIDList = []
+                        playerIDList.append(member.playerID)
+                        url = '/mothers/notifications?noti_id=' + str(notification.pk)
+                        send_push(playerIDList, msg, url)
 
         return redirect('/manager/posts/')
+
+
+
+def urlsFromText(str):
+    web_urls = re.findall(r'(https?://\S+)', str)
+    return web_urls
+
+
+def createPostUrlPreview(post):
+    if post.content != '':
+        web_urls = urlsFromText(post.content)
+        for wurl in web_urls:
+            try:
+                preview = link_preview(wurl)
+                wtitle = preview.title
+                wdescription = preview.description
+                wimageurl = preview.image
+                wforcetitle = preview.force_title
+                wabsoluteimageurl = preview.absolute_image
+
+                icons = favicon.get(wurl)
+                icon = None
+                if icons is not None and len(icons) > 0: icon = icons[0]
+
+                upreview = PostUrlPreview()
+                upreview.post_id = post.pk
+                if wtitle is not None: upreview.title = wtitle
+                elif wforcetitle is not None: upreview.title = wforcetitle
+                if wdescription is not None: upreview.description = wdescription
+                if wimageurl is not None and 'http' in wimageurl: upreview.image_url = wimageurl
+                elif wabsoluteimageurl is not None: upreview.image_url = wabsoluteimageurl
+                if icon is not None: upreview.icon_url = icon.url
+                upreview.site_url = wurl
+                upreview.save()
+            except:
+                print('Error')
+                try:
+                    driver = webdriver.Chrome()
+                    driver.get(wurl)
+                    wtitle = driver.title
+
+                    icons = favicon.get(wurl)
+                    icon = None
+                    if icons is not None and len(icons) > 0: icon = icons[0]
+
+                    upreview = PostUrlPreview()
+                    upreview.post_id = post.pk
+                    if wtitle is not None: upreview.title = wtitle
+                    if icon is not None: upreview.icon_url = icon.url
+                    upreview.site_url = wurl
+                    upreview.save()
+                except:
+                    pass
+            else:
+                pass
 
 
 
@@ -2821,78 +3219,77 @@ def add_post_comment(request):
     post = posts[0]
     post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
 
-    comments = Comment.objects.filter(post_id=post.pk)
+    pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+    if pl is not None: post.liked = pl.status
+    else: post.liked = ''
+
+    comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
     post.comments = str(comments.count())
     likes = PostLike.objects.filter(post_id=post.pk)
-    post.likes = str(likes.count())
+    post.reactions = str(likes.count())
+    post.content = emoji.emojize(post.content)
+
+    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
 
     # return HttpResponse(post.member_id + '///' + str(admin.pk))
 
     if int(post.member_id) != admin.pk:
 
-        pls = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk)
-        if pls.count() > 0: post.liked = 'yes'
-        else: post.liked = 'no'
+        pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+        if pl is not None: post.liked = pl.status
+        else: post.liked = ''
 
         ppictures = PostPicture.objects.filter(post_id=post.pk)
 
-        comments = Comment.objects.filter(post_id=post_id, member_id=admin.pk)
-        if comments.count() == 0:
-            comments = Comment.objects.filter(post_id=post_id).order_by('-id')
-            commentList = []
-            for comment in comments:
-                comment.commented_time = datetime.datetime.fromtimestamp(float(int(comment.commented_time)/1000)).strftime("%b %d, %Y %H:%M")
-                members = Member.objects.filter(id=comment.member_id)
-                if members.count() > 0:
-                    member = members[0]
-                    data = {
-                        'comment':comment,
-                        'member':member
-                    }
-                    commentList.append(data)
-            members = Member.objects.filter(id=post.member_id)
-            if members.count() == 0: return redirect('/manager/posts/')
-            member = members[0]
-            data = {
-                'post': post,
-                'member': member,
-                'pictures':ppictures
-            }
-            return render(request, 'motherwise/comment.html', {'post':data, 'me':admin, 'comments':commentList})
-
-        else:
-            myComment = comments[0]
-            comments = Comment.objects.filter(post_id=post_id).order_by('-id')
-            commentList = []
-            for comment in comments:
-                comment.commented_time = datetime.datetime.fromtimestamp(float(int(comment.commented_time)/1000)).strftime("%b %d, %Y %H:%M")
-                members = Member.objects.filter(id=comment.member_id)
-                if members.count() > 0:
-                    member = members[0]
-                    data = {
-                        'comment':comment,
-                        'member':member
-                    }
-                    commentList.append(data)
-            members = Member.objects.filter(id=post.member_id)
-            if members.count() == 0: return redirect('/manager/posts/')
-            member = members[0]
-            data = {
-                'post': post,
-                'member': member,
-                'pictures':ppictures
-            }
-            return render(request, 'motherwise/comment.html', {'post':data, 'me':admin, 'comments':commentList, 'comment':myComment})
-
-    else:
-        ppictures = PostPicture.objects.filter(post_id=post.pk)
-        comments = Comment.objects.filter(post_id=post_id).order_by('-id')
+        comments = Comment.objects.filter(post_id=post_id, comment_id='0')
         commentList = []
         for comment in comments:
+            cl = CommentLike.objects.filter(comment_id=comment.pk, member_id=admin.pk).first()
+            if cl is not None: comment.liked = cl.status
+            else: comment.liked = ''
+            cmts = Comment.objects.filter(comment_id=comment.pk)
+            comment.comments = str(cmts.count())
+            likes = CommentLike.objects.filter(comment_id=comment.pk)
+            comment.reactions = str(likes.count())
             comment.commented_time = datetime.datetime.fromtimestamp(float(int(comment.commented_time)/1000)).strftime("%b %d, %Y %H:%M")
             members = Member.objects.filter(id=comment.member_id)
             if members.count() > 0:
                 member = members[0]
+                comment.comment_text = emoji.emojize(comment.comment_text)
+                data = {
+                    'comment':comment,
+                    'member':member
+                }
+                commentList.append(data)
+        members = Member.objects.filter(id=post.member_id)
+        if members.count() == 0: return redirect('/manager/posts/')
+        member = members[0]
+        data = {
+            'post': post,
+            'member': member,
+            'pictures':ppictures,
+            'prevs': prevs,
+
+        }
+        return render(request, 'motherwise/comment.html', {'post':data, 'me':admin, 'comments':commentList})
+
+    else:
+        ppictures = PostPicture.objects.filter(post_id=post.pk)
+        comments = Comment.objects.filter(post_id=post_id, comment_id='0')
+        commentList = []
+        for comment in comments:
+            cl = CommentLike.objects.filter(comment_id=comment.pk, member_id=admin.pk).first()
+            if cl is not None: comment.liked = cl.status
+            else: comment.liked = ''
+            cmts = Comment.objects.filter(comment_id=comment.pk)
+            comment.comments = str(cmts.count())
+            likes = CommentLike.objects.filter(comment_id=comment.pk)
+            comment.reactions = str(likes.count())
+            comment.commented_time = datetime.datetime.fromtimestamp(float(int(comment.commented_time)/1000)).strftime("%b %d, %Y %H:%M")
+            members = Member.objects.filter(id=comment.member_id)
+            if members.count() > 0:
+                member = members[0]
+                comment.comment_text = emoji.emojize(comment.comment_text)
                 data = {
                     'comment':comment,
                     'member':member
@@ -2901,9 +3298,16 @@ def add_post_comment(request):
         data = {
             'post': post,
             'pictures':ppictures,
-            'comments':commentList
+            'comments':commentList,
+            'prevs': prevs,
         }
-        return render(request, 'motherwise/edit_post.html', {'post':data, 'me':admin})
+
+        categories = []
+        pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+        if pc is not None:
+            if pc.categories != '': categories = pc.categories.split(',')
+
+        return render(request, 'motherwise/edit_post.html', {'post':data, 'me':admin, 'categories':categories})
 
 
 
@@ -2919,7 +3323,9 @@ def delete_post_picture(request):
     fs = FileSystemStorage()
     if pics.count() > 0:
         pic = pics[0]
-        if pic.picture_url != '':
+        if pic.filename != '':
+            fs.delete(pic.filename)
+        elif pic.picture_url != '':
             fs.delete(pic.picture_url.replace(settings.URL + '/media/', ''))
             if pic.picture_url == post.picture_url:
                 post.picture_url = ''
@@ -2960,6 +3366,7 @@ def like_post(request):
         pl.post_id = post.pk
         pl.member_id = admin.pk
         pl.liked_time = str(int(round(time.time() * 1000)))
+        pl.status = 'like'
         pl.save()
 
         post.likes = str(int(post.likes) + 1)
@@ -2970,67 +3377,48 @@ def like_post(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def submit_comment(request):
     if request.method == 'POST':
 
         post_id = request.POST.get('post_id', '')
+        comment_id = request.POST.get('comment_id', '0')
         content = request.POST.get('content', '')
 
         try:
             if request.session['adminID'] == '' or request.session['adminID'] == 0:
-                return render(request, 'motherwise/admin.html')
+                return HttpResponse('error')
         except KeyError:
-            print('no session')
-            return render(request, 'motherwise/admin.html')
+            return HttpResponse('error')
 
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
 
         fs = FileSystemStorage()
 
-        comments = Comment.objects.filter(post_id=post_id, member_id=admin.pk)
-        if comments.count() == 0:
-            comment = Comment()
-            comment.post_id = post_id
-            comment.member_id = admin.pk
-            comment.comment_text = content
-            comment.commented_time = str(int(round(time.time() * 1000)))
+        comment = Comment()
+        comment.post_id = post_id
+        comment.comment_id = comment_id
+        comment.member_id = admin.pk
+        comment.comment_text = emoji.demojize(content)
+        comment.comments = '0'
+        comment.likes = '0'
+        comment.commented_time = str(int(round(time.time() * 1000)))
 
-            try:
-                image = request.FILES['image']
-                filename = fs.save(image.name, image)
-                uploaded_url = fs.url(filename)
-                comment.image_url = settings.URL + uploaded_url
-            except MultiValueDictKeyError:
-                print('no video updated')
+        try:
+            image = request.FILES['image']
+            filename = fs.save(image.name, image)
+            uploaded_url = fs.url(filename)
+            comment.image_url = settings.URL + uploaded_url
+            comment.filename = filename
+        except MultiValueDictKeyError:
+            print('no video updated')
 
-            comment.save()
+        comment.save()
 
-            post = Post.objects.get(id=post_id)
-            post.comments = str(int(post.comments) + 1)
-            post.save()
+        return HttpResponse('success')
 
-        else:
-            comment = comments[0]
-            comment.comment_text = content
-
-            try:
-                image = request.FILES['image']
-                filename = fs.save(image.name, image)
-                uploaded_url = fs.url(filename)
-                if comment.image_url != '':
-                    fs.delete(comment.image_url.replace(settings.URL + '/media/', ''))
-                comment.image_url = settings.URL + uploaded_url
-            except MultiValueDictKeyError:
-                print('no video updated')
-
-            comment.save()
-
-        return redirect('/manager/add_post_comment?post_id=' + post_id)
 
 
 def delete_post(request):
@@ -3057,12 +3445,16 @@ def delete_post(request):
         pl.delete()
     pps = PostPicture.objects.filter(post_id=post.pk)
     for pp in pps:
-        if pp.picture_url != '':
+        if pp.filename != '':
+            fs.delete(pp.filename)
+        elif pp.picture_url != '':
             fs.delete(pp.picture_url.replace(settings.URL + '/media/', ''))
         pp.delete()
     pcs = Comment.objects.filter(post_id=post.pk)
     for pc in pcs:
-        if pc.image_url != '':
+        if pc.filename != '':
+            fs.delete(pc.filename)
+        elif pc.image_url != '':
             fs.delete(pc.image_url.replace(settings.URL + '/media/', ''))
         pc.delete()
 
@@ -3077,10 +3469,10 @@ def delete_comment(request):
 
     try:
         if request.session['adminID'] == '' or request.session['adminID'] == 0:
-            return render(request, 'motherwise/admin.html')
+            return HttpResponse('error')
     except KeyError:
         print('no session')
-        return render(request, 'motherwise/admin.html')
+        return HttpResponse('error')
 
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
@@ -3091,23 +3483,19 @@ def delete_comment(request):
     if pcs.count() > 0:
         pc = pcs[0]
         post_id = pc.post_id
-        if pc.image_url != '':
+        if pc.filename != '':
+            fs.delete(pc.filename)
+        elif pc.image_url != '':
             fs.delete(pc.image_url.replace(settings.URL + '/media/', ''))
         pc.delete()
 
-        post = Post.objects.get(id=post_id)
-        post.comments = str(int(post.comments) - 1)
-        post.save()
-
-        return redirect('/manager/add_post_comment?post_id=' + post_id)
+        return HttpResponse('success')
     else:
-        return redirect('/manager/posts/')
+        return HttpResponse('error')
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def edit_post(request):
     if request.method == 'POST':
@@ -3116,6 +3504,7 @@ def edit_post(request):
         title = request.POST.get('title', '')
         category = request.POST.get('category', '')
         content = request.POST.get('content', '')
+        scheduled_time = request.POST.get('scheduled_time', '')
 
         try:
             if request.session['adminID'] == '' or request.session['adminID'] == 0:
@@ -3133,8 +3522,11 @@ def edit_post(request):
         post = posts[0]
         post.title = title
         post.category = category
-        post.content = content
+        post.content = emoji.demojize(content)
+        if post.sch_status != '': post.scheduled_time = scheduled_time
         post.save()
+
+        updatePostUrlPreview(post)
 
         fs = FileSystemStorage()
         i = 0
@@ -3148,15 +3540,83 @@ def edit_post(request):
             postPicture = PostPicture()
             postPicture.post_id = post.pk
             postPicture.picture_url = settings.URL + uploaded_url
+            postPicture.filename = filename
             postPicture.save()
 
         return redirect('/manager/add_post_comment?post_id=' + post_id)
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+def updatePostUrlPreview(post):
+    if post.content != '':
+        web_urls = urlsFromText(post.content)
+        for wurl in web_urls:
+            try:
+                preview = link_preview(wurl)
+                wtitle = preview.title
+                wdescription = preview.description
+                wimageurl = preview.image
+                wforcetitle = preview.force_title
+                wabsoluteimageurl = preview.absolute_image
+
+                icons = favicon.get(wurl)
+                icon = None
+                if icons is not None and len(icons) > 0: icon = icons[0]
+
+                upreviews = PostUrlPreview.objects.filter(post_id=post.pk, site_url=wurl)
+                if upreviews.count() == 0:
+                    upreview = PostUrlPreview()
+                    upreview.post_id = post.pk
+                    if wtitle is not None: upreview.title = wtitle
+                    elif wforcetitle is not None: upreview.title = wforcetitle
+                    if wdescription is not None: upreview.description = wdescription
+                    if wimageurl is not None and 'http' in wimageurl: upreview.image_url = wimageurl
+                    elif wabsoluteimageurl is not None: upreview.image_url = wabsoluteimageurl
+                    if icon is not None: upreview.icon_url = icon.url
+                    upreview.site_url = wurl
+                    upreview.save()
+            except:
+                print('Error')
+                try:
+                    driver = webdriver.Chrome()
+                    driver.get(wurl)
+                    wtitle = driver.title
+
+                    icons = favicon.get(wurl)
+                    icon = None
+                    if icons is not None and len(icons) > 0: icon = icons[0]
+
+                    upreviews = PostUrlPreview.objects.filter(post_id=post.pk, site_url=wurl)
+                    if upreviews.count() == 0:
+                        upreview = PostUrlPreview()
+                        upreview.post_id = post.pk
+                        if wtitle is not None: upreview.title = wtitle
+                        if icon is not None: upreview.icon_url = icon.url
+                        upreview.site_url = wurl
+                        upreview.save()
+                except:
+                    pass
+            else:
+                pass
+
+
+        if len(web_urls) > 0:
+            upreviews = PostUrlPreview.objects.filter(post_id=post.pk)
+            for upreview in upreviews:
+                if not upreview.site_url in web_urls:
+                    upreview.delete()
+        else:
+            upreviews = PostUrlPreview.objects.filter(post_id=post.pk)
+            upreviews.delete()
+
+    else:
+        upreviews = PostUrlPreview.objects.filter(post_id=post.pk)
+        upreviews.delete()
+
+
+
+
+
 @api_view(['GET', 'POST'])
 def search_post(request):
 
@@ -3173,6 +3633,10 @@ def search_post(request):
         adminID = request.session['adminID']
         admin = Member.objects.get(id=adminID)
 
+        uitype = ''
+        if request.user_agent.is_mobile:
+            uitype = 'mobile'
+
         users = Member.objects.filter(admin_id=admin.pk).order_by('-id')
         userList = []
         for user in users:
@@ -3182,7 +3646,7 @@ def search_post(request):
 
         search_id = request.POST.get('q', None)
 
-        posts = Post.objects.all().order_by('-id')
+        posts = Post.objects.filter(sch_status='').order_by('-id')
         postList = get_filtered_posts_data(admin, posts, search_id)
 
         list1 = []
@@ -3191,32 +3655,74 @@ def search_post(request):
         list4 = []
 
         i = 0
+        itop = 1
         for post in postList:
             post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
             i = i + 1
-            pls = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk)
-            if pls.count() > 0:
-                post.liked = 'yes'
-            else: post.liked = 'no'
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
 
-            comments = Comment.objects.filter(post_id=post.pk)
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
             post.comments = str(comments.count())
             likes = PostLike.objects.filter(post_id=post.pk)
-            post.likes = str(likes.count())
+            post.reactions = str(likes.count())
+            post.content = emoji.emojize(post.content)
+
+            prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+
+            comments1 = comments[:5]
+            commentlist = []
+            for comment in comments1:
+                cm = Member.objects.filter(id=comment.member_id).first()
+                if cm is not None:
+                    comment.comment_text = emoji.emojize(comment.comment_text)
+                    commentlist.append( { 'comment':comment, 'member':cm } )
 
             member = Member.objects.get(id=post.member_id)
 
             data = {
                 'member':member,
-                'post': post
+                'post': post,
+                'prevs': prevs,
+                'comments': commentlist,
+                'pc-cnt': str(comments.count()),
             }
 
-            if i % 4 == 1: list1.append(data)
-            elif i % 4 == 2: list2.append(data)
-            elif i % 4 == 3: list3.append(data)
-            elif i % 4 == 0: list4.append(data)
+            if uitype == 'mobile':
+                if 'top' in post.status:
+                    list1.insert(0,data)
+                else:
+                    if i % 4 == 1: list1.append(data)
+                    elif i % 4 == 2: list2.append(data)
+                    elif i % 4 == 3: list3.append(data)
+                    elif i % 4 == 0: list4.append(data)
+            else:
+                if 'top' in post.status:
+                    if itop == 1:
+                        list1.insert(0,data)
+                        itop = 2
+                    elif itop == 2:
+                        list2.insert(0,data)
+                        itop = 3
+                    elif itop == 3:
+                        list3.insert(0,data)
+                        itop = 4
+                    elif itop == 4:
+                        list4.insert(0,data)
+                        itop = 1
+                else:
+                    if i % 4 == 1: list1.append(data)
+                    elif i % 4 == 2: list2.append(data)
+                    elif i % 4 == 3: list3.append(data)
+                    elif i % 4 == 0: list4.append(data)
 
-        return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'search':'Searched', 'users':userList})
+        categories = []
+        pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+        if pc is not None:
+            if pc.categories != '': categories = pc.categories.split(',')
+
+        return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'search':'Searched', 'users':userList, 'categories':categories})
 
 
 # import datetime
@@ -3237,7 +3743,7 @@ def get_filtered_posts_data(me, posts, keyword):
                     postList.append(post)
                 elif keyword.lower() in post.comments.lower():
                     postList.append(post)
-                elif keyword.lower() in post.likes.lower():
+                elif keyword.lower() in post.reactions.lower():
                     postList.append(post)
                 elif keyword.lower() in member.name.lower():
                     postList.append(post)
@@ -3275,6 +3781,10 @@ def filter(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    uitype = ''
+    if request.user_agent.is_mobile:
+        uitype = 'mobile'
+
     users = Member.objects.filter(admin_id=admin.pk).order_by('-id')
     userList = []
     for user in users:
@@ -3289,62 +3799,105 @@ def filter(request):
 
     search = 'Searched'
 
-    allPosts = Post.objects.all().order_by('-id')
+    allPosts = Post.objects.filter(sch_status='').order_by('-id')
     i = 0
+    itop = 1
     for post in allPosts:
         i = i + 1
-        pls = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk)
-        if pls.count() > 0:
-            post.liked = 'yes'
-        else: post.liked = 'no'
+        pl = PostLike.objects.filter(post_id=post.pk, member_id=admin.pk).first()
+        if pl is not None: post.liked = pl.status
+        else: post.liked = ''
 
-        comments = Comment.objects.filter(post_id=post.pk)
+        comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
         post.comments = str(comments.count())
         likes = PostLike.objects.filter(post_id=post.pk)
-        post.likes = str(likes.count())
+        post.reactions = str(likes.count())
+        post.content = emoji.emojize(post.content)
+
+        prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+
+        comments1 = comments[:5]
+        commentlist = []
+        for comment in comments1:
+            cm = Member.objects.filter(id=comment.member_id).first()
+            if cm is not None:
+                comment.comment_text = emoji.emojize(comment.comment_text)
+                commentlist.append( { 'comment':comment, 'member':cm } )
 
         members = Member.objects.filter(id=post.member_id)
         if members.count() > 0:
             memb = members[0]
             if int(memb.admin_id) == admin.pk or memb.pk == admin.pk:
+                data = None
                 if option == 'last3':
                     if int(round(time.time() * 1000)) - int(post.posted_time) < 3 * 86400 * 1000:
                         post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
                         data = {
                             'member':memb,
-                            'post': post
+                            'post': post,
+                            'prevs': prevs,
+                            'comments': commentlist,
+                            'pc-cnt': str(comments.count()),
                         }
-                        if i % 4 == 1: list1.append(data)
-                        elif i % 4 == 2: list2.append(data)
-                        elif i % 4 == 3: list3.append(data)
-                        elif i % 4 == 0: list4.append(data)
                         search = 'Last 3 Days'
                 elif option == 'last7':
                     if int(round(time.time() * 1000)) - int(post.posted_time) < 7 * 86400 * 1000:
                         post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
                         data = {
                             'member':memb,
-                            'post': post
+                            'post': post,
+                            'prevs': prevs,
+                            'comments': commentlist,
+                            'pc-cnt': str(comments.count()),
                         }
-                        if i % 4 == 1: list1.append(data)
-                        elif i % 4 == 2: list2.append(data)
-                        elif i % 4 == 3: list3.append(data)
-                        elif i % 4 == 0: list4.append(data)
                         search = 'Last 7 Days'
                 elif option == 'last30':
                     if int(round(time.time() * 1000)) - int(post.posted_time) < 30 * 86400 * 1000:
                         post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
                         data = {
                             'member':memb,
-                            'post': post
+                            'post': post,
+                            'prevs': prevs,
+                            'comments': commentlist,
+                            'pc-cnt': str(comments.count()),
                         }
-                        if i % 4 == 1: list1.append(data)
-                        elif i % 4 == 2: list2.append(data)
-                        elif i % 4 == 3: list3.append(data)
-                        elif i % 4 == 0: list4.append(data)
                         search = 'Last 30 Days'
 
-    return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'search':search, 'users':userList})
+                if data is not None:
+                    if uitype == 'mobile':
+                        if 'top' in post.status:
+                            list1.insert(0,data)
+                        else:
+                            if i % 4 == 1: list1.append(data)
+                            elif i % 4 == 2: list2.append(data)
+                            elif i % 4 == 3: list3.append(data)
+                            elif i % 4 == 0: list4.append(data)
+                    else:
+                        if 'top' in post.status:
+                            if itop == 1:
+                                list1.insert(0,data)
+                                itop = 2
+                            elif itop == 2:
+                                list2.insert(0,data)
+                                itop = 3
+                            elif itop == 3:
+                                list3.insert(0,data)
+                                itop = 4
+                            elif itop == 4:
+                                list4.insert(0,data)
+                                itop = 1
+                        else:
+                            if i % 4 == 1: list1.append(data)
+                            elif i % 4 == 2: list2.append(data)
+                            elif i % 4 == 3: list3.append(data)
+                            elif i % 4 == 0: list4.append(data)
+
+    categories = []
+    pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+    if pc is not None:
+        if pc.categories != '': categories = pc.categories.split(',')
+
+    return render(request, 'motherwise/post.html', {'me':admin, 'list1':list1, 'list2':list2, 'list3':list3, 'list4':list4, 'search':search, 'users':userList, 'categories':categories})
 
 
 
@@ -3521,9 +4074,7 @@ def processnewmessage(request):
         return HttpResponse('The message read')
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def notisearch(request):
 
@@ -3768,7 +4319,7 @@ def open_conference(request):
     import datetime
 
     group_id = request.GET['group_id']
-    cohort = request.GET['cohort']
+    # cohort = request.GET['cohort']
 
     try:
         if request.session['adminID'] == '' or request.session['adminID'] == 0:
@@ -3832,57 +4383,53 @@ def open_conference(request):
                 return render(request, 'motherwise/conference_video.html', {'me':admin, 'members':memberList, 'group':group, 'confs':confs, 'last_conf':last_conf})
             elif last_conf.type == 'youtube':
                 return render(request, 'motherwise/conference_youtube.html', {'me':admin, 'members':memberList, 'group':group, 'confs':confs, 'last_conf':last_conf})
-            else:
-                return redirect('/manager/home')
+        else:
+            return redirect('/manager/home')
 
-    elif cohort != '':
-        members = Member.objects.filter(admin_id=admin.pk, cohort=cohort)
-        if members.count() > 0:
-            for member in members:
-                memberList.append(member)
+    else:
+        memberList = Member.objects.filter(admin_id=admin.pk, status='')
 
-            request.session['group_id'] = ''
-            request.session['cohort'] = cohort
+        request.session['group_id'] = ''
+        request.session['cohort'] = ''
 
-            memberIdList = []
-            for memb in memberList:
-                memberIdList.append(memb.pk)
-            request.session['selected_member_list'] = memberIdList
+        memberIdList = []
+        for memb in memberList:
+            memberIdList.append(memb.pk)
+        request.session['selected_member_list'] = memberIdList
 
-            confs = Conference.objects.filter(member_id=admin.pk, cohort=cohort).order_by('-id')
-            for conf in confs:
-                conf.created_time = datetime.datetime.fromtimestamp(float(int(conf.created_time)/1000)).strftime("%b %d, %Y %H:%M")
-                if conf.event_time != '': conf.event_time = datetime.datetime.fromtimestamp(float(int(conf.event_time)/1000)).strftime("%b %d, %Y %H:%M")
-            if confs.count() == 0:
-                return render(request, 'motherwise/conference_create.html', {'conf_opt':'new_conference', 'confs':confs, 'cohort':cohort})
-            try:
-                option = request.GET['option']
-                if option == 'new_conference':
-                    return render(request, 'motherwise/conference_create.html', {'conf_opt':'new_conference', 'confs':confs, 'cohort':cohort})
-            except KeyError:
-                print('no session')
-            # return render(request, 'motherwise/conference_create.html', {'conf_opt':'new_conference', 'confs':confs, 'group':group})
+        confs = Conference.objects.filter(member_id=admin.pk, group_id=0).order_by('-id')
+        for conf in confs:
+            conf.created_time = datetime.datetime.fromtimestamp(float(int(conf.created_time)/1000)).strftime("%b %d, %Y %H:%M")
+            if conf.event_time != '': conf.event_time = datetime.datetime.fromtimestamp(float(int(conf.event_time)/1000)).strftime("%b %d, %Y %H:%M")
+        if confs.count() == 0:
+            return render(request, 'motherwise/conference_create.html', {'conf_opt':'new_conference', 'confs':confs, 'group':None})
+        try:
+            option = request.GET['option']
+            if option == 'new_conference':
+                return render(request, 'motherwise/conference_create.html', {'conf_opt':'new_conference', 'confs':confs, 'group':None})
+        except KeyError:
+            print('no key')
+        # return render(request, 'motherwise/conference_create.html', {'conf_opt':'new_conference', 'confs':confs, 'group':None})
 
-            last_conf = confs[0]
+        last_conf = confs[0]
 
-            try:
-                conf_id = request.GET['conf_id']
-                cfs = Conference.objects.filter(id=conf_id)
-                if cfs.count() > 0:
-                    last_conf = cfs[0]
-                    last_conf.created_time = datetime.datetime.fromtimestamp(float(int(last_conf.created_time)/1000)).strftime("%b %d, %Y %H:%M")
-                    if last_conf.event_time != '': last_conf.event_time = datetime.datetime.fromtimestamp(float(int(last_conf.event_time)/1000)).strftime("%b %d, %Y %H:%M")
-            except KeyError:
-                print('no key')
+        try:
+            conf_id = request.GET['conf_id']
+            cfs = Conference.objects.filter(id=conf_id)
+            if cfs.count() > 0:
+                last_conf = cfs[0]
+                last_conf.created_time = datetime.datetime.fromtimestamp(float(int(last_conf.created_time)/1000)).strftime("%b %d, %Y %H:%M")
+                if last_conf.event_time != '': last_conf.event_time = datetime.datetime.fromtimestamp(float(int(last_conf.event_time)/1000)).strftime("%b %d, %Y %H:%M")
+        except KeyError:
+            print('no key')
 
-            if last_conf.type == 'live':
-                return render(request, 'motherwise/conference_live.html', {'me':admin, 'members':memberList, 'cohort':cohort, 'confs':confs, 'last_conf':last_conf})
-            elif last_conf.type == 'file':
-                return render(request, 'motherwise/conference_video.html', {'me':admin, 'members':memberList, 'cohort':cohort, 'confs':confs, 'last_conf':last_conf})
-            elif last_conf.type == 'youtube':
-                return render(request, 'motherwise/conference_youtube.html', {'me':admin, 'members':memberList, 'cohort':cohort, 'confs':confs, 'last_conf':last_conf})
-            else:
-                return redirect('/manager/home')
+        if last_conf.type == 'live':
+            return render(request, 'motherwise/conference_live.html', {'me':admin, 'members':memberList, 'group':None, 'confs':confs, 'last_conf':last_conf})
+        elif last_conf.type == 'file':
+            return render(request, 'motherwise/conference_video.html', {'me':admin, 'members':memberList, 'group':None, 'confs':confs, 'last_conf':last_conf})
+        elif last_conf.type == 'youtube':
+            return render(request, 'motherwise/conference_youtube.html', {'me':admin, 'members':memberList, 'group':None, 'confs':confs, 'last_conf':last_conf})
+
 
 
 def genRandomConferenceCode():
@@ -3891,9 +4438,7 @@ def genRandomConferenceCode():
     return randomString
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def create_conference(request):
 
@@ -3912,32 +4457,24 @@ def create_conference(request):
         admin = Member.objects.get(id=adminID)
 
         group_id = request.POST.get('group_id', '1')
-        cohort = request.POST.get('cohort', '')
-
-        try:
-            gtype = request.POST.get('gtype', '')
-            if gtype == 'group':
-                cohort = ''
-            elif gtype == 'cohort':
-                group_id = ''
-        except KeyError:
-            print('no key')
-            return render(request, 'motherwise/admin.html')
+        group_option = request.POST.get('group_option', '')
 
         name = request.POST.get('name', '')
         type = request.POST.get('type', '')
         youtubeurl = request.POST.get('youtubeurl', '')
-        event_time = request.POST.get('event_time', '')
 
         conf = Conference()
         conf.member_id = admin.pk
-        conf.group_id = group_id
-        conf.cohort = cohort
+        if group_option == 'community':
+            conf.group_id = group_id
+        else:
+            group_id = '0'
+            conf.group_id = group_id
         conf.name = name
         if type == 'live':
             conf.code = genRandomConferenceCode()
         conf.type = type
-        conf.event_time = event_time
+        # conf.event_time = event_time
         conf.created_time = str(int(round(time.time() * 1000)))
         conf.participants = '0'
         conf.likes = '0'
@@ -3946,8 +4483,8 @@ def create_conference(request):
 
         if type == 'youtube':
             conf.video_url = youtubeurl
-            if event_time != '':
-                dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
+            # if event_time != '':
+            #     dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
         elif type == 'file':
             try:
                 videofile = request.FILES['video']
@@ -3955,15 +4492,16 @@ def create_conference(request):
                 filename = fs.save(videofile.name, videofile)
                 video_url = fs.url(filename)
                 conf.video_url = settings.URL + video_url
+                conf.filename = filename
             except MultiValueDictKeyError:
                 print("File Not Exist")
 
-            if event_time != '':
-                dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
+            # if event_time != '':
+            #     dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
 
-        elif type == 'live':
-            conf.video_url = ''
-            dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
+        # elif type == 'live':
+        #     conf.video_url = ''
+            # dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
 
         conf.save()
 
@@ -3998,8 +4536,8 @@ def create_conference(request):
                             snt.noti_id = notification.pk
                             snt.save()
 
-                            title = 'Video Conference Invitation From MotherWise Community: The Nest'
-                            subject = 'You\'ve received an invitation from MotherWise Community: The Nest'
+                            title = 'Video Conference Invitation In The Nest'
+                            subject = 'You\'ve received an invitation in the Nest. (has recibido una invitación en el Nest.)'
                             msg = 'Dear ' + member.name + ',<br><br>You\'ve received an invitation to a video conference in a community ' + group.name + ' from MotherWise Community: The Nest.<br><br>Community name: ' + group.name + '<br>'
                             msg = msg + 'Conference topic: ' + name + '<br>'
                             msg = msg + 'Entry code: ' + conf.code + '<br>'
@@ -4007,16 +4545,30 @@ def create_conference(request):
                             elif type == 'file': type = 'General'
                             elif type == 'youtube': type = 'YouTube'
                             msg = msg + 'Type: ' + type + '<br>'
-                            if dt != '':
-                                msg = msg + 'Conference start date and time: ' + dt + '<br>'
+                            # if dt != '':
+                            #     msg = msg + 'Conference start date and time: ' + dt + '<br>'
                             msg = msg + 'So you can see this conference in the community and connect it to attend the event at that time.<br>'
                             msg = msg + 'Please join the community conference.'
                             msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
 
+                            title2 = 'invitación de videoconferencia en el Nest'
+                            msg2 = member.name + ',<br><br>has recibido una invitación a una videoconferencia en una comunidad ' + group.name + ' de la comunidad MotherWise: el Nest.<br><br>Nombre de la comunidad: ' + group.name + '<br>'
+                            msg2 = msg2 + 'tema de la conferencia: ' + name + '<br>'
+                            msg2 = msg2 + 'código de entrada: ' + conf.code + '<br>'
+                            if type == 'live': type = 'en vivo'
+                            elif type == 'file': type = 'general'
+                            elif type == 'youtube': type = 'YouTube'
+                            msg2 = msg2 + 'Type: ' + type + '<br>'
+                            # if dt != '':
+                            #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '<br>'
+                            msg2 = msg2 + 'para que pueda ver esta conferencia en la comunidad y conectarla para asistir al evento en ese momento.<br>'
+                            msg2 = msg2 + 'por favor únase a la conferencia comunitaria.'
+                            msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
+
                             from_email = admin.email
                             to_emails = []
                             to_emails.append(member.email)
-                            send_mail_message(from_email, to_emails, title, subject, msg)
+                            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                             msg = 'Dear ' + member.name + ',\nYou\'ve received an invitation to a community ' + group.name + ' from MotherWise Community: The Nest.\nCommunity name: ' + group.name + '\n'
                             msg = msg + 'Conference topic: ' + name + '\n'
@@ -4025,10 +4577,24 @@ def create_conference(request):
                             elif type == 'file': type = 'General'
                             elif type == 'youtube': type = 'YouTube'
                             msg = msg + 'Type: ' + type + '\n'
-                            if dt != '':
-                                msg = msg + 'Conference start date and time: ' + dt + '\n'
+                            # if dt != '':
+                            #     msg = msg + 'Conference start date and time: ' + dt + '\n'
                             msg = msg + 'So you can see this conference in the community and connect it to attend the event at that time.\n'
                             msg = msg + 'Please join the community conference.\nBest Regards\n\nMotherWise Community'
+
+                            msg2 = member.name + ',\nhas recibido una invitación a una comunidad ' + group.name + ' de la comunidad MotherWise: el Nest.\nnombre de la comunidad: ' + group.name + '\n'
+                            msg2 = msg2 + 'tema de la conferencia: ' + name + '\n'
+                            msg2 = msg2 + 'código de entrada: ' + conf.code + '\n'
+                            if type == 'live': type = 'en vivo'
+                            elif type == 'file': type = 'general'
+                            elif type == 'youtube': type = 'YouTube'
+                            msg2 = msg2 + 'Type: ' + type + '\n'
+                            # if dt != '':
+                            #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '\n'
+                            msg2 = msg2 + 'para que pueda ver esta conferencia en la comunidad y conectarla para asistir al evento en ese momento.\n'
+                            msg2 = msg2 + 'por favor únase a la conferencia comunitaria.\natentamente\n\ncomunidad MotherWise'
+
+                            msg = msg + '\n\n' + msg2
 
                             notification.message = msg
                             notification.save()
@@ -4065,8 +4631,8 @@ def create_conference(request):
                     conf.status = 'notified'
                     conf.save()
 
-            elif cohort != '':
-                members = Member.objects.filter(admin_id=admin.pk, cohort=cohort)
+            else:
+                members = Member.objects.filter(admin_id=admin.pk)
                 if members.count() > 0:
                     for member in members:
 
@@ -4088,38 +4654,69 @@ def create_conference(request):
                         snt.noti_id = notification.pk
                         snt.save()
 
-                        title = 'Video Conference Invitation From MotherWise Community: The Nest'
-                        subject = 'You\'ve received an invitation from MotherWise Community: The Nest'
-
-                        msg = 'Dear ' + member.name + ',<br><br>You\'ve received an invitation to a video conference in a group ' + cohort + ' from MotherWise Community: The Nest.<br><br>Group name: ' + cohort + '<br>'
-                        msg = msg + 'Conference topic: ' + name + '<br>'
+                        title = 'Video Conference Invitation In The Nest'
+                        subject = 'You\'ve received an invitation in the Nest. (has recibido una invitación en el Nest.)'
+                        msg = 'Dear ' + member.name + ',<br><br>You\'ve received an invitation to a video conference from MotherWise Community: The Nest.<br><br>'
+                        msg = msg + 'Conference topic: ' + conf.name + '<br>'
                         msg = msg + 'Entry code: ' + conf.code + '<br>'
+                        type = conf.type
                         if type == 'live': type = 'Live'
                         elif type == 'file': type = 'General'
                         elif type == 'youtube': type = 'YouTube'
                         msg = msg + 'Type: ' + type + '<br>'
-                        if dt != '':
-                            msg = msg + 'Conference start date and time: ' + dt + '<br>'
+                        # if dt != '':
+                        #     msg = msg + 'Conference start date and time: ' + dt + '<br>'
                         msg = msg + 'So you can see this conference in the group and connect it to attend the event at that time.<br>'
                         msg = msg + 'Please join the group conference.'
                         msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
 
+                        title2 = 'invitación de videoconferencia In the Nest'
+                        msg2 = member.name + ',<br><br>has recibido una invitación a una videoconferencia de la comunidad MotherWise: el Nest.<br><br>'
+                        msg2 = msg2 + 'tema de la conferencia: ' + conf.name + '<br>'
+                        msg2 = msg2 + 'código de entrada: ' + conf.code + '<br>'
+                        type = conf.type
+                        if type == 'live': type = 'en vivo'
+                        elif type == 'file': type = 'general'
+                        elif type == 'youtube': type = 'YouTube'
+                        msg2 = msg2 + 'Type: ' + type + '<br>'
+                        # if dt != '':
+                        #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '<br>'
+                        msg2 = msg2 + 'para que pueda ver esta conferencia en el grupo y conectarla para asistir al evento en ese momento.<br>'
+                        msg2 = msg2 + 'por favor únase a la conferencia grupal.'
+                        msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
+
                         from_email = admin.email
                         to_emails = []
                         to_emails.append(member.email)
-                        send_mail_message(from_email, to_emails, title, subject, msg)
+                        send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
-                        msg = 'Dear ' + member.name + ',\nYou\'ve received an invitation to a group ' + cohort + ' from MotherWise Community: The Nest.\nGroup name: ' + cohort + '\n'
-                        msg = msg + 'Conference topic: ' + name + '\n'
+                        msg = 'Dear ' + member.name + ',\nYou\'ve received an invitation from MotherWise Community: The Nest.\n'
+                        msg = msg + 'Conference topic: ' + conf.name + '\n'
                         msg = msg + 'Entry code: ' + conf.code + '\n'
+                        type = conf.type
                         if type == 'live': type = 'Live'
                         elif type == 'file': type = 'General'
                         elif type == 'youtube': type = 'YouTube'
                         msg = msg + 'Type: ' + type + '\n'
-                        if dt != '':
-                            msg = msg + 'Conference start date and time: ' + dt + '\n'
+                        # if dt != '':
+                        #     msg = msg + 'Conference start date and time: ' + dt + '\n'
                         msg = msg + 'So you can see this conference in the group and connect it to attend the event at that time.\n'
                         msg = msg + 'Please join the group conference.\nBest Regards\n\nMotherWise Community'
+
+                        msg2 = member.name + ',\nhas recibido una invitación a una videoconferencia de la comunidad MotherWise: el Nest.\n'
+                        msg2 = msg2 + 'tema de la conferencia: ' + conf.name + '\n'
+                        msg2 = msg2 + 'código de entrada: ' + conf.code + '\n'
+                        type = conf.type
+                        if type == 'live': type = 'en vivo'
+                        elif type == 'file': type = 'general'
+                        elif type == 'youtube': type = 'YouTube'
+                        msg2 = msg2 + 'Type: ' + type + '\n'
+                        # if dt != '':
+                        #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '\n'
+                        msg2 = msg2 + 'para que pueda ver esta conferencia en el grupo y conectarla para asistir al evento en ese momento.\n'
+                        msg2 = msg2 + 'por favor únase a la conferencia grupal.\n\nComunidad MotherWise'
+
+                        msg = msg + '\n\n' + msg2
 
                         notification.message = msg
                         notification.save()
@@ -4156,6 +4753,7 @@ def create_conference(request):
                     conf.status = 'notified'
                     conf.save()
 
+
         else:
             print('no message')
 
@@ -4166,13 +4764,11 @@ def create_conference(request):
         except KeyError:
             print('no key')
 
-        return redirect('/manager/open_conference?conf_id=' + str(conf.pk) + '&group_id=' + group_id + '&cohort=' + cohort)
+        return redirect('/manager/open_conference?conf_id=' + str(conf.pk) + '&group_id=' + group_id)
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def delete_conference(request):
     if request.method == 'GET':
@@ -4186,7 +4782,9 @@ def delete_conference(request):
             conf = confs[0]
             group_id = conf.group_id
             cohort = conf.cohort
-            if conf.video_url != '' and 'http' in conf.video_url:
+            if conf.filename != '':
+                fs.delete(conf.filename)
+            elif conf.video_url != '' and 'http' in conf.video_url:
                 fname = conf.video_url.replace(settings.URL + '/media/', '')
                 fs.delete(fname)
             conf.delete()
@@ -4198,15 +4796,13 @@ def delete_conference(request):
             except KeyError:
                 print('no key')
 
-            return redirect('/manager/open_conference?group_id=' + group_id + '&cohort=' + cohort)
+            return redirect('/manager/open_conference?group_id=' + group_id)
         else:
             return redirect('/manager/home')
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def conference_notify(request):
 
@@ -4225,7 +4821,6 @@ def conference_notify(request):
         admin = Member.objects.get(id=adminID)
 
         group_id = request.POST.get('group_id', '1')
-        cohort = request.POST.get('cohort', '')
         conf_id = request.POST.get('conf_id', '1')
 
         confs = Conference.objects.filter(id=conf_id)
@@ -4236,12 +4831,11 @@ def conference_notify(request):
 
         name = conf.name
         type = conf.type
-        event_time = conf.event_time
 
         dt = ''
 
-        if event_time != '':
-            dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
+        # if event_time != '':
+        #     dt = datetime.datetime.fromtimestamp(float(int(event_time)/1000)).strftime("%b %d, %Y %H:%M")
 
         if admin is not None:
             if group_id != '' and int(group_id) > 0:
@@ -4272,8 +4866,8 @@ def conference_notify(request):
                             snt.noti_id = notification.pk
                             snt.save()
 
-                            title = 'Video Conference Invitation From MotherWise Community: The Nest'
-                            subject = 'You\'ve received an invitation from MotherWise Community: The Nest'
+                            title = 'Video Conference Invitation In The Nest'
+                            subject = 'You\'ve received an invitation in the Nest (has recibido una invitación en el Nest.)'
                             msg = 'Dear ' + member.name + ',<br><br>You\'ve received an invitation to a video conference in a community ' + group.name + ' from MotherWise Community: The Nest.<br><br>Community name: ' + group.name + '<br>'
                             msg = msg + 'Conference topic: ' + conf.name + '<br>'
                             msg = msg + 'Entry code: ' + conf.code + '<br>'
@@ -4282,16 +4876,31 @@ def conference_notify(request):
                             elif type == 'file': type = 'General'
                             elif type == 'youtube': type = 'YouTube'
                             msg = msg + 'Type: ' + type + '<br>'
-                            if dt != '':
-                                msg = msg + 'Conference start date and time: ' + dt + '<br>'
+                            # if dt != '':
+                            #     msg = msg + 'Conference start date and time: ' + dt + '<br>'
                             msg = msg + 'So you can see this conference in the community and connect it to attend the event at that time.<br>'
                             msg = msg + 'Please join the community conference.'
                             msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
 
+                            title2 = 'invitación de videoconferencia In the Nest'
+                            msg2 = member.name + ',<br><br>has recibido una invitación a una videoconferencia en una comunidad ' + group.name + ' de la comunidad MotherWise: el Nest.<br><br>nombre de la comunidad: ' + group.name + '<br>'
+                            msg2 = msg2 + 'tema de la conferencia: ' + conf.name + '<br>'
+                            msg2 = msg2 + 'código de entrada: ' + conf.code + '<br>'
+                            type = conf.type
+                            if type == 'live': type = 'en vivo'
+                            elif type == 'file': type = 'general'
+                            elif type == 'youtube': type = 'YouTube'
+                            msg2 = msg2 + 'Type: ' + type + '<br>'
+                            # if dt != '':
+                            #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '<br>'
+                            msg2 = msg2 + 'para que pueda ver esta conferencia en la comunidad y conectarla para asistir al evento en ese momento.<br>'
+                            msg2 = msg2 + 'por favor únase a la conferencia comunitaria.'
+                            msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
+
                             from_email = admin.email
                             to_emails = []
                             to_emails.append(member.email)
-                            send_mail_message(from_email, to_emails, title, subject, msg)
+                            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                             msg = 'Dear ' + member.name + ',\nYou\'ve received an invitation to a community ' + group.name + ' from MotherWise Community: The Nest.\nCommunity name: ' + group.name + '\n'
                             msg = msg + 'Conference topic: ' + conf.name + '\n'
@@ -4301,10 +4910,25 @@ def conference_notify(request):
                             elif type == 'file': type = 'General'
                             elif type == 'youtube': type = 'YouTube'
                             msg = msg + 'Type: ' + type + '\n'
-                            if dt != '':
-                                msg = msg + 'Conference start date and time: ' + dt + '\n'
+                            # if dt != '':
+                            #     msg = msg + 'Conference start date and time: ' + dt + '\n'
                             msg = msg + 'So you can see this conference in the community and connect it to attend the event at that time.\n'
                             msg = msg + 'Please join the community conference.\nBest Regards\n\nMotherWise Community'
+
+                            msg2 = member.name + ',\nhas recibido una invitación a una videoconferencia en una comunidad ' + group.name + ' de la comunidad MotherWise: el Nest.\nnombre de la comunidad: ' + group.name + '\n'
+                            msg2 = msg2 + 'tema de la conferencia: ' + conf.name + '\n'
+                            msg2 = msg2 + 'código de entrada: ' + conf.code + '\n'
+                            type = conf.type
+                            if type == 'live': type = 'en vivo'
+                            elif type == 'file': type = 'general'
+                            elif type == 'youtube': type = 'YouTube'
+                            msg2 = msg2 + 'Type: ' + type + '\n'
+                            # if dt != '':
+                            #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '\n'
+                            msg2 = msg2 + 'para que pueda ver esta conferencia en la comunidad y conectarla para asistir al evento en ese momento.\n'
+                            msg2 = msg2 + 'por favor únase a la conferencia comunitaria.\n\nComunidad MotherWise'
+
+                            msg = msg + '\n\n' + msg2
 
                             notification.message = msg
                             notification.save()
@@ -4341,8 +4965,8 @@ def conference_notify(request):
                     conf.status = 'notified'
                     conf.save()
 
-            elif cohort != '':
-                members = Member.objects.filter(admin_id=admin.pk, cohort=cohort)
+            else:
+                members = Member.objects.filter(admin_id=admin.pk)
                 if members.count() > 0:
                     for member in members:
 
@@ -4364,9 +4988,9 @@ def conference_notify(request):
                         snt.noti_id = notification.pk
                         snt.save()
 
-                        title = 'Video Conference Invitation From MotherWise Community: The Nest'
-                        subject = 'You\'ve received an invitation from MotherWise Community: The Nest'
-                        msg = 'Dear ' + member.name + ',<br><br>You\'ve received an invitation to a video conference in a group ' + cohort + ' from MotherWise Community: The Nest.<br><br>Group name: ' + cohort + '<br>'
+                        title = 'Video Conference Invitation In The Nest'
+                        subject = 'You\'ve received an invitation in the Nest. (has recibido una invitación en el Nest.)'
+                        msg = 'Dear ' + member.name + ',<br><br>You\'ve received an invitation to a video conference from MotherWise Community: The Nest.<br><br>'
                         msg = msg + 'Conference topic: ' + conf.name + '<br>'
                         msg = msg + 'Entry code: ' + conf.code + '<br>'
                         type = conf.type
@@ -4374,18 +4998,33 @@ def conference_notify(request):
                         elif type == 'file': type = 'General'
                         elif type == 'youtube': type = 'YouTube'
                         msg = msg + 'Type: ' + type + '<br>'
-                        if dt != '':
-                            msg = msg + 'Conference start date and time: ' + dt + '<br>'
+                        # if dt != '':
+                        #     msg = msg + 'Conference start date and time: ' + dt + '<br>'
                         msg = msg + 'So you can see this conference in the group and connect it to attend the event at that time.<br>'
                         msg = msg + 'Please join the group conference.'
                         msg = msg + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>Join website</a>' + '<br><br>MotherWise Team'
 
+                        title2 = 'invitación de videoconferencia In the Nest'
+                        msg2 = member.name + ',<br><br>has recibido una invitación a una videoconferencia de la comunidad MotherWise: el Nest.<br><br>'
+                        msg2 = msg2 + 'tema de la conferencia: ' + conf.name + '<br>'
+                        msg2 = msg2 + 'código de entrada: ' + conf.code + '<br>'
+                        type = conf.type
+                        if type == 'live': type = 'en vivo'
+                        elif type == 'file': type = 'general'
+                        elif type == 'youtube': type = 'YouTube'
+                        msg2 = msg2 + 'Type: ' + type + '<br>'
+                        # if dt != '':
+                        #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '<br>'
+                        msg2 = msg2 + 'para que pueda ver esta conferencia en el grupo y conectarla para asistir al evento en ese momento.<br>'
+                        msg2 = msg2 + 'por favor únase a la conferencia grupal.'
+                        msg2 = msg2 + '<br><a href=\'' + settings.URL + '/mothers/notifications?noti_id=' + str(notification.pk) + '\' target=\'_blank\'>unirse al sitio web</a>' + '<br><br>Equipo MotherWise'
+
                         from_email = admin.email
                         to_emails = []
                         to_emails.append(member.email)
-                        send_mail_message(from_email, to_emails, title, subject, msg)
+                        send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
-                        msg = 'Dear ' + member.name + ',\nYou\'ve received an invitation to a group ' + cohort + ' from MotherWise Community: The Nest.\nGroup name: ' + cohort + '\n'
+                        msg = 'Dear ' + member.name + ',\nYou\'ve received an invitation from MotherWise Community: The Nest.\n'
                         msg = msg + 'Conference topic: ' + conf.name + '\n'
                         msg = msg + 'Entry code: ' + conf.code + '\n'
                         type = conf.type
@@ -4393,10 +5032,25 @@ def conference_notify(request):
                         elif type == 'file': type = 'General'
                         elif type == 'youtube': type = 'YouTube'
                         msg = msg + 'Type: ' + type + '\n'
-                        if dt != '':
-                            msg = msg + 'Conference start date and time: ' + dt + '\n'
+                        # if dt != '':
+                        #     msg = msg + 'Conference start date and time: ' + dt + '\n'
                         msg = msg + 'So you can see this conference in the group and connect it to attend the event at that time.\n'
                         msg = msg + 'Please join the group conference.\nBest Regards\n\nMotherWise Community'
+
+                        msg2 = member.name + ',\nhas recibido una invitación a una videoconferencia de la comunidad MotherWise: el Nest.\n'
+                        msg2 = msg2 + 'tema de la conferencia: ' + conf.name + '\n'
+                        msg2 = msg2 + 'código de entrada: ' + conf.code + '\n'
+                        type = conf.type
+                        if type == 'live': type = 'en vivo'
+                        elif type == 'file': type = 'general'
+                        elif type == 'youtube': type = 'YouTube'
+                        msg2 = msg2 + 'Type: ' + type + '\n'
+                        # if dt != '':
+                        #     msg2 = msg2 + 'fecha y hora de inicio de la conferencia: ' + dt + '\n'
+                        msg2 = msg2 + 'para que pueda ver esta conferencia en el grupo y conectarla para asistir al evento en ese momento.\n'
+                        msg2 = msg2 + 'por favor únase a la conferencia grupal.\n\nComunidad MotherWise'
+
+                        msg = msg + '\n\n' + msg2
 
                         notification.message = msg
                         notification.save()
@@ -4441,9 +5095,6 @@ def conference_notify(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
 @api_view(['GET', 'POST'])
 def video_selected_members(request):
 
@@ -4623,7 +5274,10 @@ def send_reply_message(request):
             # to_emails.append(member.email)
             # send_mail_message(from_email, to_emails, title, subject, msg)
 
-            msg = member.name + ', You\'ve received a reply message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+            msg = member.name + ', You\'ve received a reply message in the Nest.\nThe message is as following:\n' + message
+            msg2 = member.name + ', has recibido un mensaje de respuesta en el Nest.\nel mensaje es el siguiente:\n' + message
+
+            msg = msg + '\n\n' + msg2
 
             notification = Notification()
             notification.member_id = member.pk
@@ -4724,17 +5378,24 @@ def send_member_message(request):
         if members.count() > 0:
             member = members[0]
 
-            title = 'You\'ve received a message from MotherWise Community: Nest'
-            subject = 'MotherWise Community'
-            msg = 'Dear ' + member.name + ',<br><br>'
+            title = 'You\'ve received a message in the Nest'
+            subject = 'MotherWise Community (Comunidad MotherWise: el Nest)'
+            msg = 'Dear ' + member.name + ', You\'ve received a message in the Nest. The message is as following:<br><br>'
             msg = msg + message
+
+            title2 = 'has recibido un mensaje en el Nest.'
+            msg2 = member.name + ', has recibido un mensaje en el Nest. el mensaje es el siguiente:<br><br>'
+            msg2 = msg2 + message
 
             from_email = admin.email
             to_emails = []
             to_emails.append(member.email)
-            send_mail_message(from_email, to_emails, title, subject, msg)
+            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
             msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+            msg2 = member.name + ', has recibido un mensaje en el Nest.\nel mensaje es el siguiente:\n' + message
+
+            msg = msg + '\n\n' + msg2
 
             notification = Notification()
             notification.member_id = member.pk
@@ -4806,56 +5467,63 @@ def to_conferences(request):
     adminID = request.session['adminID']
     admin = Member.objects.get(id=adminID)
 
+    c = Cohort.objects.filter(admin_id=admin.pk).first()
+    cohorts = []
+    if c is not None:
+        if c.cohorts != '': cohorts = c.cohorts.split(',')
+
     confs = Conference.objects.filter(member_id=admin.pk).order_by('-id')
-    gconfList = []
-    cconfList = []
+    confList = []
     for conf in confs:
         conf.created_time = datetime.datetime.fromtimestamp(float(int(conf.created_time)/1000)).strftime("%b %d, %Y %H:%M")
         if conf.event_time != '': conf.event_time = datetime.datetime.fromtimestamp(float(int(conf.event_time)/1000)).strftime("%b %d, %Y %H:%M")
-        if conf.cohort == '':
-            groups = Group.objects.filter(id=conf.group_id)
-            if groups.count() > 0:
-                group = groups[0]
+        if int(conf.group_id) > 0:
+            group = Group.objects.filter(id=conf.group_id).first()
+            if group is not None:
                 data={
                     'conf':conf,
                     'group': group
                 }
-                gconfList.append(data)
-        elif conf.group_id == '':
-            cconfList.append(conf)
+                confList.append(data)
+        else:
+            data={
+                'conf':conf,
+                'group': None
+            }
+            confList.append(data)
 
     groups = Group.objects.filter(member_id=admin.pk).order_by('-id')
 
-    return render(request, 'motherwise/conferences.html', {'conf_opt':'new_conference', 'gconfs':gconfList, 'cconfs':cconfList, 'groups':groups})
+    return render(request, 'motherwise/conferences.html', {'conf_opt':'new_conference', 'confs':confList, 'cohorts':cohorts, 'groups':groups})
 
 
 
 
-from twilio.rest import Client
+# from twilio.rest import Client
 
-def sendSMS(to_phone, msg):
+# def sendSMS(to_phone, msg):
 
-    # Your Account Sid and Auth Token from twilio.com/console
-    # DANGER! This is insecure. See http://twil.io/secure
-    account_sid = 'ACa84d7b1bddaec4ba6465060ae44fb2f3'
-    auth_token = 'bfc5cdda6bf320a153116fd80b2a9b7a'
-    client = Client(account_sid, auth_token)
+#     # Your Account Sid and Auth Token from twilio.com/console
+#     # DANGER! This is insecure. See http://twil.io/secure
+#     account_sid = 'ACa84d7b1bddaec4ba6465060ae44fb2f3'
+#     auth_token = 'bfc5cdda6bf320a153116fd80b2a9b7a'
+#     client = Client(account_sid, auth_token)
 
-    message = client.messages \
-                    .create(
-                         body=msg,
-                         from_='+17206795056',
-                         to=to_phone
-                     )
+#     message = client.messages \
+#                     .create(
+#                          body=msg,
+#                          from_='+17206795056',
+#                          to=to_phone
+#                      )
 
-    print(message.sid)
+#     print(message.sid)
 
-    return to_phone
+#     return to_phone
 
 
-def sms_test(request):
-    to_phone = sendSMS('+18438161828', '12345')         #  18438161828
-    return HttpResponse('SMS sent to ' + to_phone)
+# def sms_test(request):
+#     to_phone = sendSMS('+18438161828', '12345')         #  18438161828
+#     return HttpResponse('SMS sent to ' + to_phone)
 
 
 def noti_detail(request):
@@ -4955,19 +5623,30 @@ def notify_group_chat(request):
                     member = members[0]
 
                     title = 'MotherWise Community: The Nest'
-                    subject = 'You\'ve received a community message from ' + group.name
+                    subject = 'You\'ve received a community message from (has recibido un mensaje de la comunidad de)' + group.name
                     msg = 'Dear ' + member.name + ', You\'ve received a community message from manager in ' + group.name + '. The message is as following:<br><br>'
                     msg = msg + message + '<br><br>'
                     msg = msg + '<a href=\'' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid + '\' target=\'_blank\'>Connect the community to view message</a>'
 
+                    title2 = 'Comunidad MotherWise: el Nest'
+                    msg2 = member.name + ', has recibido un mensaje de la comunidad del administrador en ' + group.name + '. el mensaje es el siguiente:<br><br>'
+                    msg2 = msg2 + message + '<br><br>'
+                    msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid + '\' target=\'_blank\'>conectar la comunidad para ver el mensaje</a>'
+
                     from_email = admin.email
                     to_emails = []
                     to_emails.append(member.email)
-                    send_mail_message(from_email, to_emails, title, subject, msg)
+                    send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                     msg = member.name + ', You\'ve received a community message from manager in ' + group.name + '. The message is as following:\n\n'
                     msg = msg + message + '\n\n'
                     msg = msg + 'Click on this link to view the message: ' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid
+
+                    msg2 = member.name + ', has recibido un mensaje de la comunidad del administrador en ' + group.name + '. el mensaje es el siguiente:\n\n'
+                    msg2 = msg2 + message + '\n\n'
+                    msg2 = msg2 + 'haga clic en este enlace para ver el mensaje: ' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid
+
+                    msg = msg + '\n\n' + msg2
 
                     notification = Notification()
                     notification.member_id = member.pk
@@ -5030,14 +5709,25 @@ def notify_group_chat(request):
                     msg = msg + message + '<br><br>'
                     msg = msg + '<a href=\'' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort + '\' target=\'_blank\'>Connect the group to view message</a>'
 
+                    title2 = 'Comunidad MotherWise: el Nest'
+                    msg2 = member.name + ', has recibido un mensaje de la comunidad del administrador en ' + cohort + '. el mensaje es el siguiente:<br><br>'
+                    msg2 = msg2 + message + '<br><br>'
+                    msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort + '\' target=\'_blank\'>conectar el grupo para ver el mensaje</a>'
+
                     from_email = admin.email
                     to_emails = []
                     to_emails.append(member.email)
-                    send_mail_message(from_email, to_emails, title, subject, msg)
+                    send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                     msg = member.name + ', You\'ve received a group message from manager in ' + cohort + '. The message is as following:\n\n'
                     msg = msg + message + '\n\n'
                     msg = msg + 'Click on this link to view the message: ' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort
+
+                    msg2 = member.name + ', has recibido un mensaje de la comunidad del administrador en ' + cohort + '. el mensaje es el siguiente:\n\n'
+                    msg2 = msg2 + message + '\n\n'
+                    msg2 = msg2 + 'haga clic en este enlace para ver el mensaje: ' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort
+
+                    msg = msg + '\n\n' + msg2
 
                     notification = Notification()
                     notification.member_id = member.pk
@@ -5121,6 +5811,8 @@ def sendfcmpush(request):
                 if member.cohort == 'admin':
                     url = '/group_private_chat?email=' + sender.email
                 msg = member.name + ', You\'ve received a message from ' + sender.name + '.\nThe message is as following:\n' + message
+                msg2 = member.name + ', has recibido un mensaje de ' + sender.name + '.\nel mensaje es el siguiente:\n' + message
+                msg = msg + '\n\n' + msg2
                 send_push(playerIDList, msg, url)
 
         resp = {'result_code': '0'}
@@ -5240,17 +5932,24 @@ def warning_message(request):
         if members.count() > 0:
             member = members[0]
 
-            title = 'You\'ve received a warning message from MotherWise Community: Nest'
-            subject = 'MotherWise Community'
-            msg = member.name + ',<br><br>'
+            title = 'You\'ve received a warning message in the Nest'
+            subject = 'MotherWise Community (Comunidad MotherWise: el Nest)'
+            msg = member.name + ', You\'ve received a warning message in the Nest. The message is as following:<br><br>'
             msg = msg + message
+
+            title2 = 'has recibido un mensaje de advertencia en el Nest:'
+            msg2 = member.name + ', has recibido un mensaje de advertencia en el Nest. el mensaje es el siguiente:<br><br>'
+            msg2 = msg2 + message
 
             from_email = admin.email
             to_emails = []
             to_emails.append(member.email)
-            send_mail_message(from_email, to_emails, title, subject, msg)
+            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
             msg = member.name + ', You\'ve received a warning message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+            msg2 = member.name + ', has recibido un mensaje de advertencia en el Nest.\nel mensaje es el siguiente:\n' + message
+
+            msg = msg + '\n\n' + msg2
 
             notification = Notification()
             notification.member_id = member.pk
@@ -5298,12 +5997,765 @@ def warning_message(request):
                 playerIDList = []
                 playerIDList.append(member.playerID)
                 msg = member.name + ', You\'ve received a warning message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+                msg2 = member.name + ', has recibido un mensaje de advertencia en el Nest.\nel mensaje es el siguiente:\n' + message
+                msg = msg + '\n\n' + msg2
                 url = '/mothers/notifications?noti_id=' + str(notification.pk)
                 send_push(playerIDList, msg, url)
 
             return HttpResponse('0')
         else:
             return HttpResponse('1')
+
+
+
+
+def reinvite_member(request):
+    member_id = request.GET['member_id']
+    members = Member.objects.filter(id=member_id)
+    if members.count() > 0:
+        member = members.first()
+        name = member.name
+        email = member.email
+        phone_number = member.phone_number
+        cohort = member.cohort
+
+        try:
+            if request.session['adminID'] == '' or request.session['adminID'] == 0:
+                return HttpResponse('no_admin_auth')
+        except KeyError:
+            print('no session')
+            return HttpResponse('no_admin_auth')
+
+        adminID = request.session['adminID']
+        admin = Member.objects.get(id=adminID)
+
+        groupText = ''
+        if member.cohort != '':
+            groupText = '<br>Group: ' + member.cohort
+
+        title = 'Invitation for MotherWise Community: The Nest'
+        subject = 'MotherWise Community: The Nest'
+        message = 'Dear ' + member.name + ',<br><br>Welcome to \"The Nest\": MotherWise\'s virtual community!<br><br>The Nest is an opportunity to connect and reconnect with other MotherWise families.<br>'
+        message = message + 'You can post articles, share pregnancy and new baby tips, watch videos, and chat directly with other moms. You\'ll also stay up-to-date on all the new programs and special events MotherWise has to offer!<br><br>'
+        message = message + settings.URL + '/nest/mothers' + '<br><br>We are providing you with your initial login information as follows:<br><br>'
+        message = message + 'E-mail: ' + member.email + ' (your email)<br>Password: ' + member.password + groupText + '<br><br>'
+
+        message = message + '***By signing up to The Nest, you are agreeing to not engage in any type of: ***<br>'
+        message = message + '        · hate speech<br>'
+        message = message + '        · cyberbullying<br>'
+        message = message + '        · solicitation and/or selling of goods or services<br>'
+        message = message + '        · posting content inappropriate for our diverse community including but not limited to political<br>'
+        message = message + '    or religious views<br><br>'
+        message = message + 'We want The Nest to be a safe place for support and inspiration. Help us foster this community and please respect everyone on The Nest.<br><br>'
+        message = message + 'Please watch this video to see how to login: https://vimeo.com/430742850<br><br>'
+        message = message + 'If you have any question, please contact us:<br><br>'
+
+        message = message + '   E-mail: ' + 'motherwisecolorado@gmail.com' + '<br>   Phone number: ' + '720-504-4624<br><br>'
+        message = message + '<a href=\'' + settings.URL + '/nest/mothers' + '\' target=\'_blank\'>Join website</a><br><br>'
+        message = message + 'Sincerely<br><br>MotherWise Team'
+
+        message = message + '<br><br>'
+
+        groupText2 = ''
+        if member.cohort != '':
+            groupText2 = '<br>Grupo: ' + member.cohort
+
+        title2 = 'Invitación para la comunidad de MotherWise: El Nido'
+        message2 = 'Querida ' + member.name + ',<br><br>¡Bienvenida al \"Nido\": la comunidad virtual de MotherWise!<br><br>El Nido es una oportunidad para conectarse y reconectarse con otras madres de MotherWise.<br>'
+        message2 = message2 + 'Puede publicar artículos, compartir consejos sobre embarazo y nuevos bebés, ver videos y chatear directamente con otras madres. ¡También se mantendrá al tanto sobre todos los nuevos programas y eventos especiales que MotherWise tiene para ofrecer!<br><br>'
+        message2 = message2 + settings.URL + '/nest/mothers' + '<br><br>Le proporcionamos su información de inicio de la siguiente manera:<br><br>'
+        message2 = message2 + 'Correo electrónico: ' + member.email + ' (Tu correo electrónico)<br>Contraseña: ' + member.password + groupText2 + '<br><br>'
+
+        message2 = message2 + '***Al suscribirse al Nido, acepta no participar en ningún tipo de: ***<br>'
+        message2 = message2 + '        · El discurso del odio<br>'
+        message2 = message2 + '        · Ciberacoso<br>'
+        message2 = message2 + '        · Solicitud y/o venta de bienes o servicios<br>'
+        message2 = message2 + '        · Publicar contenido inapropiado para nuestra diversa comunidad, incluidos, entre otros, puntos de vista políticos o religiosos<br><br>'
+        message2 = message2 + 'Queremos que El Nido sea un lugar seguro para apoyo e inspiración. Por favor ayúdanos a fomentar esta comunidad y por favor respeta a todos en El Nido.<br><br>'
+        message2 = message2 + 'Mire este video para ver cómo iniciar sesión: https://vimeo.com/430742850<br><br>'
+        message2 = message2 + 'Si usted tiene cualquier pregunta, por favor póngase en contacto con nosotros:<br><br>'
+
+        message2 = message2 + '   Correo electrónico: ' + 'motherwisecolorado@gmail.com' + '<br>   Número de teléfono: ' + '720-504-4624<br><br>'
+        message2 = message2 + '<a href=\'' + settings.URL + '/nest/mothers' + '\' target=\'_blank\'>Unirse al sitio web</a><br><br>'
+        message2 = message2 + 'Sinceramente,<br><br>el Equipo de MotherWise'
+
+        from_email = admin.email
+        to_emails = []
+        to_emails.append(member.email)
+        send_mail_message0(from_email, to_emails, title, subject, message, title2, message2)
+
+        return HttpResponse('success')
+
+    return HttpResponse('no_auth')
+
+
+
+
+def toplevelsetup(request):
+    post_id = request.GET['post_id']
+    posts = Post.objects.filter(id=post_id, sch_status='')
+    if posts.count() > 0:
+        post = posts.first()
+        if not 'top' in post.status:
+            post.status += 'top'
+        else:
+            post.status = post.status.replace('top','')
+        post.save()
+    return redirect('/manager/posts')
+
+
+
+
+
+def now():
+    from datetime import datetime
+    return datetime.now()
+
+
+def always_on(request):
+
+    year = now().year
+    month = now().month
+    day = now().day
+    hour = now().hour
+    minute = now().minute
+
+    list = []
+
+    import datetime
+    posts = Post.objects.filter(~Q(scheduled_time=''))
+    for post in posts:
+        splits = post.scheduled_time.split('-')
+        pyear = int(splits[0])
+        pmonth = int(splits[1])
+        pday = int(splits[2])
+        phour = int(splits[3])
+        pminute = int(splits[4])
+
+        sxxx = datetime.datetime(pyear, pmonth, pday, phour, pminute, 1)
+        nxxx = datetime.datetime(year, month, day, hour, minute, 1)
+        duration = nxxx - sxxx
+
+        list.append(duration.total_seconds())
+
+        if duration.total_seconds() >= 0:
+
+            if post.notified_members != '' and post.sch_status != '':
+                ids = post.notified_members.split(',')
+                for m_id in ids:
+                    members = Member.objects.filter(id=int(m_id))
+                    if members.count() > 0:
+                        member = members.first()
+                        admin = Member.objects.get(id=member.admin_id)
+
+                        title = 'MotherWise Community: The Nest'
+                        subject = 'You\'ve received a post in the Nest (has recibido una publicación en el Nest)'
+                        msg = 'Dear ' + member.name + ', You\'ve received a post from MotherWise Community: The Nest.<br><br>'
+                        msg = msg + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>View the post</a>'
+
+                        title2 = 'comunidad MotherWise: el Nest'
+                        msg2 = member.name + ', has recibido una publicación en el Nest.<br><br>'
+                        msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>ver la publicación</a>'
+
+                        from_email = admin.email
+                        to_emails = []
+                        to_emails.append(member.email)
+                        send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
+
+                        msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\n\n'
+                        msg = msg + 'Click on this link to view the post: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
+
+                        msg2 = member.name + ', has recibido una publicación en el Nest.\n\n'
+                        msg2 = msg2 + 'haga clic en este enlace para ver la publicación: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
+
+                        msg = msg + '\n\n' + msg2
+
+                        notification = Notification()
+                        notification.member_id = member.pk
+                        notification.sender_id = admin.pk
+                        notification.message = msg
+                        notification.notified_time = str(int(round(time.time() * 1000)))
+                        notification.save()
+
+                        rcv = Received()
+                        rcv.member_id = member.pk
+                        rcv.sender_id = admin.pk
+                        rcv.noti_id = notification.pk
+                        rcv.save()
+
+                        snt = Sent()
+                        snt.member_id = member.pk
+                        snt.sender_id = admin.pk
+                        snt.noti_id = notification.pk
+                        snt.save()
+
+                        ##########################################################################################################################################################################
+
+                        db = firebase.database()
+                        data = {
+                            "msg": msg,
+                            "date":str(int(round(time.time() * 1000))),
+                            "sender_id": str(admin.pk),
+                            "sender_name": admin.name,
+                            "sender_email": admin.email,
+                            "sender_photo": admin.photo_url,
+                            "role": "admin",
+                            "type": "post",
+                            "id": str(post.pk),
+                            "mes_id": str(notification.pk)
+                        }
+
+                        db.child("notify").child(str(member.pk)).push(data)
+                        db.child("notify2").child(str(member.pk)).push(data)
+
+                        sendFCMPushNotification(member.pk, admin.pk, msg)
+
+                        #################################################################################################################################################################################
+
+                        if member.playerID != '':
+                            playerIDList = []
+                            playerIDList.append(member.playerID)
+                            url = '/mothers/notifications?noti_id=' + str(notification.pk)
+                            if member.cohort == 'admin':
+                                url = '/manager/notifications?noti_id=' + str(notification.pk)
+                            send_push(playerIDList, msg, url)
+
+            if post.sch_status != '':
+                post.sch_status = ''
+                post.save()
+
+    return HttpResponse(str(list) + ' /// ' + str(now()))
+
+
+
+
+def openbroadcast(request):
+    try:
+        if request.session['adminID'] == '' or request.session['adminID'] == 0:
+            return HttpResponse('no_admin_auth')
+    except KeyError:
+        print('no session')
+        return HttpResponse('no_admin_auth')
+
+    adminID = request.session['adminID']
+    admin = Member.objects.get(id=adminID)
+    users = Member.objects.filter(~Q(id=admin.pk)).order_by('-id')
+    return render(request, 'motherwise/broadcast.html', {'users':users})
+
+
+@api_view(['GET', 'POST'])
+def broadcast(request):
+    try:
+        if request.session['adminID'] == '' or request.session['adminID'] == 0:
+            return HttpResponse('no_admin_auth')
+    except KeyError:
+        print('no session')
+        return HttpResponse('no_admin_auth')
+
+    adminID = request.session['adminID']
+    admin = Member.objects.get(id=adminID)
+
+    if request.method == 'POST':
+        message = request.POST.get('message', '')
+
+        is_file = False
+
+        fname = None
+        fread = None
+        fcontenttype = None
+
+        try:
+            f = request.FILES['file']
+            if f.size > 5242880:
+                is_file = False
+            else:
+                fname = f.name
+                fread = f.read()
+                fcontenttype = f.content_type
+                is_file = True
+        except MultiValueDictKeyError:
+            is_file = False
+
+        members = Member.objects.filter(~Q(id=admin.pk)).order_by('-id')
+
+        for member in members:
+            title = 'MotherWise Community: The Nest'
+            subject = 'You\'ve received a message from the Nest (Has recibido un mensaje del Nest)'
+
+            from_email = admin.email
+            to_emails = []
+            if member.registered_time != '' and member.notice_excluded == '':
+                to_emails.append(member.email)
+
+                try:
+                    if is_file == False: send_mail_message(from_email, to_emails, title, subject, message)
+                    else: send_mail_message_with_file(from_email, to_emails, title, subject, message, fname, fread, fcontenttype)
+                except: pass
+
+                try: sendFCMPushNotification(member.pk, admin.pk, message)
+                except: pass
+
+                notification = Notification()
+                notification.member_id = member.pk
+                notification.sender_id = admin.pk
+                notification.message = message
+                notification.notified_time = str(int(round(time.time() * 1000)))
+                notification.save()
+
+                if member.playerID != '':
+                    try:
+                        playerIDList = []
+                        playerIDList.append(member.playerID)
+                        msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\nThe message is as following:\n' + message
+                        msg2 = member.name + ', has recibido un mensaje de Nest.\nel mensaje es el siguiente:\n' + message
+                        msg = msg + '\n\n' + msg2
+                        url = '/mothers/notifications?noti_id=' + str(notification.pk)
+                        send_push(playerIDList, msg, url)
+                    except: pass
+
+        return HttpResponse('success')
+
+
+
+@api_view(['POST','GET'])
+def bexcludedemailsave(request):
+    try:
+        if request.session['adminID'] == '' or request.session['adminID'] == 0:
+            return HttpResponse('no_admin_auth')
+    except KeyError:
+        print('no session')
+        return HttpResponse('no_admin_auth')
+
+    adminID = request.session['adminID']
+    admin = Member.objects.get(id=adminID)
+
+    if request.method == 'POST':
+        exusers = request.POST.getlist('exusers[]')
+
+        members = Member.objects.filter(~Q(id=admin.pk)).order_by('-id')
+        for member in members:
+            if member.notice_excluded != '':
+                member.notice_excluded = ''
+                member.save()
+        for uid in exusers:
+            member = members.filter(id=uid).first()
+            if member is not None:
+                member.notice_excluded = 'yes'
+                member.save()
+        return HttpResponse(json.dumps({'result':'success', 'exusers':str(len(exusers))}))
+
+
+
+def send_mail_message_with_file (from_email, to_emails, title, subject, message, fname, fread, fcontenttype):
+    html =  """\
+                <html>
+                    <head></head>
+                    <body>
+
+                        <h2 style="margin-left:10px; color:#02839a;">{title}</h2>
+                        <div style="font-size:14px; white-space: pre-line; word-wrap: break-word;">
+                            {mes}
+                        </div>
+                    </body>
+                </html>
+            """
+    html = html.format(title=title, mes=message)
+
+    mail = EmailMultiAlternatives(subject, '', from_email, to_emails)
+    mail.attach_alternative(html, "text/html")
+    mail.attach(fname, fread, fcontenttype)
+    mail.send(fail_silently=False)
+
+
+
+#####################################################################################################################################
+
+def tonewpost(request):
+    import datetime
+    try:
+        if request.session['adminID'] == 0:
+            return render(request, 'motherwise/admin.html')
+    except KeyError:
+        print('no session')
+        return render(request, 'motherwise/admin.html')
+
+    adminID = request.session['adminID']
+    admin = Member.objects.get(id=adminID)
+
+    users = Member.objects.filter(admin_id=admin.pk).order_by('-id')
+    userList = []
+    for user in users:
+        if user.registered_time != '':
+            user.username = '@' + user.email[0:user.email.find('@')]
+            userList.append(user)
+
+    categories = []
+    pc = PostCategory.objects.filter(admin_id=admin.pk).first()
+    if pc is not None:
+        if pc.categories != '': categories = pc.categories.split(',')
+
+    token = request.GET['token']
+
+    comida = ''
+    try: comida = request.GET['comida']
+    except: pass
+
+    return render(request, 'mothers/new_post.html', {'me':admin, 'users':userList, 'token':token, 'comida':comida, 'categories':categories, 'opt':'admin'})
+
+
+
+
+@api_view(['GET', 'POST'])
+def newpost(request):
+    if request.method == 'POST':
+
+        title = request.POST.get('title', '')
+        category = request.POST.get('category', '')
+        content = request.POST.get('content', '')
+        scheduled_time = request.POST.get('scheduled_time', '')
+
+        try:
+            if request.session['adminID'] == '' or request.session['adminID'] == 0:
+                return HttpResponse('error')
+        except KeyError:
+            print('no session')
+            return HttpResponse('error')
+
+        adminID = request.session['adminID']
+        admin = Member.objects.get(id=adminID)
+
+        post = Post()
+        post.member_id = admin.pk
+        post.title = title
+        post.category = category
+        post.content = emoji.demojize(content)
+        post.picture_url = ''
+        post.comments = '0'
+        post.likes = '0'
+        post.loves = '0'
+        post.haha = '0'
+        post.wow = '0'
+        post.sad = '0'
+        post.angry = '0'
+        post.reactions = '0'
+        post.scheduled_time = scheduled_time
+        post.posted_time = str(int(round(time.time() * 1000)))
+
+        try:
+            ids = request.POST.getlist('users[]')
+            if len(ids) > 0: post.notified_members = ",".join(str(i) for i in ids)
+        except KeyError:
+            print('No key')
+
+        try:
+            ids = request.POST.get('selections','')
+            if ids != '': post.notified_members = ids
+        except KeyError:
+            print('No key')
+
+        if scheduled_time != '': post.sch_status = 'scheduled'
+        post.save()
+
+        createPostUrlPreview(post)
+
+        fs = FileSystemStorage()
+        i = 0
+        for f in request.FILES.getlist('pictures'):
+            i = i + 1
+            filename = fs.save(f.name, f)
+            uploaded_url = fs.url(filename)
+            if i == 1:
+                post.picture_url = settings.URL + uploaded_url
+                post.save()
+            postPicture = PostPicture()
+            postPicture.post_id = post.pk
+            postPicture.picture_url = settings.URL + uploaded_url
+            postPicture.filename = filename
+            postPicture.save()
+
+
+        if post.scheduled_time == '':
+
+            for member_id in ids:
+                members = Member.objects.filter(id=int(member_id))
+                if members.count() > 0:
+                    member = members[0]
+
+                    title = 'MotherWise Community: The Nest'
+                    subject = 'You\'ve received a post in the Nest (has recibido una publicación en el Nest)'
+                    msg = 'Dear ' + member.name + ', You\'ve received a post from MotherWise Community: The Nest.<br><br>'
+                    msg = msg + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>View the post</a>'
+
+                    title2 = 'comunidad MotherWise: el Nest'
+                    msg2 = member.name + ', has recibido una publicación en el Nest.<br><br>'
+                    msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>ver la publicación</a>'
+
+                    from_email = admin.email
+                    to_emails = []
+                    to_emails.append(member.email)
+                    send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
+
+                    msg = member.name + ', You\'ve received a message from MotherWise Community: The Nest.\n\n'
+                    msg = msg + 'Click on this link to view the post: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
+
+                    msg2 = member.name + ', has recibido una publicación en el Nest.\n\n'
+                    msg2 = msg2 + 'haga clic en este enlace para ver la publicación: ' + settings.URL + '/mothers/to_post?post_id=' + str(post.pk)
+
+                    msg = msg + '\n\n' + msg2
+
+                    notification = Notification()
+                    notification.member_id = member.pk
+                    notification.sender_id = admin.pk
+                    notification.message = msg
+                    notification.notified_time = str(int(round(time.time() * 1000)))
+                    notification.save()
+
+                    rcv = Received()
+                    rcv.member_id = member.pk
+                    rcv.sender_id = admin.pk
+                    rcv.noti_id = notification.pk
+                    rcv.save()
+
+                    snt = Sent()
+                    snt.member_id = member.pk
+                    snt.sender_id = admin.pk
+                    snt.noti_id = notification.pk
+                    snt.save()
+
+                    ##########################################################################################################################################################################
+
+                    db = firebase.database()
+                    data = {
+                        "msg": msg,
+                        "date":str(int(round(time.time() * 1000))),
+                        "sender_id": str(admin.pk),
+                        "sender_name": admin.name,
+                        "sender_email": admin.email,
+                        "sender_photo": admin.photo_url,
+                        "role": "admin",
+                        "type": "post",
+                        "id": str(post.pk),
+                        "mes_id": str(notification.pk)
+                    }
+
+                    db.child("notify").child(str(member.pk)).push(data)
+                    db.child("notify2").child(str(member.pk)).push(data)
+
+                    sendFCMPushNotification(member.pk, admin.pk, msg)
+
+                    #################################################################################################################################################################################
+
+                    if member.playerID != '':
+                        playerIDList = []
+                        playerIDList.append(member.playerID)
+                        url = '/mothers/notifications?noti_id=' + str(notification.pk)
+                        send_push(playerIDList, msg, url)
+
+        return HttpResponse('success')
+
+
+
+def analytics(request):
+
+    from datetime import datetime
+
+    try:
+        if request.session['adminID'] == '' or request.session['adminID'] == 0:
+            return HttpResponse('error')
+    except KeyError:
+        print('no session')
+        return HttpResponse('error')
+
+    adminID = request.session['adminID']
+    admin = Member.objects.get(id=adminID)
+
+    members = Member.objects.filter(admin_id=admin.pk)
+    groups = Cohort.objects.filter(admin_id=admin.pk).first().cohorts.split(',')
+    gcnt = len(groups)
+    groups1 = groups[:int(gcnt / 2)]
+    groups2 = groups[int(gcnt / 2):gcnt]
+
+    inviteds1 = [0] * len(groups1)
+    activateds1 = [0] * len(groups1)
+    group_posts1 = [0] * len(groups1)
+
+    inviteds2 = [0] * len(groups2)
+    activateds2 = [0] * len(groups2)
+    group_posts2 = [0] * len(groups2)
+
+    total_activs = 0
+    activ_percentlist_bygroup = []
+
+    monthly_activateds1 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    monthly_posts1 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    monthly_activateds2 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    monthly_posts2 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    monthly_activateds3 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    monthly_posts3 = [0,0,0,0,0,0,0,0,0,0,0,0]
+
+    cities = []
+    activateds_bycity = []
+    activated_members_bycity = []
+
+    this_year = datetime.fromtimestamp(time.time()).year
+    last_year1 = this_year - 1
+    last_year2 = this_year - 2
+
+    for member in members:
+        if member.cohort != 'admin' and member.cohort != '':
+            if member.cohort in groups1:
+                index_invited = groups1.index(member.cohort)
+                invits = inviteds1[index_invited] + 1
+                inviteds1[index_invited] = invits
+                if member.registered_time != '' and int(member.registered_time) > 0:
+                    index_activated = groups1.index(member.cohort)
+                    activs = activateds1[index_activated] + 1
+                    activateds1[index_activated] = activs
+                    total_activs = total_activs + 1
+
+                    posts = Post.objects.filter(member_id=member.pk)
+                    for post in posts:
+                        psts = group_posts1[index_activated] + 1
+                        group_posts1[index_activated] = psts
+            elif member.cohort in groups2:
+                index_invited = groups2.index(member.cohort)
+                invits = inviteds2[index_invited] + 1
+                inviteds2[index_invited] = invits
+                if member.registered_time != '' and int(member.registered_time) > 0:
+                    index_activated = groups2.index(member.cohort)
+                    activs = activateds2[index_activated] + 1
+                    activateds2[index_activated] = activs
+                    total_activs = total_activs + 1
+
+                    posts = Post.objects.filter(member_id=member.pk)
+                    for post in posts:
+                        psts = group_posts2[index_activated] + 1
+                        group_posts2[index_activated] = psts
+
+
+        if member.registered_time != '' and int(member.registered_time) > 0:
+            registered_date_obj = datetime.fromtimestamp(int(member.registered_time)/1000)
+            if this_year == registered_date_obj.year:
+                activs = monthly_activateds1[registered_date_obj.month - 1] + 1
+                monthly_activateds1[registered_date_obj.month - 1] = activs
+            if last_year1 == registered_date_obj.year:
+                activs = monthly_activateds2[registered_date_obj.month - 1] + 1
+                monthly_activateds2[registered_date_obj.month - 1] = activs
+            if last_year2 == registered_date_obj.year:
+                activs = monthly_activateds3[registered_date_obj.month - 1] + 1
+                monthly_activateds3[registered_date_obj.month - 1] = activs
+            if member.city.replace('\'','').strip() not in cities:
+                cities.append(member.city.replace('\'','').strip())
+                activateds_bycity.append(0)
+                activated_members_bycity.append([])
+            activs = activateds_bycity[cities.index(member.city.replace('\'','').strip())] + 1
+            activateds_bycity[cities.index(member.city.replace('\'','').strip())] = activs
+            activated_members_bycity[cities.index(member.city.replace('\'','').strip())].append(member)
+
+            posts = Post.objects.filter(member_id=member.pk)
+            for post in posts:
+                posted_date_obj = datetime.fromtimestamp(int(post.posted_time)/1000)
+                if this_year == posted_date_obj.year:
+                    psts = monthly_posts1[posted_date_obj.month - 1] + 1
+                    monthly_posts1[posted_date_obj.month - 1] = psts
+                if last_year1 == posted_date_obj.year:
+                    psts = monthly_posts2[posted_date_obj.month - 1] + 1
+                    monthly_posts2[posted_date_obj.month - 1] = psts
+                if last_year2 == posted_date_obj.year:
+                    psts = monthly_posts3[posted_date_obj.month - 1] + 1
+                    monthly_posts3[posted_date_obj.month - 1] = psts
+
+
+    cityActivsList = []
+    cityActivsChartWidth = 0
+    for i in range(0, len(cities)):
+        data = {
+            'city': cities[i],
+            'activsval': activateds_bycity[i],
+            'activmembers': activated_members_bycity[i]
+        }
+        cityActivsList.append(data)
+        cityActivsChartWidth = cityActivsChartWidth + 50
+
+    activateds = activateds1 + activateds2
+
+    for i in range(0, len(activateds)):
+        percentval = round(activateds[i] * 100 / total_activs, 2)
+        data = {
+            'group': groups[i],
+            'activ_percent': percentval
+        }
+        activ_percentlist_bygroup.append(data)
+
+    activ_percent = round(total_activs * 100 / members.count(), 2)
+    activdata = {
+        'percvalue': activ_percent,
+        'title': 'Activated'
+    }
+    inactivdata = {
+        'percvalue': round(100 - activ_percent, 2),
+        'title': 'Inactivated'
+    }
+
+    communities = Group.objects.filter(member_id=admin.pk)
+    comActivsList = []
+    comPostsList = []
+    for com in communities:
+        gms = GroupMember.objects.filter(group_id=com.pk)
+        member_count = gms.count()
+        data = {
+            'com': com.name,
+            'activsval': str(member_count),
+        }
+        comActivsList.append(data)
+        post_count = 0
+        for gm in gms:
+            post_count += Post.objects.filter(member_id=gm.member_id).count()
+        data = {
+            'com': com.name,
+            'postsval': str(post_count),
+        }
+        comPostsList.append(data)
+
+    context = {
+        'this_year': str(this_year),
+        'last_year1': str(last_year1),
+        'last_year2': str(last_year2),
+        'groups': groups,
+        'groups1': groups1,
+        'groups2': groups2,
+        'activateds': activateds,
+        'inviteds1': inviteds1,
+        'activateds1': activateds1,
+        'group_posts1': group_posts1,
+        'inviteds2': inviteds2,
+        'activateds2': activateds2,
+        'group_posts2': group_posts2,
+        'activ_percentlist_bygroup': activ_percentlist_bygroup,
+        'total_activ_inactiv_percent': [activdata, inactivdata],
+        'monthly_activateds1': monthly_activateds1,
+        'monthly_posts1': monthly_posts1,
+        'monthly_activateds2': monthly_activateds2,
+        'monthly_posts2': monthly_posts2,
+        'monthly_activateds3': monthly_activateds3,
+        'monthly_posts3': monthly_posts3,
+        'city_activateds': cityActivsList,
+        'cityActivsChartWidth': cityActivsChartWidth,
+        'com_activateds': comActivsList,
+        'com_posts': comPostsList,
+    }
+
+    return render(request, 'motherwise/analytics.html', context)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5334,9 +6786,7 @@ def warning_message(request):
 def open_translate(request):
     return render(request, 'motherwise/translate.html')
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def process_translate(request):
     from googletrans import Translator
@@ -5351,12 +6801,26 @@ def process_translate(request):
 
 
 
+def smtp_test(request):
+    send_mail_message('motherwisecolorado@gmail.com', ['marquez07melissa@gmail.com'], 'From MotherWise Manager', 'Test message', 'Hello how are you?')
+    return HttpResponse('success!')
 
 
 
-
-
-
+def testtranslate(request):
+    from googletrans import Translator
+    sentences = [
+        "Challenge",
+        "Resources",
+        "MotherWise Announcements",
+        "Just for Fun",
+    ]
+    translator = Translator()
+    translations = translator.translate(sentences, dest="es")
+    arr = []
+    for translation in translations:
+        arr.append(translation.text)
+    return HttpResponse(",".join(arr))
 
 
 

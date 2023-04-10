@@ -1,361 +1,317 @@
-{% extends 'mothers/base_post.html' %}
-{% block title %}Network Posts{% endblock %}
-{% block body %}
+<html>
 
-<br>
-<br>
+<head>
 
-<meta charset="utf-8">
+{% load tag_library %}
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if me.pk != member.pk %}{% if me.admin_id|to_int == member.pk %}Manager's{% else %}{{member.name}}'s{% endif %}{% else %}My{% endif %} Posts | MotherWise Nest</title>
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
 
+<script src="/static/reactions/jquery-2.1.4.js"></script>
+<script src="/static/reactions/jquery-ui_1.12.1_.min.js"></script>
+<script src="/static/reactions/facebook-reactions.js"></script>
+<link rel="stylesheet" href="/static/reactions/stylesheet.css">
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
-  <script>
-      WebFont.load({
-      google: {
-      families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
-    }
+<script>
+    WebFont.load({
+        google: {
+            families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
     });
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
+
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function showPostCreateForm(){
+        console.log(isMobile)
+        // if(isMobile == true) {
+        //     document.getElementById("postcreateform").style.display="inline-block";
+        //     document.body.scrollTop = 0;
+        //     document.documentElement.scrollTop = 0;
+        // }else {
+        //     var token = generate_token(200);
+        //     window.sessionStorage.setItem('mw_token', token);
+        //     window.open("/mothers/tonewpost?token=" + token) ;
+        // }
+        var token = generate_token(200);
+        window.sessionStorage.setItem('mw_token', token);
+        window.open("/mothers/tonewpost?token=" + token) ;
+    }
+    var isMobile;
+    console.log(window.innerWidth)
+    if(window.innerWidth <= 576) {
+        isMobile = true;
+    } else {
+        isMobile = false;
+    }
+
+    function checkUI(x) {
+        if (x.matches) {
+            isMobile = true;
+        } else {
+            isMobile = false;
+        }
+    }
+
+    var x = window.matchMedia("(max-width: 576px)")
+    // checkUI(x)
+    x.addListener(checkUI)
 </script>
 
 <style>
 
 html, body{
-  background: url("/static/images/postbg.jpg") no-repeat center center fixed;
+  background:linear-gradient(0deg,rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('/static/images/q.png') no-repeat center center fixed;
   background-size:cover;
 }
-
-.dropdown {
-    position: relative;
-    display: inline-block;
+@font-face {
+   font-family: lemon;
+   src: url('/static/fonts/lemon.ttf');
 }
+.topBtn {display: none;position: fixed;bottom: 20%;z-index: 99;border: none;outline: none;background-color: rgba(0,0,0,0.3);color: white;cursor: pointer;padding: 15px;border-radius: 50%;}
+.topBtn:hover {background-color:orange;}
+.postform {background-color:rgba(255,255,255,0.1); border-radius:10px; margin:10px 0px 10px 0px; box-shadow:0 0 30px rgba(0,0,0,0.3);}
+.postform:hover {background-color:rgba(0,0,0,0.1); box-shadow:0 0 50px rgba(0,0,0,0.8); transform: scale(1.02);transition:0.3s;}
+.contentform {padding: 10px;}
+.no-result {font-size:20px; font-weight:300; color: rgba(255,255,255,0.5); text-align:center;position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
+    transform:translate(-50%, -50%); width:auto; z-index:100; top:350px; display:none;}
+.text {overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;white-space:pre-line;color:rgba(255,255,255,0.8);/*word-break: break-all;*/
+    display:-webkit-box;-webkit-line-clamp: 50;/* number of lines to show */-webkit-box-orient:vertical;}
+.member-name {padding-left:10px;margin-top:15px;color:rgba(255,255,255,0.8);float:left;font-size:14px;text-align:left;word-wrap:break-word;}
+.member-name > div {font-size:11px;color:rgba(255,255,255,0.8);}
+.member-photo {width:40px;height:40px;border-radius:50%;object-fit:cover;}
+.action-btn {color:rgba(255,255,255,0.6);margin:10px;font-size:18px;}
+.action-btn:hover {color:rgba(255,255,255,0.8);}
+.post-title {font-size:20px;color:rgba(255,255,255,0.8);font-weight:600;}
+.post-category {font-size:14px;color:rgba(255,255,255,0.8);}
+.post-time {font-size:12px;color:rgba(255,255,255,0.8);}
+.post-picture {width:100%;height:auto;object-fit:contain;}
+.post-content {color:rgba(255,255,255,0.8) !important;text-decoration:none !important;text-align:left;padding:10px;}
+.post-actions {color:rgba(255,255,255,0.8);float:left;font-weight:500;font-size:18px;text-align:center;margin:0px 0px 15px 10px;display:flex;}
+.post-actions span { margin-right:5px; }
+.post-detail-btn {color:rgba(255,255,255,0.6);text-align:center;margin-left:15px;margin-right:15px;}
+.post-detail-btn > span {padding-right:0px; color:rgba(255,255,255,0.6);font-size:16px;}
+.post-detail-btn > span:hover {color:rgba(255,255,255,0.8);}
+.post-header {width:100%;padding-bottom:3px;display:flex;}
+.member-photo-section {padding:10px;float:left;position:relative;}
+.post-footer {width:100%;display:inline-block;}
+.post-detail-section {text-align:right;float:right;margin-bottom:10px;}
+#title0 {font-size:60px; font-weight:800; margin-bottom:40px; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%; font-family:lemon;}
+#title {font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;position:fixed; left:50%; float:middle;
+    transform:translate(-50%, -50%); width:100%; z-index:100; top:50px; display:none;}
+#gif {glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display:none;}
+#gif1 {width:30px;height:30px;margin-right:5px;}
+.top {width:25px;height:25px;margin-top:5px;}
+.logo {position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%; visibility:hidden;}
+#postcreateform {border-radius:10px; background-color:rgba(255,255,255,0.2); width: 100%; height:auto; margin-bottom:30px; display:none;}
+.contentform {padding: 10px;}
+textarea {width:100%; height:100px; min-height:100px; max-height:400px; border:1px solid #ccc; padding:15px; border-radius:5px;}
+textarea:focus { outline:0; border:2px solid rgba(0,0,0,0.8); }
+p span {color: #F00;}
+p {margin: 0px;font-weight: 200;line-height: 2;color:#fff;}
+h1 {text-align:center;color: #666;text-shadow: 1px 1px 0px #FFF;margin:50px 0px 0px 0px}
+input {border-radius: 5px;border: 1px solid #eee;width: 100%;height: 42px;float: left;padding: 0px 15px;color:black;}
+a {text-decoration:inherit}
+.form-group {overflow: hidden;width:100%;}
+.bouton-update {background-color:green;color:#FFF;text-align:center;width:100%;border:0;padding:10px 15px;border-radius:5px;cursor:pointer;font-size:14px;font-weight:600;}
+select {border-radius:5px;border:1px solid #eee;margin-bottom:15px;margin-right:auto;width:100%;height:42px;opacity:0.95;float:middle;padding:0px 15px;color:black;text-align:left;}
+select:focus { outline:0;border:1.5px solid rgba(0,0,0,0.8);}
+.post-create-close {color:white; font-size:20px; float:right; margin:10px; cursor:pointer;}
+.notify-members-section {width:100%; margin:0px 0px 10px 0px; border-radius:3px; border:2px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;}
+.notify-members-section > a {width:100%; display:flex; text-align:center; color:white; font-size:16px; font-weight:500; text-decoration: none;}
+.max-2lines {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.singleline {width:100%;overflow:hidden;text-overflow:ellipsis;word-wrap:break-word;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
+.post-link-image {width:100%;height:100px;object-fit:cover;}
+.icon-frame {width:15px;height:15px;margin-right:3px;}
+.icon-site-link {flex-grow:1;font-size:11px;color:rgba(255,255,0,0.6);}
+.new-post-link-image {width:100px;height:80px;object-fit:cover;}
+#arrow2 {color:white};
+.postform::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: white;border-radius:10px;}
+.postform::-webkit-scrollbar {width: 8px;background: gray;border-radius:10px;}
+.postform::-webkit-scrollbar-thumb {background: gray;width: 8px;border-radius:10px;}
+#uform::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);background: white;border-radius:10px;}
+#uform::-webkit-scrollbar {width: 3px;background: gray;border-radius:10px;}
+#uform::-webkit-scrollbar-thumb {background: gray;width: 3px;border-radius:10px;}
+.text {overflow: hidden;text-overflow: ellipsis;word-wrap: break-word;white-space: pre-line;display: -webkit-box;-webkit-line-clamp: 50; /* number of lines to show */-webkit-box-orient: vertical;}
+label input {display: none;}
+label span {height: 25px;width: 25px;text-align:center;padding-bottom:6px;display: inline-block;position: relative;border:1px solid white;border-radius:3px;}
+[type=checkbox]:checked + span:before {content: '\2714';position: absolute;top:0;font-size:20px;left: 3px;}
+[type=checkbox]:checked + span:after {content: '\2714';position: absolute;top:0;left: 3px;font-size:20px;color:yellow;}
+#post-create-btn {position:fixed;right:0px;bottom:50px;background:#8600b3;border-radius:50px 0px 0px 50px;z-index:100;color:white;padding:10px 20px;text-decoration:none;display:none;}
+.fa-times-thin:before {content: '\00d7';}
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 400px;
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 8px;
-}
+.trans-section { display:inline-block; height:auto; width:auto; position:fixed; z-index:1000; bottom:50px; border-radius:30px; left:1%; }
 
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+.ricon-container { width:auto;display:inline-flex;padding-left:5px;margin-right:8px; }
+.ricon { width:25px;height:25px;border-radius:50%;border:2px solid white;margin-left:-6px; }
+.FB_reactions:hover { background-color:rgba(0,0,0,0.3); }
+.FB_reactions:hover span { color:#bfbfbf; }
 
-.desc {
-    padding: 6px;
-    text-align: center;
-}
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
 
-.manage {
-  border-radius: 10%;
-}
+.header {position:fixed;top:0;right:0;left:0;height:70px;z-index:999;display:flex;}
+.header #back, .header #home, .header #add_post {width:40px;height:40px;text-align:center;padding:10px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;
+    margin-left:15px;color:black;font-size:18px;cursor:pointer;}
+.header #sear {width:40px;height:40px;text-align:center;padding:12px;background-color:rgba(255,255,255,0.7);border-radius:50%;margin-top:15px;margin-right:15px;color:black;font-size:18px;cursor:pointer;}
+.header #back:hover, .header #home:hover, .header #add_post:hover, .header #sear:hover {background-color:white;}
 
-.topBtn {
-  display: none;
-  position: fixed;
-  bottom: 20%;
-  z-index: 99;
-  border: none;
-  outline: none;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  cursor: pointer;
-  padding: 15px;
-  border-radius: 50%;
-}
+.dropdown {position:relative;display:inline-block;}
+.sear-dropdown-content, .msg-dropdown-content {display:none;position:absolute;right:10px;top:60px;background-color:white;min-width:300px;overflow:auto;
+    box-shadow:rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;z-index:99;border-radius:3px;border:1px solid white;}
+.sear-dropdown-content a {color:black;padding:8px 10px 8px 12px;text-decoration:none;display:block;font-family:verdana;}
+.sear-dropdown-content a:hover {background-color:#eee;}
+.sear-dropdown-content a:first-child {background-color:#404040;}
+.sear-dropdown-content a > div {font-size:16px;font-weight:520;display:flex;}
+.sear-dropdown-content a > div > i {padding:10px 8px 10px 8px;background:rgba(0,0,0,0.1);border-radius:50%;width:35px;height:35px;text-align:center;}
+.sear-dropdown-content a > div > i:last-child {padding:10px;background:transparent;font-weight:400;}
+.sear-dropdown-content a > div > div {flex-grow:1;margin-left:15px;margin-top:7px;}
+.sear-dropdown-content a {border-bottom:1px solid #eee;padding-top:-10px;padding-bottom:10px;}
+.sear-dropdown-content a:last-child {border-bottom:0;}
+.sear-dropdown-content a > form button {background-color:transparent;border:0;} .sear-dropdown-content a > form button:hover {background-color:transparent !important;border:0;}
+.sear-dropdown-content a > form button > i {color:white; font-size:18px; padding:1.5px;}
+.sear-dropdown-content a > form > div > input {background:transparent;color:white;border:0;border-bottom:1.5px solid white;border-radius:0px;box-shadow:none;}
+.sear-dropdown-content a > form > div > input:focus {outline:none;box-shadow:none;}
+.top-progress {width:50px;height:50px;display:none;}
 
-.topBtn:hover {
-  background-color: orange;
-}
+.pc-section { padding-left:25px;padding-right:20px;padding-bottom:20px;text-align:left; }
+.pc-section > div { margin-bottom:6px; }
+.pc-section > div > div > img { width:25px;height:25px;object-fit:cover;border-radius:50%; }
+.pc-section > div > div > span { font-size:14px;color:white;margin-left:8px; }
+.pc-section > div > .pc-item-comment { color:white;font-size:12px;padding:8px 15px;border-radius:0px 15px 15px 15px;background-color:rgba(0,0,0,0.08);display:inline-block !important;margin-top:3px;margin-left:15px; }
+.pc-section > a { color:white;font-size:13px;margin-top:25px;text-decoration:underline;font-style:italic; }
+.pc-section > a:hover { color:#00ccff; }
 
-form h1 {
-  font-size: 25px;
-  background: #327a81 none repeat scroll 0% 0%;
-  color: rgb(255, 255, 255);
-  padding: 19px 22px;
-  border-radius: 5px 5px 0px 0px;
-  margin: auto;
-  text-shadow: none;
-  text-align:left
-}
-
-.user-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:5px;
-  margin-bottom:2px;
-  background:#f2f2f2;
-  background-size:cover;
-  overflow: hidden;
-}
-
-.user-form:hover {
-  background:#fff;
-  background-size:cover;
-}
-
-.group-form {
-  max-width:100%;
-  width:auto;
-  margin:auto;
-  border-radius:10px;
-  margin-bottom:2px;
-  background:linear-gradient(0deg,rgba(20,150,250,0.6),rgba(0,100,250,0.6));
-  background-size:cover;
-  overflow: hidden;
-}
-
-.group-form:hover {
-  background:linear-gradient(0deg,rgba(100,50,250,0.6),rgba(50,100,250,0.6));
-  background-size:cover;
-}
-
-.contentform {
-  padding: 10px;
-}
-
-
-p span {
-  color: #F00;
-}
-
-p {
-  margin: 0px;
-  font-weight: 200;
-  line-height: 2;
-  color:#fff;
-}
-
-h1 {
-  text-align:center;
-  color: #666;
-  text-shadow: 1px 1px 0px #FFF;
-  margin:50px 0px 0px 0px
-}
-
-input {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  width: 100%;
-  height: 42px;
-  float: left;
-  padding: 0px 15px;
-  color:black;
-}
-
-a {
-  text-decoration:inherit
-}
-
-.form-group {
-  overflow: hidden;
-  width:100%;
-}
-
-.bouton-update{
-  background-color: green;
-  color: #FFF;
-  text-align: center;
-  width: 100%;
-  border:0;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-#manage-menu {
-    -webkit-padding-start: 0px;
-    -webkit-margin-before: 0px;
-    -webkit-margin-after: 0px;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
-    width:auto;
-    background-color:white;
-    color:black;
-    position: relative; /* <-- Added */
-    z-index: 100; /* <-- Added */
-}
-
-.menu {
-    padding:2px 15px;
-}
-
-.menu a{
-    color:gray;
-}
-
-.menu a:hover {
-    color:black;
-}
-
-#backgroundOverlay{
-    background-color:rgba(0,0,0,0.3);
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:none;
-}
-
-.slide {
-    display: inline-block;
-}
-
-select {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  margin-bottom: 15px;
-  margin-right:auto;
-  width: 100%;
-  height: 42px;
-  opacity:0.95;
-  float: middle;
-  padding: 0px 15px;
-  color:black;
-  text-align:left;
-}
-
-.postform::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background: white;
-	border-radius:10px;
-}
-
-.postform::-webkit-scrollbar
-{
-	width: 8px;
-	background: gray;
-	border-radius:10px;
-}
-
-.postform::-webkit-scrollbar-thumb
-{
-	background: gray;
-	width: 8px;
-	border-radius:10px;
-}
-
-
-#uform::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background: white;
-	border-radius:10px;
-}
-
-#uform::-webkit-scrollbar
-{
-	width: 3px;
-	background: gray;
-	border-radius:10px;
-}
-
-#uform::-webkit-scrollbar-thumb
-{
-	background: gray;
-	width: 3px;
-	border-radius:10px;
-}
-
-
-.text {
-   overflow: hidden;
-   text-overflow: ellipsis;
-   word-wrap: break-word;
-   white-space: pre-line;
-   /*word-break: break-all;*/
-   display: -webkit-box;
-   -webkit-line-clamp: 50; /* number of lines to show */
-   -webkit-box-orient: vertical;
-}
-
-label input {
-  display: none;/* <-- hide the default checkbox */
-}
-
-label span {/* <-- style the artificial checkbox */
-  height: 25px;
-  width: 25px;
-  text-align:center;
-  padding-bottom:6px;
-  display: inline-block;
-  position: relative;
-  border:1px solid white;
-  border-radius:3px;
-}
-
-[type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top:0;
-  font-size:20px;
-  left: 3px;
-}
-
-[type=checkbox]:checked + span:after {/* <-- style its checked state..with a ticked icon */
-  content: '\2714';
-  position: absolute;
-  top:0;
-  left: 3px;
-  font-size:20px;
-  color:yellow;
+@media (min-width:300px) and (max-width:1230px) {
+    .header {background:#595959;}
 }
 
 </style>
 
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); window.location.href = '/mothers/home'; sss=false; setTimeout(function(){ sss=true; }, 1000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 1000);-->
-<!--</script>-->
 
-<div id="no_result" style="font-size:20px; font-weight:300; color: rgba(255,255,255,0.6); text-align:center;
-	position:fixed; left:50%; float:middle; padding: 10px 15px 10px 15px;
-	transform:translate(-50%, -50%); width:auto; z-index:100; top:250px; display:none;">
+<script>
+$(document).ready(function() {
+    jQuery.noConflict();
+	$('.FB_reactions').facebookReactions({
+		postUrl: "mother"
+	});
+});
+function openSearchMenu() {
+    document.getElementById("sear-dropdown-menu").classList.toggle("show");
+}
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('#sear')) {
+        var dropdowns = document.getElementsByClassName("sear-dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+</script>
+
+
+</head>
+
+<body>
+
+
+<div id="no_result" class="no-result">
     No post found ...
 </div>
 
-<img src="/static/images/processing.gif" class="glyphicon glyphicon-fire" aria-hidden="true" style="position:fixed; left:50%; float:middle;
-	transform:translate(-50%, -50%); width:80px; height:auto; z-index:100; top:120px; display: none;" id="gif">
+<img src="/static/images/processing.gif" id="gif">
 
-<img src="/static/images/logo.png" style="position:relative; width:60px; height:60px; border-radius:3%; z-index:-1; left:3%;">
+<img src="/static/images/logo.png" class="logo">
 
-<div id="title" style="font-size:25px; font-weight:800; color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center;
-	position:fixed; left:50%; float:middle; transform:translate(-50%, -50%); width:100%; z-index:100; top:115px; display:none;">{% if search %}{{search}}{% else %}NETWORK{% endif %} POSTS</div>
+<div id="title">{% if search %}Searched{% else %}{% if me.pk != member.pk %}{% if me.admin_id|to_int == member.pk %}Manager's{% else %}{{member.name}}'s{% endif %}{% else %}My{% endif %}{% endif %} Posts</div>
 
 <div style="width:100%; height:auto;">
 
-    <div style="font-size:25px; font-weight:800; margin-bottom:40px; margin-top:20px;
-        color: #F7D479; text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7); text-align:center; width:100%;">{% if search %}{{search}}{% else %}NETWORK{% endif %} POSTS</div>
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }" title="Back"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';" title="Home"></i>
+        {% if me.pk == member.pk %}<i id="add_post" class="fa fa-pencil" onclick="showPostCreateForm()" title="Create Post"></i>{% endif %}
+        <div style="flex-grow:1;"></div>
+        <div class="dropdown">
+            <i id="sear" class="fa fa-search" onclick="openSearchMenu()" title="Search"></i>
+            <div id="sear-dropdown-menu" class="sear-dropdown-content">
+                <a href="javascript:void(0)">
+                    <form id="s-form" method="post" action="/mothers/search_post/" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" value="" placeholder="Type a keyword...">
+                            <input hidden name="u" value="{{member.pk}}">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" onclick="searchPost()"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </a>
+                {% if search %}
+                <a href="{% if me.pk == member.pk %}/mothers/mineppppp/{% else %}/mothers/qqqqqqqqqqqq?user_id={{member.pk}}{% endif %}">
+                    <div><i class="fa fa-chevron-left" aria-hidden="true"></i><div>Back to View All</div><i class="fa fa-angle-right" aria-hidden="true" style="visibility:hidden;"></i></div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div id="title0">{% if search %}Searched{% else %}{% if me.pk != member.pk %}{% if me.admin_id|to_int == member.pk %}Manager's{% else %}{{member.name}}'s{% endif %}{% else %}My{% endif %}{% endif %} Posts</div>
+
+    <center><img src="/static/images/progressbar.gif" class="top-progress"></center>
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3" style="text-align:center;">
 
-            <div style="width:100%; height:auto; padding-bottom:10%; overflow:auto;">
+                <div id="postcreateform">
 
-                <div id="postcreateform" style="border-radius:10px; background-color:rgba(255,255,255,0.4); width: 100%; height:auto; margin-bottom:30px; display:none;">
-
-                    <span class="fa fa-close" style="color:white; font-size:20px; float:right; margin:10px;" onclick="javascript:document.getElementById('postcreateform').style.display='none';"></span>
+                    <span class="fa fa-close post-create-close" onclick="javascript:document.getElementById('postcreateform').style.display='none';"></span>
 
                     <div style="margin:15px ">
-                        <div style="color:white; font-size:18px; font-weight:500; font-family:verdana;">
+                        <div style="color:white; font-size:18px; font-weight:600; font-family:verdana;">
                             Create A New Post
                         </div>
                     </div>
@@ -364,27 +320,37 @@ label span {/* <-- style the artificial checkbox */
                         <div style="display:inline-block; width:90%;">
                             <form action="/mothers/create_post/" method="post" enctype="multipart/form-data" style="width:100%;">
                                 {% csrf_token %}
+
                                 <div class="form-group">
-                                    <input type="text" name="title" id="title" data-rule="required" data-msg="" required value="" placeholder="Enter a title">
+                                    <input type="text" name="title" id="post-title" required value="" placeholder="Enter a title">
                     			</div>
 
                     			<div class="form-group">
                                     <select name="category" required id="category" style="color:black;">
-                                        <option value="" style="color:gray;">Please choose a category-----</option>
-                                        <option value="Helpful tips for pregnancy and baby">Helpful tips for pregnancy and baby</option>
-                                        <option value="Inspiration">Inspiration</option>
-                                        <option value="Shout-outs">Shout-outs</option>
-                                        <option value="Wellness">Wellness</option>
-                                        <option value="Activities Suggestions">Activities Suggestions</option>
-                                        <option value="Resources">Resources</option>
+                                        <option value="" style="color:gray;">Choose a category-----</option>
+                                        {% for c in categories %}
+                                        <option value="{{c}}">{{c}}</option>
+                                        {% endfor %}
                                     </select>
                     			</div>
 
                     			<div class="form-group">
+                    			    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+                                        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+                                        crossorigin="anonymous">
+                                    </script>
                                     <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
-                                    <textarea rows="5" name="content" required id="textarea" placeholder="Write something here..."
-                                        style="width:100%; height:100px; min-height:100px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
+                                    <textarea rows="5" name="content" required id="textarea" placeholder="Write something here..." onblur="checkLinks(this)"></textarea>
                                     <script>autosize(document.getElementById("textarea"));</script>
+                                </div>
+
+                                <center>
+                                    <div id="prev-progress" style="display:none;margin-bottom:20px;">
+                                        <img src="/static/images/progressbar.gif" id="gif1"><span style="color:rgba(255,153,255,1.0);font-size:14px;">link preview loading...</span>
+                                    </div>
+                                </center>
+
+                                <div id="post-link-frame" style="display:none;">
                                 </div>
 
                                 <div class="form-group" style="width:auto; margin-bottom:10px;">
@@ -399,6 +365,9 @@ label span {/* <-- style the artificial checkbox */
                                             </div>
                                         </center>
         			                </div>
+        			                <button type="button" id="emoji-btn" style="background:transparent; border:0; float:left;">
+        			                    <i class="fa fa-smile-o" style="font-size:25px; color:white;"></i>
+        			                </button>
         				            <label style="float:left; margin-left:10px;"><i class="fa fa-paperclip" style="font-size:25px; color:white;"></i>
                                         <input type="file" name="pictures" style="display:none;" value="http://lorempixel.com/100/100/people/9" id="picture" accept="image/*" multiple/>
                                     </label><div style="color:white; font-size:12px;">You can attach 1+ images by CTRL + selection.</div>
@@ -439,12 +408,28 @@ label span {/* <-- style the artificial checkbox */
                                         }
                                         document.getElementById("picture").addEventListener("change", readFile);
                                     </script>
+
+                                    <script src="/static/emoji1/fgEmojiPicker.js"></script>
+                                    <script>
+                                        const emojiPicker = new FgEmojiPicker({
+                                            trigger: ['#emoji-btn'],
+                                            position: ['top', 'right'],
+                                            preFetch: true,
+                                            insertInto: document.querySelector('textarea#textarea'),
+                                            emit(obj, triggerElement) {
+                                                console.log(obj, triggerElement);
+                                            }
+                                        });
+                                    </script>
+
                                 </div>
 
-                                <div style="width:100%; margin:0px 0px 10px 0px; border-radius:3px; border:1.5px solid rgba(255,255,255,0.5); height:auto; text-align:center; padding:8px; display:inline-block;">
-                                    <a href="javascript:void(0);" onclick="javascript:toggleMyGroupsForm();" style="color:white; font-size:16px; font-weight:500; text-decoration: none;">
-                                        Notify members
-                                        <span class="glyphicon glyphicon-menu-down" style="color:white; margin-left:20px;" id="arrow2"></span>
+                                <div class="notify-members-section">
+                                    <a href="javascript:void(0);" onclick="javascript:toggleMyGroupsForm();">
+                                        <div style="flex-grow:1;"></div>
+                                        <div>Notify members</div>
+                                        <div style="flex-grow:1;"></div>
+                                        <span class="glyphicon glyphicon-menu-down" id="arrow2"></span>
                                     </a>
 
                                     <script>
@@ -510,8 +495,21 @@ label span {/* <-- style the artificial checkbox */
                                 </div>
 
                                 <div class="form-group">
+                                    <div style="color:white;font-size:16px;text-align:left;">Schedule the post </div>
+                                    <div style="color:white;font-size:12px;text-align:left;margin-bottom:5px;">(If you set up a schedule, the post will be activated at that date time.)</div>
+                                    <input type="datetime-local" placeholder="Choose a date and time..." onchange="setSchedule(this)">
+                                </div>
+                                <input type="hidden" name="scheduled_time" id="scheduled_time">
+
+                                <script>
+                                    function setSchedule(obj) {
+                                        document.getElementById("scheduled_time").value = obj.value.replace("T","-").replace(":","-");
+                                    }
+                                </script>
+
+                                <div class="form-group">
                         			<center>
-                                        <button type="submit" class="bouton-update" style="width:60%;">Submit</button>
+                                        <button type="submit" class="bouton-update">SUBMIT</button>
                                     </center>
                                 </div>
                             </form>
@@ -522,70 +520,131 @@ label span {/* <-- style the artificial checkbox */
 
 
                 {% if list1 %}
-                    <div style="width:100%;" class="postform">
-                        {% for post in list1 %}
-                        <div class="user-form" id="{{post.id}}">
+                    {% for post in list1 %}
+                        <div class="postform" id="{{post.id}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:flex;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="post-header" >
+                                    <div class="member-photo-section">
                                         <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
-                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
                                         </a>
                                     </div>
                                     <a href="#" style="flex-grow:1;">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="member-name">
                                             {{post.member.name}}
                                             <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
                                         </div>
                                     </a>
 
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
                                     <a href="/mothers/add_post_comment?post_id={{post.post.id}}">
                                         {% if post.member.pk == me.pk %}
-                                            <span class="fa fa-pencil" style="margin-right:10px; margin-left:10px; font-size:20px;"></span>
+                                            <span class="fa fa-pencil action-btn"></span>
                                         {% else %}
-                                            <span class="far fa-comment-alt" style="margin-right:10px; margin-left:10px; font-size:18px;"></span>
+                                            <span class="far fa-comment-alt action-btn"></span>
                                         {% endif %}
                                     </a>
+
                                     {% if post.member.pk == me.pk %}
-                                        <a href="/mothers/delpost?post_id={{post.post.id}}" onclick="return confirm('Are you sure you want to delete this post?')">
-                                            <span class="fa fa-trash" style="margin-right:5px; margin-left:10px; font-size:20px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                            <span class="fa fa-trash action-btn"></span>
                                         </a>
                                     {% endif %}
 
                                 </div>
 
                                 <div class="form-group">
-                                    <div style="font-size:20px; font-weight:600;">{{post.post.title}}</div>
-                                    <div style="font-size:14px;">{{post.post.category}}</div>
-                                    <div style="font-size:12px;">{{post.post.posted_time}}</div>
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
                                 </div>
 
                                 {% if post.post.picture_url %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" style="width:100%; height:250px; object-fit:contain;"></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';"></a>
                                 </div>
                                 {% endif %}
+
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-decoration:none;"><div style="text-align:left;" class="text">{{post.post.content}}</div></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
                                 </div>
 
-                                <div style="color: #04a2be; float:left; font-weight:500; font-size:18px; text-align:center; margin:0px 0px 15px 10px;">
-                                    <span class="fa fa-thumbs-o-up"></span> {{post.post.likes}} <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
                                 </div>
 
-                                <div style="text-align:right; float:right; margin-bottom:10px;">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-align:center; margin-left:15px; margin-right:5px;">
-                                        <span class="fas fa-arrow-right" style="padding-right:0px; color:#04a2be; font-size:20px;"></span>
-                                    </a>
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
                                 </div>
 
                             </div>
 
                         </div>
 
-                        {% endfor %}
+                        <br>
 
-                    </div>
+                    {% endfor %}
 
                 {% else %}
 
@@ -593,77 +652,137 @@ label span {/* <-- style the artificial checkbox */
 
                 {% endif %}
 
-            </div>
-
         </div>
 
         <div class="col-sm-3" style="text-align:center;">
 
             {% if list2 %}
-                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
-                    {% for post in list2 %}
-                        <div class="user-form" id="{{post.id}}">
+
+                {% for post in list2 %}
+
+                        <div class="postform" id="{{post.id}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:flex;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="post-header" >
+                                    <div class="member-photo-section">
                                         <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
-                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
                                         </a>
                                     </div>
                                     <a href="#" style="flex-grow:1;">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="member-name">
                                             {{post.member.name}}
                                             <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
                                         </div>
                                     </a>
 
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
                                     <a href="/mothers/add_post_comment?post_id={{post.post.id}}">
                                         {% if post.member.pk == me.pk %}
-                                            <span class="fa fa-pencil" style="margin-right:10px; margin-left:10px; font-size:20px;"></span>
+                                            <span class="fa fa-pencil action-btn"></span>
                                         {% else %}
-                                            <span class="far fa-comment-alt" style="margin-right:10px; margin-left:10px; font-size:18px;"></span>
+                                            <span class="far fa-comment-alt action-btn"></span>
                                         {% endif %}
                                     </a>
+
                                     {% if post.member.pk == me.pk %}
-                                        <a href="/mothers/delpost?post_id={{post.post.id}}" onclick="return confirm('Are you sure you want to delete this post?')">
-                                            <span class="fa fa-trash" style="margin-right:5px; margin-left:10px; font-size:20px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                            <span class="fa fa-trash action-btn"></span>
                                         </a>
                                     {% endif %}
 
                                 </div>
 
                                 <div class="form-group">
-                                    <div style="font-size:20px; font-weight:600;">{{post.post.title}}</div>
-                                    <div style="font-size:14px;">{{post.post.category}}</div>
-                                    <div style="font-size:12px;">{{post.post.posted_time}}</div>
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
                                 </div>
 
                                 {% if post.post.picture_url %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" style="width:100%; height:250px; object-fit:contain;"></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';"></a>
                                 </div>
                                 {% endif %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-decoration:none;"><div style="text-align:left;" class="text">{{post.post.content}}</div></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
                                 </div>
 
-                                <div style="color: #04a2be; float:left; font-weight:500; font-size:18px; text-align:center; margin:0px 0px 15px 10px;">
-                                    <span class="fa fa-thumbs-o-up"></span> {{post.post.likes}} <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
                                 </div>
 
-                                <div style="text-align:right; float:right; margin-bottom:10px;">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-align:center; margin-left:15px; margin-right:5px;">
-                                        <span class="fas fa-arrow-right" style="padding-right:0px; color:#04a2be; font-size:20px;"></span>
-                                    </a>
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
                                 </div>
 
                             </div>
 
                         </div>
 
-                    {% endfor %}
+                        <br>
 
-                </form>
+                {% endfor %}
 
             {% endif %}
 
@@ -672,70 +791,131 @@ label span {/* <-- style the artificial checkbox */
         <div class="col-sm-3" style="text-align:center;">
 
             {% if list3 %}
-                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
-                    {% for post in list3 %}
-                        <div class="user-form" id="{{post.id}}">
+                {% for post in list3 %}
+
+                        <div class="postform" id="{{post.id}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:flex;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="post-header" >
+                                    <div class="member-photo-section">
                                         <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
-                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
                                         </a>
                                     </div>
                                     <a href="#" style="flex-grow:1;">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="member-name">
                                             {{post.member.name}}
                                             <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
                                         </div>
                                     </a>
 
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
                                     <a href="/mothers/add_post_comment?post_id={{post.post.id}}">
                                         {% if post.member.pk == me.pk %}
-                                            <span class="fa fa-pencil" style="margin-right:10px; margin-left:10px; font-size:20px;"></span>
+                                            <span class="fa fa-pencil action-btn"></span>
                                         {% else %}
-                                            <span class="far fa-comment-alt" style="margin-right:10px; margin-left:10px; font-size:18px;"></span>
+                                            <span class="far fa-comment-alt action-btn"></span>
                                         {% endif %}
                                     </a>
+
                                     {% if post.member.pk == me.pk %}
-                                        <a href="/mothers/delpost?post_id={{post.post.id}}" onclick="return confirm('Are you sure you want to delete this post?')">
-                                            <span class="fa fa-trash" style="margin-right:5px; margin-left:10px; font-size:20px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                            <span class="fa fa-trash action-btn"></span>
                                         </a>
                                     {% endif %}
 
                                 </div>
 
                                 <div class="form-group">
-                                    <div style="font-size:20px; font-weight:600;">{{post.post.title}}</div>
-                                    <div style="font-size:14px;">{{post.post.category}}</div>
-                                    <div style="font-size:12px;">{{post.post.posted_time}}</div>
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
                                 </div>
 
                                 {% if post.post.picture_url %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" style="width:100%; height:250px; object-fit:contain;"></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';"></a>
                                 </div>
                                 {% endif %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-decoration:none;"><div style="text-align:left;" class="text">{{post.post.content}}</div></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
                                 </div>
 
-                                <div style="color: #04a2be; float:left; font-weight:500; font-size:18px; text-align:center; margin:0px 0px 15px 10px;">
-                                    <span class="fa fa-thumbs-o-up"></span> {{post.post.likes}} <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
                                 </div>
 
-                                <div style="text-align:right; float:right; margin-bottom:10px;">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-align:center; margin-left:15px; margin-right:5px;">
-                                        <span class="fas fa-arrow-right" style="padding-right:0px; color:#04a2be; font-size:20px;"></span>
-                                    </a>
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
                                 </div>
 
                             </div>
 
                         </div>
 
-                    {% endfor %}
+                        <br>
 
-                </form>
+                {% endfor %}
 
             {% endif %}
 
@@ -743,70 +923,132 @@ label span {/* <-- style the artificial checkbox */
 
         <div class="col-sm-3" id="postlist2" style="text-align:center;">
             {% if list4 %}
-                <form style="width:100%; height:auto; overflow:hidden;" method="post" enctype="multipart/form-data" class="postform">
+
                     {% for post in list4 %}
-                        <div class="user-form" id="{{post.id}}">
+
+                        <div class="postform" id="{{post.id}}">
                             <div class="contentform">
-                                <div style="width:100%; padding-bottom:3px; display:flex;" >
-                                    <div style="padding:10px; float:left; position:relative;">
+                                <div class="post-header" >
+                                    <div class="member-photo-section">
                                         <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
-                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                            <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" class="member-photo">
                                         </a>
                                     </div>
                                     <a href="#" style="flex-grow:1;">
-                                        <div style="padding-left:10px; margin-top:15px; color: black; float:left; font-size:14px; text-align:left; word-wrap: break-word;">
+                                        <div class="member-name">
                                             {{post.member.name}}
                                             <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
                                         </div>
                                     </a>
 
+                                    {% if 'top' in post.post.status %}<img src="/static/images/top.png" class="top">{% endif %}
+
                                     <a href="/mothers/add_post_comment?post_id={{post.post.id}}">
                                         {% if post.member.pk == me.pk %}
-                                            <span class="fa fa-pencil" style="margin-right:10px; margin-left:10px; font-size:20px;"></span>
+                                            <span class="fa fa-pencil action-btn"></span>
                                         {% else %}
-                                            <span class="far fa-comment-alt" style="margin-right:10px; margin-left:10px; font-size:18px;"></span>
+                                            <span class="far fa-comment-alt action-btn"></span>
                                         {% endif %}
                                     </a>
+
                                     {% if post.member.pk == me.pk %}
-                                        <a href="/mothers/delpost?post_id={{post.post.id}}" onclick="return confirm('Are you sure you want to delete this post?')">
-                                            <span class="fa fa-trash" style="margin-right:5px; margin-left:10px; font-size:20px;"></span>
+                                        <a href="javascript:void(0)" onclick="confirmDeletion('{{post.post.id}}')">
+                                            <span class="fa fa-trash action-btn"></span>
                                         </a>
                                     {% endif %}
 
                                 </div>
 
                                 <div class="form-group">
-                                    <div style="font-size:20px; font-weight:600;">{{post.post.title}}</div>
-                                    <div style="font-size:14px;">{{post.post.category}}</div>
-                                    <div style="font-size:12px;">{{post.post.posted_time}}</div>
+                                    <div class="text post-title">{{post.post.title}}</div>
+                                    <div class="post-category">{{post.post.category}}</div>
+                                    <div class="post-time">{{post.post.posted_time}}</div>
                                 </div>
 
                                 {% if post.post.picture_url %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" style="width:100%; height:250px; object-fit:contain;"></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}"><img src="{{post.post.picture_url}}" class="post-picture" onerror="this.onerror=null;this.src='https://rec.or.id/images/article/no-image-available.jpg';"></a>
                                 </div>
                                 {% endif %}
                                 <div class="form-group">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-decoration:none;"><div style="text-align:left;" class="text">{{post.post.content}}</div></a>
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="text post-content">{{post.post.content}}</a>
                                 </div>
 
-                                <div style="color: #04a2be; float:left; font-weight:500; font-size:18px; text-align:center; margin:0px 0px 15px 10px;">
-                                    <span class="fa fa-thumbs-o-up"></span> {{post.post.likes}} <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                {% for prev in post.prevs %}
+                                <div class="form-group">
+                                    <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                        {% if prev.image_url %}
+                                        <div class="col-sm-4">
+                                            <img src="{{prev.image_url}}" class="post-link-image">
+                                        </div>
+                                        <div class="col-sm-8" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-12" style="text-align:left;">
+                                            <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                            {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                            <div style="display:flex;">
+                                                {% if prev.icon_url %}<img src="{{prev.icon_url}}" class="icon-frame">{% endif %}
+                                                <div class="icon-site-link max-2lines">{{prev.site_url}}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                <div class="post-footer">
+                                    <div class="post-actions">
+                                        <a class="FB_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                            <span id="flbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                                        <span class="far fa-comment-alt" style="margin-left:20px;"></span> {{post.post.comments}}
+                                    </div>
+
+                                    <div class="post-detail-section">
+                                        <a href="/mothers/add_post_comment?post_id={{post.post.id}}" class="post-detail-btn">
+                                            <span class="fas fa-arrow-right"></span>
+                                        </a>
+                                    </div>
                                 </div>
 
-                                <div style="text-align:right; float:right; margin-bottom:10px;">
-                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}" style="text-align:center; margin-left:15px; margin-right:5px;">
-                                        <span class="fas fa-arrow-right" style="padding-right:0px; color:#04a2be; font-size:20px;"></span>
-                                    </a>
+                                <div class="pc-section">
+                                    {% for comment in post.comments %}
+                                    <div>
+                                        <div>
+                                            <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% else %}/static/images/ic_profile.png{% endif %}">
+                                            <span>{{comment.member.name}}</span>
+                                        </div>
+                                        <div class="text pc-item-comment">{{comment.comment.comment_text}}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% if post.pc_cnt|to_int > 5 %}
+                                    <a href="/mothers/add_post_comment?post_id={{post.post.id}}">View more comments</a>
+                                    {% endif %}
                                 </div>
 
                             </div>
 
                         </div>
 
-                    {% endfor %}
+                        <br>
 
-                </form>
+                    {% endfor %}
 
             {% endif %}
 
@@ -816,37 +1058,13 @@ label span {/* <-- style the artificial checkbox */
 </div>
 </div>
 
-<input type="hidden" id="me_email" value="{{me.email}}">
 
-<div id="messageBox" style="font-size:16px; font-weight:300; color: black;
-	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 8px 15px 15px 15px;
-	transform:translate(-50%, -50%); min-width:400px; max-width:600px; width:auto; z-index:200; top:320px; display:none;">
-    <div style="float:left; position:relative;">
-        <span class="fa fa-group" style="font-size:30px;" id="box-icon">{{group.color}}</span>
-        <div style="color:white; top:0px; left:0px; position:absolute; font-size:25px; font-weight:600; width:100%; text-align:center;">{{group.code}}</div>
-    </div>
-    <span class="fa fa-close" style="font-size:20px; float:right; margin-top:5px;" onclick="javascript:dismissLayouts();"></span>
-    <div style="width:100%; display:inline-block;">
-        <div>
-            <div style="font-size:18px; font-weight:600; color: black; text-align:center; width:100%;" id="messageboxtitle">SEND MESSAGE</div><br>
-            <form action="/manager/message_to_group/" method="post" enctype="multipart/form-data" style="width:100%;" id="msgForm">
-                {% csrf_token %}
-                <div class="form-group">
-                    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
-                    <textarea rows="8" name="message" required id="textarea2" placeholder="Write something here..."
-                        style="width:100%; height:150px; min-height:150px; max-height:300px; border:1px solid #ccc; padding:15px; border-radius:5px;"></textarea>
-                    <script>autosize(document.getElementById("textarea2"));</script>
-                </div>
-                <input hidden id="group_id" name="group_id" value="">
-                <input hidden id="option" name="option" value="">
-                <center>
-                    <button type="submit" class="bouton-update" style="width:60%; margin-bottom:20px;">Submit</button>
-                </center>
-
-            </form>
-        </div>
-    </div>
+<a href="javascript:void(0)" onclick="toPostCreateForm();" id="post-create-btn" style="display:none;">
+    <i class="fa fa-plus"></i><span style="margin-left:10px;">Create Post</span>
 </div>
+
+
+<input type="hidden" id="me_email" value="{{me.email}}">
 
 
 <div id="backgroundOverlay" onclick="javascript:dismissLayouts();">
@@ -858,15 +1076,28 @@ label span {/* <-- style the artificial checkbox */
 
 <button onclick="topFunction()" class="topBtn" id="topBtn" style="right:15px;"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
 
-<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+<div class="trans-section">
     <div id="google_translate_element" style="float:left;"></div>
 </div>
 <script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-    }
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+$( document ).ready(function() {
+    $('#google_translate_element').bind('DOMSubtreeModified', function() {
+        var val = $(this);
+        var strlang = "" + val[0].innerText + "";
+        var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+        if(toolBar !== undefined) {
+            toolBar.style.display  = 'none';
+            document.body.style.top = '0px';
+        }
+    });
+});
+</script>
 
 <script>
 // When the user scrolls down 20px from the top of the document, show the button
@@ -874,13 +1105,11 @@ window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
  //   alert("Hello");
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    if (document.body.scrollTop > 120 || document.documentElement.scrollTop > 120) {
         document.getElementById("topBtn").style.display = "block";                         // Top button display none;
-        document.getElementById("navbar").style.backgroundColor = "rgba(0,0,0,0.7)";
         document.getElementById("title").style.display = "block";
     } else {
         document.getElementById("topBtn").style.display = "none";
-        // document.getElementById("navbar").style.backgroundColor = "transparent";
         document.getElementById("title").style.display = "none";
     }
 }
@@ -941,7 +1170,7 @@ for (i = 0; i < y.length; i++) {
 function urlify(text) {
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
-        return '<a href="' + url + '" style="color:red; word-break: break-all;">' + url + '</a>';
+        return '<a href="' + url + '" style="color:yellow; word-break: break-all;">' + url + '</a>';
     });
 }
 
@@ -974,10 +1203,338 @@ function ScrollToResolver(elem) {
   }
 }
 
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.postform .text').each(function(i) {
+            const response = this.innerHTML
+            const decoded = response
+              .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+              .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+            this.innerHTML = decoded;
+        });
+   });
+});
+
+function confirmDeletion(postid) {
+    var msg = "Are you sure you want to delete this post？";
+    swal({
+        title: "Warning！",
+        text: msg,
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            window.location.href = "/mothers/delpost?post_id=" + postid;
+        }
+    });
+}
+
+function checkLinks(obj){
+    var progressbar = document.getElementById("prev-progress");
+    var container = document.getElementById("post-link-frame");
+    container.innerHTML = "";
+    if(obj.value.length == 0 || !obj.value.includes("http")) {
+        container.style.display = "none";
+        return;
+    }
+    progressbar.style.display = "block";
+    var formdata = new FormData();
+    formdata.append("content", obj.value);
+    var xhr = new XMLHttpRequest(formdata);
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var data = xhr.responseText;
+            console.log('LINK RESP: ' + data);
+            let jsonData = JSON.parse(data);
+            if(jsonData['result'] == 'success') {
+                data = jsonData['data'];
+                for(var i=0; i<data.length; i++){
+                    let title = data[i].title;
+                    let description = data[i].description;
+                    let image_url = data[i].image_url;
+                    let icon_url = data[i].icon_url;
+                    let site_url = data[i].site_url;
+
+                    if(container.style.display == "none") container.style.display = "block";
+                    var formgroupbox = document.createElement("div");
+                    formgroupbox.classList.add("form-group");
+                    var row = document.createElement("div");
+                    row.style.display = "flex";
+                    row.style.cursor = "pointer";
+                    row.addEventListener('click', function(e) {
+                        window.open(site_url);
+                    });
+                    formgroupbox.append(row);
+                    if(image_url.length > 0){
+                        var imageframe = document.createElement("div");
+                        var imagebox = document.createElement("img");
+                        imagebox.classList.add("new-post-link-image");
+                        imagebox.src = image_url;
+                        imageframe.append(imagebox);
+                        row.append(imageframe);
+
+                        var bodybox = document.createElement("div");
+                        bodybox.style.flexGrow = "1";
+                        bodybox.style.paddingLeft = "5px";
+                        bodybox.style.textAlign = "left";
+
+                        var titlebox = document.createElement("label");
+                        titlebox.style.color = "white";
+                        titlebox.style.fontSize = "16px";
+                        titlebox.classList.add("max-2lines");
+                        titlebox.innerHTML = title;
+                        bodybox.append(titlebox);
+
+                        if(description.length > 0) {
+                            var descbox = document.createElement("div");
+                            descbox.classList.add("singleline");
+                            descbox.style.fontSize = "14px";
+                            descbox.style.color = "rgba(255,255,255,0.8)";
+                            descbox.innerHTML = description;
+                            bodybox.append(descbox);
+                        }
+
+                        var linkframe = document.createElement("div");
+                        linkframe.style.display = "flex";
+                        if(icon_url.length > 0) {
+                            var iconbox = document.createElement("img");
+                            iconbox.classList.add("icon-frame");
+                            iconbox.src = icon_url;
+                            linkframe.append(iconbox);
+                        }
+                        var linkbox = document.createElement("div");
+                        linkbox.classList.add("icon-site-link");
+                        linkbox.classList.add("singleline");
+                        linkbox.innerHTML = site_url;
+                        linkframe.append(linkbox);
+                        bodybox.append(linkframe);
+                        row.append(bodybox);
+                    }else {
+                        var bodybox = document.createElement("div");
+                        // bodybox.classList.add("col-sm-12");
+                        bodybox.style.textAlign = "left";
+
+                        var titlebox = document.createElement("label");
+                        titlebox.style.color = "white";
+                        titlebox.style.fontSize = "16px";
+                        titlebox.classList.add("max-2lines");
+                        titlebox.innerHTML = title;
+                        bodybox.append(titlebox);
+
+                        if(description.length > 0) {
+                            let descbox = document.createElement("div");
+                            descbox.classList.add("singleline");
+                            descbox.style.fontSize = "14px";
+                            descbox.style.color = "rgba(255,255,255,0.8)";
+                            descbox.innerHTML = description;
+                            bodybox.append(descbox);
+                        }
+
+                        var linkframe = document.createElement("div");
+                        linkframe.style.display = "flex";
+                        if(icon_url.length > 0) {
+                            var iconbox = document.createElement("img");
+                            iconbox.classList.add("icon-frame");
+                            iconbox.src = icon_url;
+                            linkframe.append(iconbox);
+                        }
+                        var linkbox = document.createElement("div");
+                        linkbox.classList.add("icon-site-link");
+                        linkbox.classList.add("singleline");
+                        linkbox.innerHTML = site_url;
+                        linkframe.append(linkbox);
+                        bodybox.append(linkframe);
+                        row.append(bodybox);
+                    }
+                    container.append(formgroupbox);
+                }
+            }
+            progressbar.style.display = "none";
+        }
+    };
+    xhr.open('POST', '/mothers/bbbbb', true);
+    xhr.send(formdata);
+
+}
+
+var isMobile;
+console.log(window.innerWidth)
+if(window.innerWidth <= 576) {
+    isMobile = true;
+    document.getElementById("post-create-btn").style.display = "block";
+} else {
+    isMobile = false;
+    // document.getElementById("post-create-btn").style.display = "none";
+}
+
+function checkUI(x) {
+    if (x.matches) {
+        document.getElementById("post-create-btn").style.display = "block";
+    } else {
+        // document.getElementById("post-create-btn").style.display = "none";
+    }
+}
+
+var x = window.matchMedia("(max-width: 576px)")
+// checkUI(x)
+x.addListener(checkUI)
+
+
+function toPostCreateForm(){
+    console.log(isMobile)
+    if(isMobile == true) {
+        document.getElementById("postcreateform").style.display="inline-block";
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }else {
+        var token = generate_token(200);
+        window.sessionStorage.setItem('mw_token', token);
+        window.open("/mothers/tonewpost?token=" + token) ;
+    }
+}
+
+
+function generate_token(length){
+    //edit the token allowed characters
+    var a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".split("");
+    var b = [];
+    for (var i=0; i<length; i++) {
+        var j = (Math.random() * (a.length-1)).toFixed(0);
+        b[i] = a[j];
+    }
+    return b.join("");
+}
+
+
+const channel = new BroadcastChannel("mw_post");
+channel.addEventListener("message", e => {
+    console.log(e.data);
+    if(e.data != null) {
+        let data = JSON.parse(JSON.stringify(e.data));
+        let token = data["token"];
+        if(token.length > 0 && token == window.sessionStorage.getItem('mw_token')) {
+            location.reload();
+        }
+    }
+});
+
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+
+function updateReaction(option, postid, feeling) {
+    console.log(option + " /// " + postid + " /// " + feeling)
+    if(feeling == null) feeling = "";
+    console.log(feeling)
+    if(option == "mother") {
+	    var formData = new FormData();
+	    formData.append("post_id", postid);
+	    formData.append("feeling", feeling);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let response = xhr.response;
+                // console.log(response)
+                if(response != "error") {
+                    let resp = xhr.responseText;
+                    // console.log(resp)
+                    let data = JSON.parse(resp);
+                    let post = data["post"];
+                    let allfeelings = post["reactions"];  if(allfeelings.length == 0) allfeelings = "0";
+                    document.getElementById("feelings-" + postid).innerHTML = allfeelings;
+                    if(parseInt(allfeelings) == 0) document.getElementById("feelings-" + postid).style.display = "none";
+                    else document.getElementById("feelings-" + postid).style.display = "block";
+                    if(feeling.length == 0) document.getElementById("flbl-" + postid).innerHTML = "Like";
+                    let likes = post["likes"]; if(likes.length == 0) likes = "0";
+                    let loves = post["loves"]; if(loves.length == 0) loves = "0";
+                    let haha = post["haha"]; if(haha.length == 0) haha = "0";
+                    let wow = post["wow"]; if(wow.length == 0) wow = "0";
+                    let sad = post["sad"]; if(sad.length == 0) sad = "0";
+                    let angry = post["angry"]; if(angry.length == 0) angry = "0";
+                    if(parseInt(likes) == 0) document.getElementById("like-" + postid).style.display = "none";
+                    else document.getElementById("like-" + postid).style.display = "block";
+                    if(parseInt(loves) == 0) document.getElementById("love-" + postid).style.display = "none";
+                    else document.getElementById("love-" + postid).style.display = "block";
+                    if(parseInt(haha) == 0) document.getElementById("haha-" + postid).style.display = "none";
+                    else document.getElementById("haha-" + postid).style.display = "block";
+                    if(parseInt(wow) == 0) document.getElementById("wow-" + postid).style.display = "none";
+                    else document.getElementById("wow-" + postid).style.display = "block";
+                    if(parseInt(sad) == 0) document.getElementById("sad-" + postid).style.display = "none";
+                    else document.getElementById("sad-" + postid).style.display = "block";
+                    if(parseInt(angry) == 0) document.getElementById("angry-" + postid).style.display = "none";
+                    else document.getElementById("angry-" + postid).style.display = "block";
+                }
+            }
+        };
+        xhr.open('POST', "/mothers/react_post", true);
+        xhr.send(formData);
+	}
+}
+
+
+document.getElementById("s-form").querySelector("input[name='q']").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("s-form").querySelector("button").click();
+  }
+});
+
+function searchPost() {
+    let q = document.getElementsByName("q")[0];
+    if(q.value.length == 0) {
+        showFailureAlert("Please enter a keyword.");
+        return;
+    }
+    let form = document.getElementById("s-form");
+    let topProg = document.getElementsByClassName("top-progress")[0];
+    topProg.style.display = "block";
+    form.submit();
+}
+
+function showSuccessAlert(msg) {
+    swal({
+        title: "Success!",
+        text: msg,
+        icon: "success",
+        button: "OK",
+    });
+}
+
+function showFailureAlert(msg) {
+    swal({
+        title: "Oops! We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+
 </script>
 
 
-{% endblock %}
+
+</body>
+
+</html>
 
 
 

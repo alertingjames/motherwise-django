@@ -48,13 +48,15 @@ from django import forms
 import sys
 from django.core.cache import cache
 import random
+from django.db.models import Q
 
 from pbsonesignal import PybossaOneSignal
 
 from pyfcm import FCMNotification
 
-from motherwise.models import Member, Contact, Group, GroupMember, GroupConnect, Post, Comment, PostPicture, PostLike, Notification, Received, Sent, Replied, Conference, Report
-from motherwise.serializers import MemberSerializer, GroupSerializer, PostSerializer, PostPictureSerializer, CommentSerializer, NotificationSerializer, ConferenceSerializer
+from motherwise.models import Member, Contact, Group, GroupMember, GroupConnect, Post, PostUrlPreview, Comment, PostPicture, PostLike, Notification, Received, Sent, Replied, Conference, Report, PostBlock, Cohort, PostCategory
+from motherwise.models import CommentBlock, CommentLike
+from motherwise.serializers import MemberSerializer, GroupSerializer, PostSerializer, PostUrlPreviewSerializer, PostPictureSerializer, CommentSerializer, NotificationSerializer, ConferenceSerializer
 
 import pyrebase
 
@@ -126,9 +128,8 @@ def index(request):
     return HttpResponse('Hello I am VaCay Mobile Server!')
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def login(request):
     if request.method == 'POST':
@@ -166,9 +167,8 @@ def login(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def register(request):
     if request.method == 'POST':
@@ -186,15 +186,12 @@ def register(request):
 
         fs = FileSystemStorage()
 
-        members = Member.objects.filter(id=member_id)
-        member = None
-        if members.count() == 0:
+        member = Member.objects.filter(id=member_id).first()
+        if member is None:
             member = Member()
             mbs = Member.objects.filter(email='cayleywetzig@gmail.com')
             admin = mbs[0]
             member.admin_id = admin.pk
-        else:
-            member = members[0]
         member.name = name
         member.email = email
         if password != "": member.password = password
@@ -216,6 +213,15 @@ def register(request):
         except KeyError:
             print('no key')
 
+        i = 0
+        for f in request.FILES.getlist('files'):
+            i = i + 1
+            filename = fs.save(f.name, f)
+            uploaded_url = fs.url(filename)
+            if i == 1:
+                member.photo_url = settings.URL + uploaded_url
+                member.save()
+
         try:
             f = request.FILES['file']
             filename = fs.save(f.name, f)
@@ -233,9 +239,8 @@ def register(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def forgotpassword(request):
     if request.method == 'POST':
@@ -285,9 +290,8 @@ def resetpassword(request):
     return render(request, 'usermobile/resetpwd.html', {'email':email})
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def rstpwd(request):
     if request.method == 'POST':
@@ -312,9 +316,8 @@ def rstpwd(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def addlocation(request):
     if request.method == 'POST':
@@ -342,9 +345,8 @@ def addlocation(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def home(request):
     import datetime
@@ -387,9 +389,8 @@ def home(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def sendmembermessage(request):
     if request.method == 'POST':
@@ -429,7 +430,7 @@ def sendmembermessage(request):
             snt.save()
 
             title = 'MotherWise Community: The Nest'
-            subject = 'You\'ve received a message from a member of MotherWise Community: The Nest'
+            subject = 'You\'ve received a message from a member of the Nest (has recibido un mensaje de un miembro de Nest)'
             msg = 'Dear ' + member.name + ', You\'ve received a message from ' + me.name + '. The message is as following:<br><br>'
             msg = msg + message
             rurl = '/mothers/notifications?noti_id=' + str(notification.pk)
@@ -437,10 +438,18 @@ def sendmembermessage(request):
                 rurl = '/notifications?noti_id=' + str(notification.pk)
             msg = msg + '<br><br><a href=\'' + settings.URL + rurl + '\' target=\'_blank\'>Join website</a>'
 
+            title2 = 'Comunidad MotherWise: el Nest'
+            msg2 = member.name + ', has recibido un mensaje de ' + me.name + '. el mensaje es el siguiente:<br><br>'
+            msg2 = msg2 + message
+            rurl = '/mothers/notifications?noti_id=' + str(notification.pk)
+            if member.cohort == 'admin':
+                rurl = '/notifications?noti_id=' + str(notification.pk)
+            msg2 = msg2 + '<br><br><a href=\'' + settings.URL + rurl + '\' target=\'_blank\'>unirse al sitio web</a>'
+
             from_email = me.email
             to_emails = []
             to_emails.append(member.email)
-            send_mail_message(from_email, to_emails, title, subject, msg)
+            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
             ##########################################################################################################################################################################
 
@@ -472,6 +481,8 @@ def sendmembermessage(request):
                 if member.cohort == 'admin':
                     url = '/notifications?noti_id=' + str(notification.pk)
                 msg = member.name + ', You\'ve received a message from ' + me.name + '.\nThe message is as following:\n' + message
+                msg2 = member.name + ', has recibido un mensaje de ' + me.name + '.\nel mensaje es el siguiente:\n' + message
+                msg = msg + '\n\n' + msg2
                 send_push(playerIDList, msg, url)
 
             resp = {'result_code': '0'}
@@ -480,6 +491,30 @@ def sendmembermessage(request):
             resp = {'result_code': '2'}
             return HttpResponse(json.dumps(resp))
 
+
+
+def send_mail_message0(from_email, to_emails, title, subject, message, title2, message2):
+    html =  """\
+                <html>
+                    <head></head>
+                    <body>
+                        <a href="#"><img src="https://www.vacay.company/static/images/logo.png" style="width:120px;height:120px;border-radius: 8%; margin-left:25px;"/></a>
+                        <h2 style="margin-left:10px; color:#02839a;">{title}</h2>
+                        <div style="font-size:14px; white-space: pre-line; word-wrap: break-word;">
+                            {mes}
+                        </div>
+                        <h2 style="margin-left:10px; color:#02839a;">{title2}</h2>
+                        <div style="font-size:14px; white-space: pre-line; word-wrap: break-word;">
+                            {mes2}
+                        </div>
+                    </body>
+                </html>
+            """
+    html = html.format(title=title, mes=message, title2=title2, mes2=message2)
+
+    msg = EmailMultiAlternatives(subject, '', from_email, to_emails)
+    msg.attach_alternative(html, "text/html")
+    msg.send(fail_silently=False)
 
 
 def send_mail_message(from_email, to_emails, title, subject, message):
@@ -521,9 +556,8 @@ def send_push(playerIDs, message, url):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def messageselecteds(request):
     if request.method == 'POST':
@@ -570,7 +604,7 @@ def messageselecteds(request):
                     snt.save()
 
                     title = 'MotherWise Community: The Nest'
-                    subject = 'You\'ve received a message from a member of MotherWise Community: The Nest'
+                    subject = 'You\'ve received a message from a member of the Nest (has recibido un mensaje de un miembro de Nest)'
                     msg = 'Dear ' + member.name + ', You\'ve received a message from ' + me.name + '. The message is as following:<br><br>'
                     msg = msg + message
                     rurl = '/mothers/notifications?noti_id=' + str(notification.pk)
@@ -578,10 +612,18 @@ def messageselecteds(request):
                         rurl = '/notifications?noti_id=' + str(notification.pk)
                     msg = msg + '<br><br><a href=\'' + settings.URL + rurl + '\' target=\'_blank\'>Join website</a>'
 
+                    title2 = 'Comunidad MotherWise: el Nest'
+                    msg2 = member.name + ', has recibido un mensaje de ' + me.name + '. el mensaje es el siguiente:<br><br>'
+                    msg2 = msg2 + message
+                    rurl = '/mothers/notifications?noti_id=' + str(notification.pk)
+                    if member.cohort == 'admin':
+                        rurl = '/notifications?noti_id=' + str(notification.pk)
+                    msg2 = msg2 + '<br><br><a href=\'' + settings.URL + rurl + '\' target=\'_blank\'>unirse al sitio web</a>'
+
                     from_email = me.email
                     to_emails = []
                     to_emails.append(member.email)
-                    send_mail_message(from_email, to_emails, title, subject, msg)
+                    send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                     #####################################################################################################################################################################
 
@@ -610,6 +652,8 @@ def messageselecteds(request):
                         playerIDList = []
                         playerIDList.append(member.playerID)
                         msg = member.name + ', You\'ve received a message from ' + me.name + '.\nThe message is as following:\n' + message
+                        msg2 = member.name + ', has recibido un mensaje de ' + me.name + '.\nel mensaje es el siguiente:\n' + message
+                        msg = msg + '\n\n' + msg2
                         url = '/mothers/notifications?noti_id=' + str(notification.pk)
                         if member.cohort == 'admin':
                             url = '/notifications?noti_id=' + str(notification.pk)
@@ -656,9 +700,8 @@ def update_contact(me, member_email):
     return contactList
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def networkposts(request):
     if request.method == 'POST':
@@ -666,12 +709,10 @@ def networkposts(request):
 
         member_id = request.POST.get('member_id', '1')
 
-        members = Member.objects.filter(id=member_id)
-        if members.count() == 0:
+        me = Member.objects.get(id=member_id)
+        if me is None:
             resp = {'result_code': '1'}
             return HttpResponse(json.dumps(resp))
-
-        me = members[0]
 
         users = Member.objects.filter(admin_id=me.admin_id).order_by('-id')
         userList = []
@@ -686,46 +727,368 @@ def networkposts(request):
 
         postList = []
 
-        allPosts = Post.objects.all().order_by('-id')
+        allPosts = Post.objects.filter(Q(sch_status='') & ~Q(status__icontains='top')).order_by('-id')[:10]
         i = 0
         for post in allPosts:
+            if PostBlock.objects.filter(member_id=post.member_id, blocker_id=member_id, option='poster', status='blocked').count() > 0: continue
+            if PostBlock.objects.filter(post_id=post.pk, blocker_id=member_id, option='post', status='blocked').count() > 0: continue
             post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
             i = i + 1
-            pls = PostLike.objects.filter(post_id=post.pk, member_id=me.pk)
-            if pls.count() > 0:
-                post.liked = 'yes'
-            else: post.liked = 'no'
-
-            comments = Comment.objects.filter(post_id=post.pk)
-            post.comments = str(comments.count())
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=me.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
             likes = PostLike.objects.filter(post_id=post.pk)
-            post.likes = str(likes.count())
+            post.reactions = str(likes.count())
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+            post.comments = str(comments.count())
 
-            members = Member.objects.filter(id=post.member_id)
-            if members.count() > 0:
-                memb = members[0]
+            member = Member.objects.get(id=post.member_id)
+            if member is not None:
+                memb = member
                 if memb.admin_id == me.admin_id or memb.pk == int(me.admin_id):
                     memb_serializer = MemberSerializer(memb, many=False)
                     post_serializer = PostSerializer(post, many=False)
                     pps = PostPicture.objects.filter(post_id=post.pk)
+                    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+                    prev_serializer = PostUrlPreviewSerializer(prevs, many=True)
+                    comments1 = comments[:5]
+                    commentlist = []
+                    for comment in comments1:
+                        cm = Member.objects.filter(id=comment.member_id).first()
+                        if cm is not None:
+                            cdata = {
+                                'comment': CommentSerializer(comment, many=False).data,
+                                'commented_member': MemberSerializer(cm, many=False).data,
+                            }
+                            commentlist.append(cdata)
                     data = {
                         'member':memb_serializer.data,
                         'post': post_serializer.data,
-                        'pics': str(pps.count())
+                        'prevs': prev_serializer.data,
+                        'pics': str(pps.count()),
+                        'comments': commentlist,
                     }
-
                     postList.append(data)
+                    # if 'top' in post.status:
+                    #     postList.insert(0, data)
+                    # else:
+                    #     postList.append(data)
 
         users_serializer = MemberSerializer(userList, many=True)
+
+        topPosts = Post.objects.filter(sch_status='', status__icontains='top').order_by('-id')
+        for post in topPosts:
+            if PostBlock.objects.filter(member_id=post.member_id, blocker_id=member_id, option='poster', status='blocked').count() > 0: continue
+            if PostBlock.objects.filter(post_id=post.pk, blocker_id=member_id, option='post', status='blocked').count() > 0: continue
+            post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=me.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
+            likes = PostLike.objects.filter(post_id=post.pk)
+            post.reactions = str(likes.count())
+
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+            post.comments = str(comments.count())
+
+            member = Member.objects.get(id=post.member_id)
+            if member is not None:
+                memb = member
+                if memb.admin_id == me.admin_id or memb.pk == int(me.admin_id):
+                    memb_serializer = MemberSerializer(memb, many=False)
+                    post_serializer = PostSerializer(post, many=False)
+                    pps = PostPicture.objects.filter(post_id=post.pk)
+                    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+                    prev_serializer = PostUrlPreviewSerializer(prevs, many=True)
+                    comments1 = comments[:5]
+                    commentlist = []
+                    for comment in comments1:
+                        cm = Member.objects.filter(id=comment.member_id).first()
+                        if cm is not None:
+                            cdata = {
+                                'comment': CommentSerializer(comment, many=False).data,
+                                'commented_member': MemberSerializer(cm, many=False).data,
+                            }
+                            commentlist.append(cdata)
+                    data = {
+                        'member':memb_serializer.data,
+                        'post': post_serializer.data,
+                        'prevs': prev_serializer.data,
+                        'pics': str(pps.count()),
+                        'comments': commentlist,
+                    }
+                    postList.insert(0, data)
 
         resp = {'result_code':'0', 'posts': postList, 'users':users_serializer.data}
         return HttpResponse(json.dumps(resp))
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+@api_view(['GET', 'POST'])
+def refnetworkposts(request):
+    if request.method == 'POST':
+        import datetime
+
+        member_id = request.POST.get('member_id', '1')
+        num = request.POST.get('num', '0')
+
+        me = Member.objects.get(id=member_id)
+        if me is None:
+            resp = {'result_code': '1'}
+            return HttpResponse(json.dumps(resp))
+
+        postList = []
+
+        posts = Post.objects.filter(Q(sch_status='') & ~Q(status__icontains='top')).order_by('-id')[int(num):int(num) + 10]
+        i = 0
+        for post in posts:
+            if PostBlock.objects.filter(member_id=post.member_id, blocker_id=member_id, option='poster', status='blocked').count() > 0: continue
+            if PostBlock.objects.filter(post_id=post.pk, blocker_id=member_id, option='post', status='blocked').count() > 0: continue
+            post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+            i = i + 1
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=me.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
+            likes = PostLike.objects.filter(post_id=post.pk)
+            post.reactions = str(likes.count())
+
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+            post.comments = str(comments.count())
+
+            member = Member.objects.get(id=post.member_id)
+            if member is not None:
+                memb = member
+                if memb.admin_id == me.admin_id or memb.pk == int(me.admin_id):
+                    memb_serializer = MemberSerializer(memb, many=False)
+                    post_serializer = PostSerializer(post, many=False)
+                    pps = PostPicture.objects.filter(post_id=post.pk)
+                    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+                    prev_serializer = PostUrlPreviewSerializer(prevs, many=True)
+                    comments1 = comments[:5]
+                    commentlist = []
+                    for comment in comments1:
+                        cm = Member.objects.filter(id=comment.member_id).first()
+                        if cm is not None:
+                            cdata = {
+                                'comment': CommentSerializer(comment, many=False).data,
+                                'commented_member': MemberSerializer(cm, many=False).data,
+                            }
+                            commentlist.append(cdata)
+                    data = {
+                        'member':memb_serializer.data,
+                        'post': post_serializer.data,
+                        'prevs': prev_serializer.data,
+                        'pics': str(pps.count()),
+                        'comments': commentlist,
+                    }
+                    postList.append(data)
+
+        resp = {'result_code':'0', 'posts': postList}
+        return HttpResponse(json.dumps(resp))
+
+
+
+
+
+@api_view(['GET', 'POST'])
+def userposts(request):
+    if request.method == 'POST':
+        import datetime
+
+        member_id = request.POST.get('member_id', '1')
+        me_id = request.POST.get('me_id', '1')
+
+        me = Member.objects.get(id=me_id)
+        if me is None:
+            resp = {'result_code': '1'}
+            return HttpResponse(json.dumps(resp))
+
+        users = Member.objects.filter(admin_id=me.admin_id).order_by('-id')
+        userList = []
+        for user in users:
+            if user.registered_time != '' and user.pk != me.pk:
+                user.username = '@' + user.email[0:user.email.find('@')]
+                userList.append(user)
+
+        admin = Member.objects.get(id=me.admin_id)
+        admin.username = '@' + admin.email[0:admin.email.find('@')]
+        userList.insert(0,admin)
+
+        postList = []
+
+        allPosts = Post.objects.filter(Q(member_id=member_id) & Q(sch_status='') & ~Q(status__icontains='top')).order_by('-id')
+        posts = allPosts[:10]
+        i = 0
+        for post in posts:
+            if PostBlock.objects.filter(member_id=post.member_id, blocker_id=me_id, option='poster', status='blocked').count() > 0: continue
+            if PostBlock.objects.filter(post_id=post.pk, blocker_id=me_id, option='post', status='blocked').count() > 0: continue
+            post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+            i = i + 1
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=me.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
+            likes = PostLike.objects.filter(post_id=post.pk)
+            post.reactions = str(likes.count())
+
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+            post.comments = str(comments.count())
+
+            member = Member.objects.get(id=post.member_id)
+            if member is not None:
+                memb = member
+                if memb.admin_id == me.admin_id or memb.pk == int(me.admin_id):
+                    memb_serializer = MemberSerializer(memb, many=False)
+                    post_serializer = PostSerializer(post, many=False)
+                    pps = PostPicture.objects.filter(post_id=post.pk)
+                    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+                    prev_serializer = PostUrlPreviewSerializer(prevs, many=True)
+                    comments1 = comments[:5]
+                    commentlist = []
+                    for comment in comments1:
+                        cm = Member.objects.filter(id=comment.member_id).first()
+                        if cm is not None:
+                            cdata = {
+                                'comment': CommentSerializer(comment, many=False).data,
+                                'commented_member': MemberSerializer(cm, many=False).data,
+                            }
+                            commentlist.append(cdata)
+                    data = {
+                        'member':memb_serializer.data,
+                        'post': post_serializer.data,
+                        'prevs': prev_serializer.data,
+                        'pics': str(pps.count()),
+                        'comments': commentlist,
+                    }
+                    postList.append(data)
+                    # if 'top' in post.status:
+                    #     postList.insert(0, data)
+                    # else:
+                    #     postList.append(data)
+
+        users_serializer = MemberSerializer(userList, many=True)
+
+        topPosts = Post.objects.filter(member_id=member_id, sch_status='', status__icontains='top').order_by('-id')
+        for post in topPosts:
+            if PostBlock.objects.filter(member_id=post.member_id, blocker_id=me_id, option='poster', status='blocked').count() > 0: continue
+            if PostBlock.objects.filter(post_id=post.pk, blocker_id=me_id, option='post', status='blocked').count() > 0: continue
+            post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=me.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
+            likes = PostLike.objects.filter(post_id=post.pk)
+            post.reactions = str(likes.count())
+
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+            post.comments = str(comments.count())
+
+            member = Member.objects.get(id=post.member_id)
+            if member is not None:
+                memb = member
+                if memb.admin_id == me.admin_id or memb.pk == int(me.admin_id):
+                    memb_serializer = MemberSerializer(memb, many=False)
+                    post_serializer = PostSerializer(post, many=False)
+                    pps = PostPicture.objects.filter(post_id=post.pk)
+                    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+                    prev_serializer = PostUrlPreviewSerializer(prevs, many=True)
+                    comments1 = comments[:5]
+                    commentlist = []
+                    for comment in comments1:
+                        cm = Member.objects.filter(id=comment.member_id).first()
+                        if cm is not None:
+                            cdata = {
+                                'comment': CommentSerializer(comment, many=False).data,
+                                'commented_member': MemberSerializer(cm, many=False).data,
+                            }
+                            commentlist.append(cdata)
+                    data = {
+                        'member':memb_serializer.data,
+                        'post': post_serializer.data,
+                        'prevs': prev_serializer.data,
+                        'pics': str(pps.count()),
+                        'comments': commentlist,
+                    }
+                    postList.insert(0, data)
+
+        resp = {'result_code':'0', 'posts': postList, 'users':users_serializer.data, 'total_posts':str(allPosts.count())}
+        return HttpResponse(json.dumps(resp))
+
+
+
+
+@api_view(['GET', 'POST'])
+def refuserposts(request):
+    if request.method == 'POST':
+        import datetime
+
+        member_id = request.POST.get('member_id', '1')
+        me_id = request.POST.get('me_id', '1')
+        num = request.POST.get('num', '0')
+
+        me = Member.objects.get(id=me_id)
+        if me is None:
+            resp = {'result_code': '1'}
+            return HttpResponse(json.dumps(resp))
+
+        postList = []
+
+        posts = Post.objects.filter(Q(member_id=member_id) & Q(sch_status='') & ~Q(status__icontains='top')).order_by('-id')[int(num):int(num)+10]
+        i = 0
+        for post in posts:
+            if PostBlock.objects.filter(member_id=post.member_id, blocker_id=me_id, option='poster', status='blocked').count() > 0: continue
+            if PostBlock.objects.filter(post_id=post.pk, blocker_id=me_id, option='post', status='blocked').count() > 0: continue
+            post.posted_time = datetime.datetime.fromtimestamp(float(int(post.posted_time)/1000)).strftime("%b %d, %Y %H:%M")
+            i = i + 1
+            pl = PostLike.objects.filter(post_id=post.pk, member_id=me.pk).first()
+            if pl is not None: post.liked = pl.status
+            else: post.liked = ''
+            likes = PostLike.objects.filter(post_id=post.pk)
+            post.reactions = str(likes.count())
+
+            comments = Comment.objects.filter(post_id=post.pk, comment_id='0')
+            post.comments = str(comments.count())
+
+            member = Member.objects.get(id=post.member_id)
+            if member is not None:
+                memb = member
+                if memb.admin_id == me.admin_id or memb.pk == int(me.admin_id):
+                    memb_serializer = MemberSerializer(memb, many=False)
+                    post_serializer = PostSerializer(post, many=False)
+                    pps = PostPicture.objects.filter(post_id=post.pk)
+                    prevs = PostUrlPreview.objects.filter(post_id=post.pk)
+                    prev_serializer = PostUrlPreviewSerializer(prevs, many=True)
+                    comments1 = comments[:5]
+                    commentlist = []
+                    for comment in comments1:
+                        cm = Member.objects.filter(id=comment.member_id).first()
+                        if cm is not None:
+                            cdata = {
+                                'comment': CommentSerializer(comment, many=False).data,
+                                'commented_member': MemberSerializer(cm, many=False).data,
+                            }
+                            commentlist.append(cdata)
+                    data = {
+                        'member':memb_serializer.data,
+                        'post': post_serializer.data,
+                        'prevs': prev_serializer.data,
+                        'pics': str(pps.count()),
+                        'comments': commentlist,
+                    }
+                    postList.append(data)
+
+        resp = {'result_code':'0', 'posts': postList}
+        return HttpResponse(json.dumps(resp))
+
+
+
+
+
+def mypostcount(request):
+    member_id = request.GET['member_id']
+    my_posts_count = Post.objects.filter(member_id=member_id, sch_status='').count()
+    return HttpResponse(json.dumps({'result_code':'0', 'my_posts_count':str(my_posts_count)}))
+
+
+
 @api_view(['GET', 'POST'])
 def likepost(request):
 
@@ -758,6 +1121,7 @@ def likepost(request):
             pl.post_id = post.pk
             pl.member_id = me.pk
             pl.liked_time = str(int(round(time.time() * 1000)))
+            pl.status = 'like'
             pl.save()
 
             post.likes = str(int(post.likes) + 1)
@@ -767,17 +1131,67 @@ def likepost(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
+@api_view(['POST','GET'])
+def react_post(request):
+    if request.method == 'POST':
+        member_id = request.POST.get('member_id', '1')
+        post_id = request.POST.get('post_id','0')
+        feeling = request.POST.get('feeling','')
+
+        post = Post.objects.filter(id=post_id).first()
+        if post is None: return HttpResponse(json.dumps({'result_code':'1'}))
+
+        pl = PostLike.objects.filter(post_id=post_id, member_id=member_id).first()
+        if pl is not None:
+            if feeling == '':
+                pl.delete()
+            else:
+                pl.liked_time = str(int(round(time.time() * 1000)))
+                pl.status = feeling
+                pl.save()
+        else:
+            if feeling != '':
+                pl = PostLike()
+                pl.post_id = post_id
+                pl.member_id = member_id
+                pl.liked_time = str(int(round(time.time() * 1000)))
+                pl.status = feeling
+                pl.save()
+
+        allfeelings = PostLike.objects.filter(post_id=post_id)
+        post.reactions = str(allfeelings.count())
+        likes = PostLike.objects.filter(post_id=post_id, status='like')
+        post.likes = str(likes.count())
+        loves = PostLike.objects.filter(post_id=post_id, status='love')
+        post.loves = str(loves.count())
+        hahas = PostLike.objects.filter(post_id=post_id, status='haha')
+        post.haha = str(hahas.count())
+        wows = PostLike.objects.filter(post_id=post_id, status='wow')
+        post.wow = str(wows.count())
+        sads = PostLike.objects.filter(post_id=post_id, status='sad')
+        post.sad = str(sads.count())
+        angrys = PostLike.objects.filter(post_id=post_id, status='angry')
+        post.angry = str(angrys.count())
+        post.save()
+
+        pl = PostLike.objects.filter(post_id=post.pk, member_id=member_id).first()
+        if pl is not None: post.liked = pl.status
+        else: post.liked = ''
+        likes = PostLike.objects.filter(post_id=post_id)
+        post.reactions = str(likes.count())
+        return HttpResponse(json.dumps({'result_code':'0', 'post':PostSerializer(post, many=False).data}))
+
+
+
+
 @api_view(['GET', 'POST'])
 def getcomments(request):
-
     import datetime
-
     if request.method == 'POST':
-
         post_id = request.POST.get('post_id', '1')
+        member_id = request.POST.get('member_id', '1')
 
         posts = Post.objects.filter(id=post_id)
         if posts.count() == 0:
@@ -786,9 +1200,17 @@ def getcomments(request):
 
         post = posts[0]
 
-        comments = Comment.objects.filter(post_id=post.pk).order_by('-id')
+        comments = Comment.objects.filter(post_id=post.pk, comment_id='0').order_by('-id')
         commentList = []
         for comment in comments:
+            cl = CommentLike.objects.filter(comment_id=comment.pk, member_id=member_id).first()
+            if cl is not None: comment.liked = cl.status
+            else: comment.liked = ''
+            cmts = Comment.objects.filter(comment_id=comment.pk)
+            comment.comments = str(cmts.count())
+            likes = CommentLike.objects.filter(comment_id=comment.pk)
+            comment.reactions = str(likes.count())
+            if CommentBlock.objects.filter(post_id=post.pk, comment_id=comment.pk, blocker_id=member_id).first() is not None: continue
             comment.commented_time = datetime.datetime.fromtimestamp(float(int(comment.commented_time)/1000)).strftime("%b %d, %Y %H:%M")
             members = Member.objects.filter(id=comment.member_id)
             if members.count() > 0:
@@ -806,14 +1228,66 @@ def getcomments(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+@api_view(['POST','GET'])
+def react_comment(request):
+    if request.method == 'POST':
+        member_id = request.POST.get('member_id', '1')
+        comment_id = request.POST.get('comment_id','0')
+        feeling = request.POST.get('feeling','')
+
+        comment = Comment.objects.filter(id=comment_id).first()
+        if comment is None: return HttpResponse(json.dumps({'result_code':'1'}))
+
+        cl = CommentLike.objects.filter(comment_id=comment_id, member_id=member_id).first()
+        if cl is not None:
+            if feeling == '':
+                cl.delete()
+            else:
+                cl.liked_time = str(int(round(time.time() * 1000)))
+                cl.status = feeling
+                cl.save()
+        else:
+            if feeling != '':
+                cl = CommentLike()
+                cl.comment_id = comment_id
+                cl.member_id = member_id
+                cl.liked_time = str(int(round(time.time() * 1000)))
+                cl.status = feeling
+                cl.save()
+
+        allfeelings = CommentLike.objects.filter(comment_id=comment_id)
+        comment.reactions = str(allfeelings.count())
+        likes = CommentLike.objects.filter(comment_id=comment_id, status='like')
+        comment.likes = str(likes.count())
+        loves = CommentLike.objects.filter(comment_id=comment_id, status='love')
+        comment.loves = str(loves.count())
+        hahas = CommentLike.objects.filter(comment_id=comment_id, status='haha')
+        comment.haha = str(hahas.count())
+        wows = CommentLike.objects.filter(comment_id=comment_id, status='wow')
+        comment.wow = str(wows.count())
+        sads = CommentLike.objects.filter(comment_id=comment_id, status='sad')
+        comment.sad = str(sads.count())
+        angrys = CommentLike.objects.filter(comment_id=comment_id, status='angry')
+        comment.angry = str(angrys.count())
+        comment.save()
+
+        cl = CommentLike.objects.filter(comment_id=comment_id, member_id=member_id).first()
+        if cl is not None: comment.liked = cl.status
+        else: comment.liked = ''
+        likes = CommentLike.objects.filter(comment_id=comment_id)
+        comment.reactions = str(likes.count())
+        return HttpResponse(json.dumps({'result_code':'0', 'comment':CommentSerializer(comment, many=False).data}))
+
+
+
+
 @api_view(['GET', 'POST'])
 def submitcomment(request):
     if request.method == 'POST':
 
         post_id = request.POST.get('post_id', '')
+        comment_id = request.POST.get('comment_id', '0')
         content = request.POST.get('content', '')
         member_id = request.POST.get('member_id', '1')
 
@@ -832,6 +1306,8 @@ def submitcomment(request):
             comment.post_id = post_id
             comment.member_id = me.pk
             comment.comment_text = content
+            comment.comments = '0'
+            comment.likes = '0'
             comment.commented_time = str(int(round(time.time() * 1000)))
 
             try:
@@ -873,9 +1349,103 @@ def submitcomment(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
+@api_view(['GET', 'POST'])
+def send_comment(request):
+    if request.method == 'POST':
+
+        post_id = request.POST.get('post_id', '')
+        comment_id = request.POST.get('comment_id', '0')
+        content = request.POST.get('content', '')
+        member_id = request.POST.get('member_id', '1')
+
+        members = Member.objects.filter(id=member_id)
+        if members.count() == 0:
+            resp = {'result_code': '1'}
+            return HttpResponse(json.dumps(resp))
+
+        me = members[0]
+
+        fs = FileSystemStorage()
+
+        comment = Comment()
+        comment.post_id = post_id
+        comment.member_id = me.pk
+        comment.comment_id = comment_id
+        comment.comment_text = content
+        comment.comments = '0'
+        comment.likes = '0'
+        comment.commented_time = str(int(round(time.time() * 1000)))
+
+        try:
+            image = request.FILES['image']
+            filename = fs.save(image.name, image)
+            uploaded_url = fs.url(filename)
+            comment.image_url = settings.URL + uploaded_url
+        except MultiValueDictKeyError:
+            print('no video updated')
+
+        comment.save()
+
+        posts = Post.objects.filter(id=post_id)
+        if posts.count() == 0:
+            resp = {'result_code': '2'}
+            return HttpResponse(json.dumps(resp))
+        post = posts[0]
+        post.comments = str(int(post.comments) + 1)
+        post.save()
+
+        resp = {'result_code':'0'}
+        return HttpResponse(json.dumps(resp))
+
+
+
+
+@api_view(['GET', 'POST'])
+def subcomments(request):
+    import datetime
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id', '0')
+        comment_id = request.POST.get('comment_id', '0')
+        member_id = request.POST.get('member_id', '0')
+
+        posts = Post.objects.filter(id=post_id)
+        if posts.count() == 0:
+            resp = {'result_code': '1'}
+            return HttpResponse(json.dumps(resp))
+
+        post = posts[0]
+
+        comments = Comment.objects.filter(post_id=post.pk, comment_id=comment_id)
+        commentList = []
+        for comment in comments:
+            cl = CommentLike.objects.filter(comment_id=comment.pk, member_id=member_id).first()
+            if cl is not None: comment.liked = cl.status
+            else: comment.liked = ''
+            cmts = Comment.objects.filter(comment_id=comment.pk)
+            comment.comments = str(cmts.count())
+            likes = CommentLike.objects.filter(comment_id=comment.pk)
+            comment.reactions = str(likes.count())
+            if CommentBlock.objects.filter(post_id=post.pk, comment_id=comment.pk, blocker_id=member_id).first() is not None: continue
+            comment.commented_time = datetime.datetime.fromtimestamp(float(int(comment.commented_time)/1000)).strftime("%b %d, %Y %H:%M")
+            members = Member.objects.filter(id=comment.member_id)
+            if members.count() > 0:
+                member = members[0]
+                comment_serializer = CommentSerializer(comment, many=False)
+                member_serializer = MemberSerializer(member, many=False)
+                data = {
+                    'comment':comment_serializer.data,
+                    'member':member_serializer.data
+                }
+                commentList.append(data)
+
+        resp = {'result_code':'0', 'data':commentList}
+        return HttpResponse(json.dumps(resp))
+
+
+
+
 @api_view(['GET', 'POST'])
 def deletepost(request):
     if request.method == 'POST':
@@ -911,9 +1481,8 @@ def deletepost(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def deletecomment(request):
     if request.method == 'POST':
@@ -942,9 +1511,8 @@ def deletecomment(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def getpostpictures(request):
     if request.method == 'POST':
@@ -960,9 +1528,8 @@ def getpostpictures(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def createpost(request):
     if request.method == 'POST':
@@ -972,6 +1539,7 @@ def createpost(request):
         category = request.POST.get('category', '')
         content = request.POST.get('content', '')
         members_json_str = request.POST.get('members', '')
+        scheduled_time = request.POST.get('scheduled_time', '')
 
         member_id = request.POST.get('member_id', '1')
 
@@ -994,26 +1562,62 @@ def createpost(request):
             post = posts[0]
         else: post = Post()
 
+        ids = []
+        try:
+            decoded = json.loads(members_json_str)
+            for data in decoded['members']:
+                m_id = data['member_id']
+                ids.append(int(m_id))
+        except:
+            print('No notified member id')
+
+
         post.member_id = me.pk
         post.title = title
         post.category = category
         post.content = content
-        post.picture_url = ''
-        post.comments = '0'
-        post.likes = '0'
+        if int(post_id) == 0: post.picture_url = ''
+        if int(post_id) == 0: post.comments = '0'
+        if int(post_id) == 0: post.likes = '0'
         post.posted_time = str(int(round(time.time() * 1000)))
         if int(post_id) > 0: post.status = "updated"
+        post.scheduled_time = scheduled_time
+        if len(ids) > 0: post.notified_members = ",".join(str(i) for i in ids)
+        if scheduled_time != '' and int(post_id) == 0: post.sch_status = 'scheduled'
         post.save()
 
         fs = FileSystemStorage()
 
-        cnt = request.POST.get('pic_count', '0')
+        try:
+            cnt = request.POST.get('pic_count', '0')
 
-        if int(cnt) > 0:
+            if int(cnt) > 0:
+                i = 0
+                for i in range(0, int(cnt)):
+                    f  = request.FILES["file" + str(i)]
+
+                    # print("Product File Size: " + str(f.size))
+                    # if f.size > 1024 * 1024 * 2:
+                    #     continue
+
+                    i = i + 1
+
+                    filename = fs.save(f.name, f)
+                    uploaded_url = fs.url(filename)
+
+                    if i == 1:
+                        post.picture_url = settings.URL + uploaded_url
+                        post.save()
+                    postPicture = PostPicture()
+                    postPicture.post_id = post.pk
+                    postPicture.picture_url = settings.URL + uploaded_url
+                    postPicture.save()
+        except KeyError:
+            print('No key')
+
+        try:
             i = 0
-            for i in range(0, int(cnt)):
-                f  = request.FILES["file" + str(i)]
-
+            for f in request.FILES.getlist('images'):
                 # print("Product File Size: " + str(f.size))
                 # if f.size > 1024 * 1024 * 2:
                 #     continue
@@ -1030,8 +1634,11 @@ def createpost(request):
                 postPicture.post_id = post.pk
                 postPicture.picture_url = settings.URL + uploaded_url
                 postPicture.save()
+        except KeyError:
+            print('No key')
 
-        if members_json_str != '':
+
+        if members_json_str != '' and post.scheduled_time == '':
             try:
                 decoded = json.loads(members_json_str)
                 for data in decoded['members']:
@@ -1052,19 +1659,34 @@ def createpost(request):
                         else:
                             msg = msg + '<a href=\'' + settings.URL + '/mothers/posts?post_id=' + str(post.pk) + '\' target=\'_blank\'>View the post</a>'
 
+                        title2 = 'Comunidad MotherWise: el Nest'
+                        msg2 = member.name + ', has recibido una publicación de ' + me.name + '.<br><br>'
+
+                        if member.cohort == 'admin':
+                            msg2 = msg2 + '<a href=\'' + settings.URL + '/to_post?post_id=' + str(post.pk) + '\' target=\'_blank\'>ver la publicación</a>'
+                        else:
+                            msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/posts?post_id=' + str(post.pk) + '\' target=\'_blank\'>ver la publicación</a>'
+
                         from_email = admin.email
                         if member.cohort == 'admin':
                             from_email = settings.ADMIN_EMAIL
                         to_emails = []
                         to_emails.append(member.email)
-                        send_mail_message(from_email, to_emails, title, subject, msg)
+                        send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                         msg = member.name + ', You\'ve received a message from ' + me.name + '.\n\n'
-
                         if member.cohort == 'admin':
                             msg = msg + 'Click on this link to view the post: ' + settings.URL + '/to_post?post_id=' + str(post.pk)
                         else:
                             msg = msg + 'Click on this link to view the post: ' + settings.URL + '/mothers/posts?post_id=' + str(post.pk)
+
+                        msg2 = member.name + ', has recibido una publicación de ' + me.name + '.\n\n'
+                        if member.cohort == 'admin':
+                            msg2 = msg2 + 'haga clic en este enlace para ver la publicación: ' + settings.URL + '/to_post?post_id=' + str(post.pk)
+                        else:
+                            msg2 = msg2 + 'haga clic en este enlace para ver la publicación: ' + settings.URL + '/mothers/posts?post_id=' + str(post.pk)
+
+                        msg = msg + '\n\n' + msg2
 
                         notification = Notification()
                         notification.member_id = member.pk
@@ -1128,9 +1750,8 @@ def createpost(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def delpostpicture(request):
     if request.method == 'POST':
@@ -1161,9 +1782,8 @@ def delpostpicture(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def getlikes(request):
 
@@ -1188,6 +1808,7 @@ def getlikes(request):
             if members.count() > 0:
                 member = members[0]
                 member.registered_time = datetime.datetime.fromtimestamp(float(int(member.registered_time)/1000)).strftime("%b %d, %Y %H:%M")
+                member.post_feeling = pl.status
                 likeList.append(member)
 
         serializer = MemberSerializer(likeList, many=True)
@@ -1197,9 +1818,8 @@ def getlikes(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def getreceivedmessages(request):
 
@@ -1242,9 +1862,8 @@ def getreceivedmessages(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def deletemessage(request):
 
@@ -1267,9 +1886,8 @@ def deletemessage(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def processnewmessage(request):
     if request.method == 'POST':
@@ -1283,9 +1901,8 @@ def processnewmessage(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def getsentmessages(request):
 
@@ -1329,9 +1946,8 @@ def getsentmessages(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def replymessage(request):
     if request.method == 'POST':
@@ -1363,6 +1979,9 @@ def replymessage(request):
             # send_mail_message(from_email, to_emails, title, subject, msg)
 
             msg = member.name + ', You\'ve received a reply message from MotherWise Community.\nThe message is as following:\n' + message
+            msg2 = member.name + ', has recibido un mensaje de respuesta en el Nest.\nel mensaje es el siguiente:\n' + message
+
+            msg = msg + '\n\n' + msg2
 
             notification = Notification()
             notification.member_id = member.pk
@@ -1431,6 +2050,8 @@ def replymessage(request):
                 playerIDList = []
                 playerIDList.append(member.playerID)
                 msg = member.name + ', You\'ve received a reply message from MotherWise Community.\nThe message is as following:\n' + message
+                msg2 = member.name + ', has recibido un mensaje de respuesta en el Nest.\nel mensaje es el siguiente:\n' + message
+                msg = msg + '\n\n' + msg2
                 url = '/mothers/notifications?noti_id=' + str(notification.pk)
                 if member.cohort == 'admin':
                     url = '/notifications?noti_id=' + str(notification.pk)
@@ -1445,9 +2066,7 @@ def replymessage(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def messagehistory(request):
     if request.method == 'POST':
@@ -1501,9 +2120,8 @@ def messagehistory(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def newnotis(request):
     if request.method == 'POST':
@@ -1531,9 +2149,7 @@ def newnotis(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def getconfs(request):
     if request.method == 'POST':
@@ -1562,7 +2178,7 @@ def getConferences(confs, me):
     for conf in confs:
         conf.created_time = datetime.datetime.fromtimestamp(float(int(conf.created_time)/1000)).strftime("%b %d, %Y %H:%M")
         if conf.event_time != '': conf.event_time = datetime.datetime.fromtimestamp(float(int(conf.event_time)/1000)).strftime("%b %d, %Y %H:%M")
-        if conf.group_id != '':
+        if conf.group_id != '' and int(conf.group_id) > 0:
             groups = Group.objects.filter(id=int(conf.group_id))
             if groups.count() > 0:
                 group = groups[0]
@@ -1570,18 +2186,16 @@ def getConferences(confs, me):
                 if gms.count() > 0:
                     conf.gname = group.name
                     confList.append(conf)
-        elif conf.cohort != '':
-            mbs = Member.objects.filter(id=me.pk, cohort=conf.cohort)
-            if mbs.count() > 0:
-                conf.gname = conf.cohort
+        else:
+            mb = Member.objects.filter(id=me.pk).first()
+            if mb is not None:
+                conf.gname = 'Everyone'
                 confList.append(conf)
     return confList
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def changepassword(request):
 
@@ -1611,9 +2225,7 @@ def changepassword(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
 @api_view(['GET', 'POST'])
 def openconference(request):
 
@@ -1655,8 +2267,8 @@ def openconference(request):
                 admin = Member.objects.get(id=me.admin_id)
                 memberList.insert(0,admin)
 
-        elif cohort != '':
-            members = Member.objects.filter(admin_id=me.admin_id, cohort=cohort, status='')
+        else:
+            members = Member.objects.filter(admin_id=me.admin_id, status='')
             if members.count() > 0:
                 for member in members:
                     memberList.append(member)
@@ -1671,9 +2283,8 @@ def openconference(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def getgroupmembers(request):
 
@@ -1713,9 +2324,8 @@ def getgroupmembers(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def getgroupconfs(request):
     if request.method == 'POST':
@@ -1748,9 +2358,8 @@ def getgroupconfs(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def notifygroupchatmembers(request):
     if request.method == 'POST':
@@ -1792,7 +2401,7 @@ def notifygroupchatmembers(request):
                             member = members[0]
 
                             title = 'MotherWise Community: The Nest'
-                            subject = 'You\'ve received a community message from ' + group.name
+                            subject = 'You\'ve received a community message from (has recibido un mensaje de la comunidad de)' + group.name
                             msg = 'Dear ' + member.name + ', You\'ve received a community message from ' + me.name + ' in ' + group.name + '. The message is as following:<br><br>'
                             msg = msg + message + '<br><br>'
 
@@ -1801,10 +2410,19 @@ def notifygroupchatmembers(request):
                             else:
                                 msg = msg + '<a href=\'' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid + '\' target=\'_blank\'>Connect the community to view message</a>'
 
+                            title2 = 'Comunidad MotherWise: el Nest'
+                            msg2 = member.name + ', has recibido un mensaje de la comunidad de ' + me.name + ' en ' + group.name + '. el mensaje es el siguiente:<br><br>'
+                            msg2 = msg2 + message + '<br><br>'
+
+                            if member.cohort == 'admin':
+                                msg2 = msg2 + '<a href=\'' + settings.URL + '/open_group_chat?group_id=' + groupid + '\' target=\'_blank\'>conectar la comunidad para ver el mensaje</a>'
+                            else:
+                                msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid + '\' target=\'_blank\'>conectar la comunidad para ver el mensaje</a>'
+
                             from_email = settings.ADMIN_EMAIL
                             to_emails = []
                             to_emails.append(member.email)
-                            send_mail_message(from_email, to_emails, title, subject, msg)
+                            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                             msg = member.name + ', You\'ve received a community message from ' + me.name + ' in ' + group.name + '. The message is as following:\n\n'
                             msg = msg + message + '\n\n'
@@ -1813,6 +2431,16 @@ def notifygroupchatmembers(request):
                                 msg = msg + 'Click on this link to view the message: ' + settings.URL + '/open_group_chat?group_id=' + groupid
                             else:
                                 msg = msg + 'Click on this link to view the message: ' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid
+
+                            msg2 = member.name + ', has recibido un mensaje de la comunidad de ' + me.name + ' en ' + group.name + '. el mensaje es el siguiente:\n\n'
+                            msg2 = msg2 + message + '\n\n'
+
+                            if member.cohort == 'admin':
+                                msg2 = msg2 + 'haga clic en este enlace para ver el mensaje: ' + settings.URL + '/open_group_chat?group_id=' + groupid
+                            else:
+                                msg2 = msg2 + 'haga clic en este enlace para ver el mensaje: ' + settings.URL + '/mothers/open_group_chat?group_id=' + groupid
+
+                            msg = msg + '\n\n' + msg2
 
                             notification = Notification()
                             notification.member_id = member.pk
@@ -1890,7 +2518,7 @@ def notifygroupchatmembers(request):
                             member = members[0]
 
                             title = 'MotherWise Community: The Nest'
-                            subject = 'You\'ve received a group message from ' + cohort
+                            subject = 'You\'ve received a group message from (has recibido un mensaje grupal de)' + cohort
                             msg = 'Dear ' + member.name + ', You\'ve received a group message from ' + me.name + ' in ' + cohort + '. The message is as following:<br><br>'
                             msg = msg + message + '<br><br>'
 
@@ -1899,10 +2527,19 @@ def notifygroupchatmembers(request):
                             else:
                                 msg = msg + '<a href=\'' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort + '\' target=\'_blank\'>Connect the group to view message</a>'
 
+                            title2 = 'Comunidad MotherWise: el Nest'
+                            msg2 = member.name + ', has recibido un mensaje grupal de ' + me.name + ' en ' + cohort + '. el mensaje es el siguiente:<br><br>'
+                            msg2 = msg2 + message + '<br><br>'
+
+                            if member.cohort == 'admin':
+                                msg2 = msg2 + '<a href=\'' + settings.URL + '/group_cohort_chat?cohort=' + cohort + '\' target=\'_blank\'>conectar el grupo para ver el mensaje</a>'
+                            else:
+                                msg2 = msg2 + '<a href=\'' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort + '\' target=\'_blank\'>conectar el grupo para ver el mensaje</a>'
+
                             from_email = settings.ADMIN_EMAIL
                             to_emails = []
                             to_emails.append(member.email)
-                            send_mail_message(from_email, to_emails, title, subject, msg)
+                            send_mail_message0(from_email, to_emails, title, subject, msg, title2, msg2)
 
                             msg = member.name + ', You\'ve received a group message from ' + me.name + ' in ' + cohort + '. The message is as following:\n\n'
                             msg = msg + message + '\n\n'
@@ -1911,6 +2548,16 @@ def notifygroupchatmembers(request):
                                 msg = msg + 'Click on this link to view the message: ' + settings.URL + '/group_cohort_chat?cohort=' + cohort
                             else:
                                 msg = msg + 'Click on this link to view the message: ' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort
+
+                            msg2 = member.name + ', has recibido un mensaje grupal de ' + me.name + ' en ' + cohort + '. el mensaje es el siguiente:\n\n'
+                            msg2 = msg2 + message + '\n\n'
+
+                            if member.cohort == 'admin':
+                                msg2 = msg2 + 'haga clic en este enlace para ver el mensaje: ' + settings.URL + '/group_cohort_chat?cohort=' + cohort
+                            else:
+                                msg2 = msg2 + 'haga clic en este enlace para ver el mensaje: ' + settings.URL + '/mothers/open_cohort_chat?cohort=' + cohort
+
+                            msg = msg + '\n\n' + msg2
 
                             notification = Notification()
                             notification.member_id = member.pk
@@ -1975,9 +2622,8 @@ def notifygroupchatmembers(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def fcmregister(request):
     if request.method == 'POST':
@@ -2020,9 +2666,8 @@ def sendFCMPushNotification(member_id, sender_id, notiText):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def sendfcmpush(request):
     if request.method == 'POST':
@@ -2050,6 +2695,8 @@ def sendfcmpush(request):
                 if member.cohort == 'admin':
                     url = '/group_private_chat?email=' + sender.email
                 msg = member.name + ', You\'ve received a message from ' + sender.name + '.\nThe message is as following:\n' + message
+                msg2 = member.name + ', has recibido un mensaje de ' + sender.name + '.\nel mensaje es el siguiente:\n' + message
+                msg = msg + '\n\n' + msg2
                 send_push(playerIDList, msg, url)
 
         resp = {'result_code': '0'}
@@ -2057,9 +2704,8 @@ def sendfcmpush(request):
 
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def requestvideocall(request):
     if request.method == 'POST':
@@ -2112,35 +2758,40 @@ def requestvideocall(request):
         return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def readterms(request):
     if request.method == 'POST':
         member_id = request.POST.get('member_id', '1')
-        members = Member.objects.filter(id=member_id)
-        if members.count() == 0 :
+        member = Member.objects.filter(id=member_id).first()
+        if member is None :
             resp = {'result_code': '1'}
             return HttpResponse(json.dumps(resp))
-        member = members[0]
         member.status2 = "read_terms"
         member.save()
 
         resp = {'result_code': '0'}
         return HttpResponse(json.dumps(resp))
 
+    resp = {'result_code': '1'}
+    return HttpResponse(json.dumps(resp))
 
 
-@csrf_protect
-@csrf_exempt
-@permission_classes((AllowAny,))
+
+
 @api_view(['GET', 'POST'])
 def reportmember(request):
     if request.method == 'POST':
         member_id = request.POST.get('member_id', '1')
         reporter_id = request.POST.get('reporter_id', '1')
+        post_id = request.POST.get('post_id', '0')
+        comment_id = request.POST.get('comment_id', '0')
+        category = request.POST.get('category', '')
+        subcategory = request.POST.get('subcategory', '')
         message = request.POST.get('message', '')
+        option = request.POST.get('option','')
+
         members = Member.objects.filter(id=member_id)
         if members.count() == 0 :
             resp = {'result_code': '1'}
@@ -2148,12 +2799,204 @@ def reportmember(request):
         report = Report()
         report.member_id = member_id
         report.reporter_id = reporter_id
+        report.post_id = post_id
+        report.comment_id = comment_id
+        report.category = category
+        report.subcategory = subcategory
         report.message = message
+        report.option = option
         report.reported_time = str(int(round(time.time() * 1000)))
         report.save()
 
         resp = {'result_code': '0'}
         return HttpResponse(json.dumps(resp))
+
+
+
+@api_view(['POST','GET'])
+def blockpost(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id','0')
+        member_id = request.POST.get('member_id','0')
+        option = request.POST.get('option','')
+        sts = request.POST.get('status','')
+
+        post = Post.objects.filter(id=post_id).first()
+        if post is None: return HttpResponse(json.dumps({'result_code':'1'}))
+
+        pb = PostBlock.objects.filter(post_id=post_id, blocker_id=member_id).first()
+        if pb is None:
+            pb = PostBlock()
+        pb.post_id = post_id
+        pb.member_id = post.member_id
+        pb.blocker_id = member_id
+        pb.option = option
+        pb.created_on = str(int(round(time.time() * 1000)))
+        pb.status = sts
+        pb.save()
+
+        resp = {'result_code': '0'}
+        return HttpResponse(json.dumps(resp))
+
+
+
+@api_view(['POST','GET'])
+def upostcategories(request):
+    if request.method == 'POST':
+        admin_id = request.POST.get('admin_id','0')
+        pc = PostCategory.objects.filter(admin_id=admin_id).first()
+        if pc is not None:
+            from googletrans import Translator
+            sentences = pc.categories.split(',')
+            translator = Translator()
+            translations = translator.translate(sentences, dest="es")
+            arr = []
+            for translation in translations:
+                arr.append(translation.text)
+            es_categories = ",".join(arr)
+            return HttpResponse(json.dumps({'result_code':'0', 'us_categories':pc.categories, 'es_categories': es_categories}))
+    return HttpResponse(json.dumps({'result_code':'1'}))
+
+
+
+@api_view(['POST','GET'])
+def ugroupnames(request):
+    if request.method == 'POST':
+        admin_id = request.POST.get('admin_id','0')
+        cht = Cohort.objects.filter(admin_id=admin_id).first()
+        if cht is not None:
+            return HttpResponse(json.dumps({'result_code':'0', 'group_names':cht.cohorts}))
+    return HttpResponse(json.dumps({'result_code':'1'}))
+
+
+
+
+@api_view(['POST','GET'])
+def blockcomment(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id','0')
+        comment_id = request.POST.get('comment_id','0')
+        member_id = request.POST.get('member_id','0')
+        blocker_id = request.POST.get('blocker_id','0')
+        sts = request.POST.get('status','')
+
+        cb = CommentBlock.objects.filter(post_id=post_id, comment_id=comment_id, member_id=member_id, blocker_id=blocker_id).first()
+        if cb is None:
+            cb = CommentBlock()
+        cb.post_id = post_id
+        cb.comment_id = comment_id
+        cb.member_id = member_id
+        cb.blocker_id = blocker_id
+        cb.created_on = str(int(round(time.time() * 1000)))
+        cb.status = sts
+        cb.save()
+
+        try:
+            db = firebase.database()
+            data = {
+                "status": "blocked",
+                "post_id": post_id,
+                "blocker_id": blocker_id,
+            }
+            db.child("comment_block").child(member_id).remove()
+            db.child("comment_block").child(member_id).push(data)
+        except: pass
+
+        resp = {'result_code': '0'}
+        return HttpResponse(json.dumps(resp))
+
+
+
+
+@api_view(['POST','GET'])
+def check_comment_block_status(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id','0')
+        member_id = request.POST.get('member_id','0')
+
+        resp = { 'result_code': '0' }
+        cb = CommentBlock.objects.filter(post_id=post_id, member_id=member_id, status='blocked').first()
+        if cb is not None:
+            resp = { 'result_code': '1' }
+
+        return HttpResponse(json.dumps(resp))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css"/>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
 
@@ -20,7 +20,18 @@
     <link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
     <link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <style>
+
+@font-face {
+   font-family: lemon;
+   src: url('/static/fonts/lemon.ttf');
+}
+
+input:focus, button:focus {
+    outline:none;
+}
 
 .dropdown-menu{
     background-color: #fff;
@@ -56,17 +67,27 @@ h4:hover{
     text-decoration:underline;
 }
 
+#navbar { background:rgba(0,0,0,0); }
+
+@media(max-width:576px) {
+    #navbar { background:rgba(0,0,0,0.7); }
+}
+
+.goog-te-banner-frame.skiptranslate {display:none !important;}
+.goog-logo-link {display:none !important; }
+.goog-te-gadget {font-size:0px !important;}
+
 </style>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>-->
 </head>
 
 <body>
 
-<nav id="navbar" class="navbar navbar-inverse" style="background:rgba(0,0,0,0.7); padding-top:30px;">
+<nav id="navbar" class="navbar navbar-inverse">
     <div class="container-fluid">
 
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar" aria-expanded="false" aria-label="Toggle navigation" onclick="javascript:changeNavbarBackgroundColor();">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -77,11 +98,17 @@ h4:hover{
         <div class="collapse navbar-collapse" id="topNavBar" style="border:0;">
             <ul class="nav navbar-nav">
                 <li style="margin-right:30px;">
-                    <a href="javascript:void(0)" onclick="exitGroup('home');">
+                    <a href="/mothers/">
                         <h4 style=""><span class="fa fa-home" aria-hidden="true" style="margin-right:10px;"></span>Home</h4>
                     </a>
                 </li>
-
+                {% if last_conf %}
+                <li style="margin-right:30px;">
+                    <a href="/mothers/conferences">
+                        <h4 style=""><span class="fas fa-video" aria-hidden="true" style="margin-right:10px;"></span>Videos</h4>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
 
             <!--<div class="" style="position:absolute; left:50%; text-align:center; margin-top:35px; float:middle; transform:translate(-50%, -50%);">-->
@@ -193,44 +220,63 @@ h4:hover{
 
 <script>
 
-    function exitGroup(option){
-    //   if (confirm("Do you want to exit the room?")) {
-          try {
-              firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
-          }
-          catch(err) {
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
 
-          }
-          if(option == 'home') window.location.href = "/mothers/home";
-          else if(option == 'logout') window.location.href = "/mothers/logout";
-    //   }
-   }
-
-    var openF = false;
-
-    function changeNavbarBackgroundColor(){
-        console.log("Clicked on nav button");
-        var navbar = document.getElementById('navbar');
-        if(!openF) {
-            navbar.style.backgroundColor = "rgba(0,0,0,0.7)";
-            openF = true;
-        }else{
-            // navbar.style.backgroundColor = "transparent";
-            openF = false;
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
 </script>
 
+
+<script>
+
+    document.addEventListener("visibilitychange", event => {
+        if (document.visibilityState == "visible") {
+            console.log("tab is active")
+            firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+            firebase.database().ref('gmusers' + group + '/' + sender_email).push().set({
+                sender_name: sender_name,
+                sender_email: semail,
+                sender_photo: sender_photo,
+                sender_id: sender_id
+            });
+        } else {
+            console.log("tab is inactive")
+            try {
+                firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
+            }
+            catch(err) {
+
+            }
+        }
+    })
+
+</script>
+
+
+
 <script>
     $(document).click(function(){
-        hideMenuBar();
+        if(!$( this ).hasClass('dropdown-toggle')){
+            $('.navbar-collapse').collapse('hide');
+        }
     });
 
-    function hideMenuBar(){
-        // $(".dropdown-menu").hide();
-        $('.navbar-collapse').collapse('hide');
-    }
+    $('.navbar-nav li a').on('click', function(){
+        if(!$( this ).hasClass('dropdown-toggle')){
+            $('.navbar-collapse').collapse('hide');
+        }
+    });
 
 </script>
 

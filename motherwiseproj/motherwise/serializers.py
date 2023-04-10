@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Member, Group, Post, PostPicture, Comment, Notification, Conference
+from .models import Member, Group, Post, PostPicture, Comment, Notification, Conference, PostUrlPreview, Recipe, FoodResource
 
 class MemberSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,7 +37,22 @@ class ConferenceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PostUrlPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostUrlPreview
+        fields = ('__all__')
 
+
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('__all__')
+
+
+class FoodResourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodResource
+        fields = ('__all__')
 
 
 

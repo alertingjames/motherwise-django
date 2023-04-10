@@ -19,7 +19,7 @@ starCountRef.on('child_added', function(snapshot) {
     li.style.textAlign = 'left';
     var ul2 = document.createElement("div");
     var img = document.createElement("img");
-    if (key2.senderPhoto.length > 0) img.src = key2.senderPhoto;
+    if (key2.senderPhoto.length > 0 && isValidImage(key2.senderPhoto)) img.src = key2.senderPhoto;
     else img.src = "/static/images/ic_profile.png";
     img.style.width = "40";
     img.style.height = "40";
@@ -136,12 +136,15 @@ function timeConverter(UNIX_timestamp){
     // if(oneDayMilliseconds <= now - UNIX_timestamp && now - UNIX_timestamp < oneMonthMilliseconds) time = String(parseInt((now - UNIX_timestamp)/(24*3600000))) + "d ago";
     console.log(time);
 
-  return time;
+    return time;
 }
 
 
-
-
+function isValidImage(imageurl) {
+    var img = new Image();
+    img.src = imageurl;
+    return img.height != 0;
+}
 
 
 

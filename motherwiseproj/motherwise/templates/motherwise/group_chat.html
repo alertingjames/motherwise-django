@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
-<script src='https://meet.jit.si/external_api.js'></script>
+<!--<script src='https://meet.jit.si/external_api.js'></script>-->
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
   <script>
@@ -670,15 +670,6 @@ label span {/* <-- style the artificial checkbox */
 
 </style>
 
-<!--<script>-->
-<!--    var sss = false;-->
-<!--	history.pushState(null, null, location.href);-->
-<!--    history.back();-->
-<!--    history.forward();-->
-<!--    window.onpopstate = function () { history.go(1); if(sss){console.log('back button pressed'); exitGroup('home'); sss=false; setTimeout(function(){ sss=true; }, 2000);} };-->
-<!--    setTimeout(function(){ sss=true; }, 2000);-->
-<!--</script>-->
-
 <div id="imageFrame" style="text-align:center; box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
 	position:fixed; left:50%; float:middle; background-color:white; border-radius:10px; padding: 10px;
 	transform:translate(-50%, -50%); width:auto; height:auto; z-index:200; top:350px; display:none;">
@@ -721,38 +712,9 @@ label span {/* <-- style the artificial checkbox */
                 <div style="display:flex; margin:0px;">
                     <select name="cohort" required id="cohort" style="flex-grow:1; font-size:16px;" onchange="setValue(this)">
                         <option value="">Please choose a group</option>
-                        <option value="E81">E81</option>
-                        <option value="E83">E83</option>
-                        <option value="E84">E84</option>
-                        <option value="E86">E86</option>
-                        <option value="E87">E87</option>
-                        <option value="S82">S82</option>
-                        <option value="S85">S85</option>
-                        <option value="S88">S88</option>
-                        <option value="E(v)89">E(v)89</option>
-                        <option value="E(v)90">E(v)90</option>
-                        <option value="S(v)91">S(v)91</option>
-                        <option value="E(v)92">E(v)92</option>
-                        <option value="E(v)93">E(v)93</option>
-                        <option value="E(v)94">E(v)94</option>
-                        <option value="S(v)95">S(v)95</option>
-                        <option value="E(v)96">E(v)96</option>
-                        <option value="E(v)97">E(v)97</option>
-                        <option value="S(v)98">S(v)98</option>
-                        <option value="E(v)99">E(v)99</option>
-                        <option value="E(v)100">E(v)100</option>
-                        <option value="S(v)101">S(v)101</option>
-                        <option value="E(v)102">E(v)102</option>
-                        <option value="E(v)103">E(v)103</option>
-                        <option value="S(v)104">S(v)104</option>
-                        <option value="E(v)105">E(v)105</option>
-                        <option value="E(v)106">E(v)106</option>
-                        <option value="S(v)107">S(v)107</option>
-                        <option value="E(v)108">E(v)108</option>
-                        <option value="E(v)109">E(v)109</option>
-                        <option value="S(v)110">S(v)110</option>
-                        <option value="MotherWise Alumni">MotherWise Alumni</option>
-                        <option value="MotherWise Team">MotherWise Team</option>
+                        {% for c in cohorts %}
+                        <option value="{{c}}">{{c}}</option>
+                        {% endfor %}
                     </select>
                     <input hidden id="selected_cohort">
                     <script>
@@ -790,7 +752,7 @@ label span {/* <-- style the artificial checkbox */
                 <!--////////////////////////////////-->
 
                 <div id="chat-form">
-                    <a href="javascript:void(0)" onclick="openMeet();" style="text-align:center; margin-right:10px; float:right;">
+                    <a href="javascript:void(0)" onclick="openMeet();" style="text-align:center; margin-right:10px; float:right; display:none;">
                         <span class="fa fa-video" style="padding:8px; color:red; font-size:25px; background-color:white; border-radius:50%;"></span>
                     </a>
                     <center>
@@ -1038,31 +1000,32 @@ label span {/* <-- style the artificial checkbox */
 </div>
 
 <script>
-    function openMeet(){
-        document.getElementById('meet').style.display = 'block';
-        document.getElementById('backgroundOverlay').style.display='block';
-    }
+    // function openMeet(){
+    //     document.getElementById('meet').style.display = 'block';
+    //     document.getElementById('backgroundOverlay').style.display='block';
+    // }
 
-    var myId = '{{me.pk}}_{{me.pk}}';
-    const domain = 'meet.jit.si';
-    var height = 700;
-    const options = {
-        roomName: '{% if group %}{{me.pk}}gr{{group.pk}}{% elif cohort %}{{me.pk}}{{cohort}}{% endif %}',
-        // width: 700,
-        height: height,
-        parentNode: document.querySelector('#meet'),
-        interfaceConfigOverwrite: {
-            TILE_VIEW_MAX_COLUMNS: 4,
-            HIDE_INVITE_MORE_HEADER: true
-        },
-        userInfo: {
-            participantId: myId,
-            // email: 'email@jitsiexamplemail.com',
-            displayName: '{{me.name}}'
-        }
-    };
-    const api = new JitsiMeetExternalAPI(domain, options);
-    api.executeCommand('avatarUrl', '{{me.photo_url}}');
+    // var myId = '{{me.pk}}_{{me.pk}}';
+    // const domain = 'meet.jit.si';
+    // var height = 700;
+    // const options = {
+    //     roomName: '{% if group %}{{me.pk}}gr{{group.pk}}{% elif cohort %}{{me.pk}}{{cohort}}{% endif %}',
+    //     // width: 700,
+    //     height: height,
+    //     parentNode: document.querySelector('#meet'),
+    //     interfaceConfigOverwrite: {
+    //         TILE_VIEW_MAX_COLUMNS: 4,
+    //         HIDE_INVITE_MORE_HEADER: true
+    //     },
+    //     userInfo: {
+    //         participantId: myId,
+    //         // email: 'email@jitsiexamplemail.com',
+    //         displayName: '{{me.name}}'
+    //     }
+    // };
+    // const api = new JitsiMeetExternalAPI(domain, options);
+    // api.executeCommand('avatarUrl', '{{me.photo_url}}');
+
     // api.executeCommand('setVideoQuality', 1024);
 </script>
 
@@ -1348,18 +1311,6 @@ function submitClick(){
             lon:'',
             time: time
         });
-
-        // firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
-        // firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
-        //     sender_id: sender_id,
-        //     sender: sender_name,
-        //     sender_email: semail,
-        //     sender_photo: sender_photo,
-        //     cohort:chrt,
-        //     groupid:groupid,
-        //     message: messageText,
-        //     time: time
-        // });
 
         document.getElementById("message").value = "";
 
@@ -2422,28 +2373,6 @@ function send_msg(sts, lat, lng, video){
             time: time
         });
 
- //       firebase.database().ref('gmnotis' + group + "/" + sender_email).remove();
-        // firebase.database().ref('gmnotis' + group + "/" + sender_email).push().set({
-        //     sender_id: sender_id,
-        //     sender: sender_name,
-        //     sender_email: semail,
-        //     sender_photo: sender_photo,
-        //     cohort:chrt,
-        //     groupid:groupid,
-        //     message: messageText,
-        //     time: time
-        // });
-
-        // var params = {
-        //     'service': lat,
-        //     'name': friend_name,
-        //     'email': document.getElementById("friend_email").value,
-        //     'service_reqdate': lng,
-        //     'status': sts,
-        //     'mailid': video
-        // }
-        // post("/acchat", params);
-
         if(document.getElementById('form')){
 
             var chxarr = [];
@@ -2486,60 +2415,6 @@ function send_msg(sts, lat, lng, video){
 
     }
 }
-
-
-
-
-
-//  var timeStr = '';
-//
-//  var currentdate = new Date();
-//
-//  var cseconds = currentdate.getSeconds();
-//  var cminutes = currentdate.getMinutes();
-//  var chours = currentdate.getHours();
-//
-//  var cyear = currentdate.getFullYear();
-//  var cmonth = currentdate.getMonth(); // beware: January = 0; February = 1, etc.
-//  var cday = currentdate.getDate();
-//
-//  if (year == cyear && month == cmonth && day == cday && hours == chours && minutes == cminutes){
-//      timeStr = 'Just Now';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours == chours && minutes != cminutes)
-//  {
-//      timeStr = (cminute - minutes) + ' min ago';
-//  }
-//  else if (year == cyear && month == cmonth && day == cday && hours != chours){
-//      timeStr = (chours - hours) + ' hr ago';
-//  }
-//  else if (year == cyear && month == cmonth && ((cday - day) == 1)){
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = 'Yesterday' + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-//  else {
-//      var ampm = hours >= 12 ? 'PM' : 'AM';
-//      hours = hours % 12;
-//      hours = hours ? hours : 12; // the hour '0' should be '12'
-//      minutes = minutes < 10 ? '0'+minutes : minutes;
-//      timeStr = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
-//  }
-
-</script>
-
-<script>
-
-$(document).ready(function()
-{
-    $(window).bind("beforeunload", function() {
-        console.log('Close current page');
-        firebase.database().ref('gmusers' + group + '/' + sender_email).remove();
-        return false;
-    });
-});
 
 </script>
 

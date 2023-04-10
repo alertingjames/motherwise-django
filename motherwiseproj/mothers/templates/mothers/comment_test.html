@@ -1,0 +1,943 @@
+<html lang="en">
+
+<head>
+
+<title>Add Comment To Post | Motherwise Nest</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load static %}
+{% load tag_library %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link href='https://fonts.googleapis.com/css?family=Satisfy' rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="/static/images/icon.png" type="image/jpg">
+
+<link href="/static/images/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/static/images/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/static/images/icons/apple-touch-icon-167x167.png" rel="apple-touch-icon" sizes="167x167" />
+<link href="/static/images/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/static/images/icons/icon-hires.png" rel="icon" sizes="192x192" />
+<link href="/static/images/icons/icon-normal.png" rel="icon" sizes="128x128" />
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/asvd/dragscroll/master/dragscroll.js"></script>
+
+<script src="/static/reactions/jquery-2.1.4.js"></script>
+<script src="/static/reactions/jquery-ui_1.12.1_.min.js"></script>
+<script src="/static/reactions/emoticon-reactions.js"></script>
+<script src="/static/reactions/comment-reactions.js"></script>
+<link rel="stylesheet" href="/static/reactions/stylesheet.css">
+<link rel="stylesheet" href="/static/css/v1/comment.css">
+
+<script>
+    $(document).ready(function() {
+        jQuery.noConflict();
+    	$('.POST_reactions').postReactions({
+    		type: "post"
+    	});
+    	$('.COMMENT_reactions').commentReactions({
+    		type: "comment"
+    	});
+    });
+</script>
+
+</head>
+
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+<script>
+    WebFont.load({
+        google: {
+            families: ["Lato:100,300,400,700,900","Karla:regular","Cookie:regular"]
+        }
+    });
+    function isValidImage(imageurl) {
+       try {
+            var img = document.createElement("img");
+            img.src = imageurl;
+        } catch(err) {
+            //
+        }
+
+        if(img.height > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
+<img src="/static/images/processing.gif" id="gif">
+
+<img src="/static/images/logo.png" class="logo">
+
+<div id="title">COMMENT ON POST</div>
+
+<div id="form">
+
+    <div class="header">
+        <i id="back" class="fa fa-chevron-left" onclick="if(window.history.length > 1) { history.back(); } else { window.close(); }"></i>
+        <i id="home" class="fa fa-home" onclick="window.location.href='/mothers/zzzzz/';"></i>
+    </div>
+
+    <div id="title0">COMMENT ON POST</div>
+
+    <div>
+
+        <div style="text-align:center; color:white;">
+
+            <div style="width:100%;">
+                <div id="post-title" style="font-size:25px;font-weight:600;">{{post.post.title}}</div>
+                <!--text-overflow:ellipsis; overflow:hidden; white-space:nowrap;-->
+                <div class="post-category">{{post.post.category}}</div>
+            </div>
+
+            <div style="font-size:12px;">{{post.post.posted_time}}</div>
+
+            <br>
+
+            <div class="contentform">
+
+                <div class="row">
+                    <div class="col-sm-6" style="display:flex;">
+                        <div style="padding:10px; position:relative;">
+                            <a href="{% if post.member.photo_url %}{{post.member.photo_url}}{% endif %}">
+                                <img src="{% if post.member.photo_url %}{{post.member.photo_url}}{% elif post.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                            </a>
+                        </div>
+                        <a href="#">
+                            <div class="post-member-name">
+                                {{post.member.name}}
+                                <div style="font-size:11px;">{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}</div>
+                            </div>
+                        </a>
+
+                        <div style="margin:10px 0px 0px 20px; display:inline-block;">
+                            <a href="javascript:void(0)" style="color:white;display:none;" onclick="javascript:window.location.assign('mailto:{{post.member.email}}');">
+                                <span class="fa fa-envelope" style="color:white; font-size:18px;"></span>
+                            </a>
+                            <a href="/mothers/to_private_chat?member_id={{post.member.pk}}" target="_blank">
+                                <span class="fa fa-comments" style="color:white; font-size:20px; margin-left:20px;"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 like-section">
+
+                        <div style="flex-grow:1;"></div>
+
+                        <div class="like-actions">
+                            <a class="POST_reactions" data-reactions-type='horizontal' data-unique-id="{{post.post.pk}}" data-emoji-class="{{post.post.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                <span id="plbl-{{post.post.pk}}" style="">{% if post.post.liked %}{{post.post.liked}}{% else %}Like{% endif %}</span>
+                            </a>
+                            <div id="ricon-container-{{post.post.pk}}" class="ricon-container">
+                                <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{post.post.pk}}" style="display:{% if post.post.likes == '' or post.post.likes|to_int == 0 %}none;{% endif %}">
+                                <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{post.post.pk}}" style="display:{% if post.post.loves == '' or post.post.loves|to_int == 0 %}none;{% endif %}">
+                                <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{post.post.pk}}" style="display:{% if post.post.haha == '' or post.post.haha|to_int == 0 %}none;{% endif %}">
+                                <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{post.post.pk}}" style="display:{% if post.post.wow == '' or post.post.wow|to_int == 0 %}none;{% endif %}">
+                                <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{post.post.pk}}" style="display:{% if post.post.sad == '' or post.post.sad|to_int == 0 %}none;{% endif %}">
+                                <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{post.post.pk}}" style="display:{% if post.post.angry == '' or post.post.angry|to_int == 0 %}none;{% endif %}">
+                            </div>
+                            <label id="feelings-{{post.post.pk}}" style="display:{% if post.post.reactions == '' or post.post.reactions|to_int == 0 %}none;{% endif %}">{{post.post.reactions}}</label>
+                            <span class="far fa-comment-alt" style="margin-left:20px;"></span> <label id="comments">{{post.post.comments}}</label>
+                        </div>
+
+                        <button id="likeBtn" style="display:none;" onclick="likePost()">
+                            {% if post.post.liked == 'yes' %}
+                            <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+                            {% else %}
+                            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                            {% endif %}
+                        </button>
+
+                        <img src="/static/images/processing.gif" id="gif2">
+
+                        <script>
+                            function likePost(){
+                                document.getElementById('gif2').style.display = "block";
+                                var xhr = new XMLHttpRequest();
+                                xhr.onreadystatechange = function() {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        console.log(xhr.response);
+                                        var likes = xhr.response;
+                                        document.getElementById("likes").innerHTML = likes;
+
+                                        var likeBtn = document.getElementById('likeBtn');
+                                        console.log(likeBtn.innerHTML)
+                                        if(likeBtn.innerHTML == '<i class="fa fa-thumbs-o-down" aria-hidden="true"></i>'){
+                                            document.getElementById('likeBtn').innerHTML = '<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>';
+                                        }else{
+                                            document.getElementById('likeBtn').innerHTML = '<i class="fa fa-thumbs-o-down" aria-hidden="true"></i>';
+                                        }
+                                        document.getElementById('gif2').style.display = "none";
+                                    }
+                                };
+                                xhr.open('GET', "/mothers/like_post?post_id={{post.post.id}}", true);
+                                xhr.send('');
+                            }
+                        </script>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div>
+
+        <div>
+
+            {% if post.pictures %}
+            <div id="postform2">
+
+                    {% for picture in post.pictures %}
+                    <center>
+                        <div>
+                            <a href="{{picture.picture_url}}" target="_blank"><img src="{{picture.picture_url}}" class="post-photo"></a>
+                        </div>
+                        <br>
+                    </center>
+                    {% endfor %}
+
+            </div>
+            {% endif %}
+
+            <div id="postform">
+                <div class="form-group" id="post_content_section">
+                    <div id="post_content" style="text-align:left; color:rgba(255,255,255,0.8); font-size:16px; word-wrap: break-word; white-space: pre-line;">{{post.post.content}}</div>
+                    {% for prev in post.prevs %}
+                        <div class="form-group">
+                            <div class="row" style="cursor:pointer;" onclick="window.open('{{prev.site_url}}');">
+                                {% if prev.image_url %}
+                                <div class="col-sm-4">
+                                    <img src="{{prev.image_url}}" style="width:100%;height:130px;object-fit:cover;">
+                                </div>
+                                <div class="col-sm-8" style="text-align:left;">
+                                    <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                    {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                    <div style="display:flex;">
+                                        {% if prev.icon_url %}<img src="{{prev.icon_url}}" style="width:15px;height:15px;margin-right:3px;">{% endif %}
+                                        <div style="flex-grow:1;font-size:11px;color:rgba(255,255,0,0.6);" class="max-2lines">{{prev.site_url}}</div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="col-sm-12" style="text-align:left;">
+                                    <label style="color:white;font-size:18px;" class="max-2lines">{{prev.title}}</label>
+                                    {% if prev.description %}<div style="font-size:14px;color:rgba(255,255,255,0.8);" class="singleline">{{prev.description}}</div>{% endif %}
+                                    <div style="display:flex;">
+                                        {% if prev.icon_url %}<img src="{{prev.icon_url}}" style="width:15px;height:15px;margin-right:3px;">{% endif %}
+                                        <div style="flex-grow:1;font-size:11px;color:rgba(255,255,0,0.6);" class="max-2lines">{{prev.site_url}}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <script>
+                    document.getElementById('post_content').innerHTML = urlify(String(document.getElementById('post_content').innerHTML));
+                    function urlify(text) {
+                        var urlRegex = /(https?:\/\/[^\s]+)/g;
+                        return text.replace(urlRegex, function(url) {
+                            return '<a href="' + url + '" style="color:yellow; word-break:break-all;">' + url + '</a>';
+                        })
+                    }
+                </script>
+                <br>
+                <div style="width:100%; margin-bottom:15px;">
+                    <div class="comment-title">
+                        Comments
+                    </div>
+                </div>
+                {% if comments %}
+                    <div class="comment-container">
+                        {% for comment in comments %}
+                        <div class="user-form">
+                            <div class="contentform">
+                                <div style="display:flex;">
+                                    <div>
+                                        <img src="{% if comment.member.photo_url %}{{comment.member.photo_url}}{% elif comment.member.cohort == 'admin' %}/static/images/manager.jpg{% else %}/static/images/ic_profile.png{% endif %}"
+                                            class="comment-user-picture">
+                                    </div>
+                                    <div style="flex-grow:1;">
+                                        <div class="row comment-member-section">
+                                            <div class="col-sm-5">
+                                                <div class="comment-user-name">{{comment.member.name}}</div>
+                                                <div class="comment-user-cohort">{% if comment.member.photo_url %}{{comment.member.cohort}}{% else %}Manager{% endif %}</div>
+                                            </div>
+                                            <div class="col-sm-5 ctime">{{comment.comment.commented_time}}</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {% if comment.member.pk == me.pk %}
+                                            <a href="javascript:void(0)" id="del-{{comment.comment.pk}}" onclick="showDeleteCommentAlert(this)">
+                                                <span class="fa fa-times combtn"></span>
+                                            </a>
+                                        {% else %}
+                                            <a href="/mothers/to_private_chat?member_id={{comment.member.pk}}" target="_blank">
+                                                <span class="fa fa-comments combtn"></span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+
+                                <div class="divider"></div>
+
+                                <div style="text-align:left;">
+                                    <div id="note" class="note">{{comment.comment.comment_text}}</div>
+                                    {% if comment.comment.image_url %}
+                                    <a href="{{comment.comment.image_url}}" target="_blank" style="margin-left:15px;margin-bottom:15px;">
+                                        <img src="{{comment.comment.image_url}}" class="comment-attached">
+                                    </a><br><br>
+                                    {% endif %}
+                                </div>
+
+                                <div class="comment-footer" id="item-footer-{{comment.comment.pk}}">
+                                    <div class="comment-actions">
+                                        <a class="COMMENT_reactions" data-reactions-type="horizontal" data-unique-id="{{comment.comment.pk}}" data-emoji-class="{{comment.comment.liked}}" style="margin-top:-10px;margin-right:15px;">
+                                            <span id="clbl-{{comment.comment.pk}}">{% if comment.comment.liked %}{{comment.comment.liked}}{% else %}Like{% endif %}</span>
+                                        </a>
+                                        <div id="ricon-container-{{comment.comment.pk}}" class="ricon-container">
+                                            <img src="/static/reactions/emojis/like.svg" class="ricon" id="like-{{comment.comment.pk}}" style="display:{% if comment.comment.likes == '' or comment.comment.likes|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/love.svg" class="ricon" id="love-{{comment.comment.pk}}" style="display:{% if comment.comment.loves == '' or comment.comment.loves|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/haha.svg" class="ricon" id="haha-{{comment.comment.pk}}" style="display:{% if comment.comment.haha == '' or comment.comment.haha|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/wow.svg" class="ricon" id="wow-{{comment.comment.pk}}" style="display:{% if comment.comment.wow == '' or comment.comment.wow|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/sad.svg" class="ricon" id="sad-{{comment.comment.pk}}" style="display:{% if comment.comment.sad == '' or comment.comment.sad|to_int == 0 %}none;{% endif %}">
+                                            <img src="/static/reactions/emojis/angry.svg" class="ricon" id="angry-{{comment.comment.pk}}" style="display:{% if comment.comment.angry == '' or comment.comment.angry|to_int == 0 %}none;{% endif %}">
+                                        </div>
+                                        <label id="feelings-{{comment.comment.pk}}" style="display:{% if comment.comment.reactions == '' or comment.comment.reactions|to_int == 0 %}none;{% endif %}">{{comment.comment.reactions}}</label>
+                                        <span class="far fa-comment-alt" data-toggle="tooltip" data-placement="top" title="{% if comment.comment.comments != '0' %}View comments{% else %}No comments{% endif %}"
+                                            id="comment-list-btn-{{comment.comment.pk}}" style="margin-top:2px;" onclick="refreshCommentForComment(this)"></span>
+                                        <label class="item-comments" style="margin-left:3px;">{{comment.comment.comments}}</label>
+                                        <span class="fa fa-pencil" id="{{comment.comment.pk}}" style="margin-top:2px;" onclick="openCommentInputSection(this)" data-toggle="tooltip" data-placement="top" title="Add your comment"></span>
+                                    </div>
+                                    <div class="sub-comments"></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="width:100%; text-align:center;">
+                        <h5 style="color:rgba(255,255,255,0.7); margin:30px;">No comment added ...</h5>
+                    </div>
+                {% endif %}
+            </div>
+            <center>
+                <div class="comment-button" id="0">
+                    <span class="fa fa-pencil"></span>Comment on the post
+                </div>
+            </center>
+        </div>
+    </div>
+</div>
+
+
+<div id="commentAlert">
+    <div id="comment-form">
+        <div class="comment-header-section">
+            <div class="comment-header">ADD COMMENT</div>
+        </div>
+
+        <div style="text-align:center;">
+            <div style="display:inline-block; width:90%;">
+                <div class="old-comment-section">
+                    <div style="display:flex;">
+                        <div>
+                            <img id="selcomuserpic">
+                        </div>
+                        <div style="flex-grow:1;">
+                            <div class="row comment-member-section">
+                                <div class="col-sm-12">
+                                    <div id="selcomusername"></div>
+                                    <div id="selcomusercohort"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div id="selcomusertext"></div>
+                </div>
+                <form action="/mothers/sendcomment/" method="post" enctype="multipart/form-data" id="commentForm" style="width:100%;">
+                    {% csrf_token %}
+        			<div class="form-group">
+        			    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+                                integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+                                crossorigin="anonymous">
+                        </script>
+                        <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+                        <textarea rows="8" name="content" required id="textarea" placeholder="Write something here..." data-emojiable="true"></textarea>
+                        <script>autosize(document.getElementById("textarea"));</script>
+                    </div>
+
+                    <input hidden name="post_id" value="{{post.post.pk}}">
+                    <input hidden name="comment_id" id="comment_id" value="0">
+
+                    <div class="form-group alert-footer">
+                        <button type="button" id="cancel-comment-btn">Cancel</button>
+                        <div style="flex-grow:1;"></div>
+                        <div id="comment-image-container">
+                            <img id="output">
+                            <i class="fa fa-times-circle" id="close-btn"></i>
+                        </div>
+                        <label id="file-btn"><i class="fa fa-paperclip"></i>
+                            <input type="file" name="image" style="display:none;" id="file" accept="image/*"/>
+                        </label>
+                        <button type="button" id="emoji-btn"><i class="fa fa-smile-o"></i></button>
+                        <img src="/static/images/progressbar.gif" class="progressbar">
+                        <button type="button" id="send-btn">Submit</button>
+
+                        <script>
+                            function readFile() {
+                                if (this.files) {
+                                    var file = this.files[0];
+                                    var picReader = new FileReader();
+                                    picReader.addEventListener("load",function(event){
+                                        document.getElementById("output").src = event.target.result;
+                                        document.getElementById("comment-image-container").style.display = "block";
+                                    });
+
+                                    //Read the image
+                                    picReader.readAsDataURL(file);
+                                }
+                            }
+                            document.getElementById("file").addEventListener("change", readFile);
+                            document.getElementById("close-btn").addEventListener("click", function(){
+                                document.getElementById("comment-image-container").style.display = "none";
+                                document.getElementById("file").value = "";
+                            });
+                            document.getElementById("cancel-comment-btn").addEventListener("click", function(){ document.getElementById("commentAlert").style.display = "none"; });
+                        </script>
+                        <script src="/static/emoji1/fgEmojiPicker.js"></script>
+                        <script>
+                            const emojiPicker = new FgEmojiPicker({
+                                trigger: ['#emoji-btn'],
+                                position: ['top', 'right'],
+                                preFetch: true,
+                                insertInto: document.querySelector('textarea#textarea'),
+                                emit(obj, triggerElement) {
+                                    console.log(obj, triggerElement);
+                                }
+                            });
+                        </script>
+                    </div>
+                </form>
+			</div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="glyphicon glyphicon-menu-up" style="color:white; font-size:14px;"></i></button>
+
+<div style="display:inline-block; height:0px; width:auto; position:fixed; z-index:100; bottom:50px; border-radius:30px; left:1%;">
+    <div id="google_translate_element" style="float:left;"></div>
+</div>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+    $( document ).ready(function() {
+        $('#google_translate_element').bind('DOMSubtreeModified', function() {
+            var val = $(this);
+            var strlang = "" + val[0].innerText + "";
+            var toolBar = document.getElementsByClassName('goog-te-banner-frame skiptranslate')[0];
+            if(toolBar !== undefined) {
+                toolBar.style.display  = 'none';
+                document.body.style.top = '0px';
+            }
+        });
+    });
+</script>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 120 || document.documentElement.scrollTop > 120) {
+        document.getElementById("myBtn").style.display = "block";                         // Top button display none;
+        document.getElementById("title").style.display = "block";
+    } else {
+        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("title").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.getElementById("member-list").scrollTop = 0;
+}
+
+$(document).ready(function() {
+   $(document).ready(function() {
+        $('.commentform #note').each(function(i) {
+            const response = this.innerHTML
+            const decoded = response
+              .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+              .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+            this.innerHTML = decoded;
+        });
+   });
+});
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+       color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getDate(ms){
+    var months = ['January', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = new Date(ms);
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var year = date.getFullYear();
+    var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+    var day = date.getDate();
+
+    var dayStr = day;
+    if(day < 10) dayStr = '0' + day;
+
+    var hourStr = hours;
+    if(hours < 10) hourStr = '0' + hours;
+
+    var minStr = minutes;
+    if(minutes < 10) minStr = '0' + minutes;
+
+    var dateStr = months[month] + ' ' + dayStr + ', ' + year + ' ' + hourStr + ':' + minStr;
+    return dateStr;
+}
+
+
+</script>
+
+<script>
+
+// ScrollTo({{member_id}});
+
+function ScrollTo(name) {
+  //init thread
+  ScrollToResolver(document.getElementById(name));
+}
+
+function ScrollToResolver(elem) {
+  elem.style.backgroundColor = "#ffccff";
+  var jump = parseInt(elem.getBoundingClientRect().top * .2);
+  document.body.scrollTop += jump - 50;
+  document.documentElement.scrollTop += jump - 50;
+  //lastjump detects anchor unreachable, also manual scrolling to cancel animation if scroll > jump
+  if (!elem.lastjump || elem.lastjump > Math.abs(jump)) {
+    elem.lastjump = Math.abs(jump);
+    setTimeout(function() {
+      ScrollToResolver(elem);
+    }, "100");
+  } else {
+    elem.lastjump = null;
+  }
+}
+
+</script>
+
+<script>
+    var post_title = document.getElementById("post-title");
+    const response = post_title.innerHTML
+    const decoded = response
+        .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+        .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+    post_title.innerHTML = decoded;
+</script>
+
+<script>
+    var post_text = document.getElementById("post_content");
+    const response2 = post_text.innerHTML
+    const decoded2 = response2
+        .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+        .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+    post_text.innerHTML = decoded2;
+</script>
+
+<!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
+<script src="/static/emoji1/fgEmojiPicker.js"></script>
+
+<script>
+
+function collectionHas(a, b) { //helper function (see below)
+    for(var i = 0, len = a.length; i < len; i ++) {
+        if(a[i] == b) return true;
+    }
+    return false;
+}
+
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while(cur && !collectionHas(all, cur)) { //keep going up until you find a match
+        cur = cur.parentNode; //go up
+    }
+    return cur; //will return null if not found
+}
+
+
+function updatePostReaction(postid, feeling) {
+    console.log("post /// " + postid + " /// " + feeling)
+    if(feeling == null) feeling = "";
+    var formData = new FormData();
+    formData.append("post_id", postid);
+    formData.append("feeling", feeling);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let response = xhr.response;
+            // console.log(response)
+            if(response != "error") {
+                let resp = xhr.responseText;
+                // console.log(resp)
+                let data = JSON.parse(resp);
+                let post = data["post"];
+                let allfeelings = post["reactions"];  if(allfeelings.length == 0) allfeelings = "0";
+                document.getElementById("feelings-" + postid).innerHTML = allfeelings;
+                if(parseInt(allfeelings) == 0) document.getElementById("feelings-" + postid).style.display = "none";
+                else document.getElementById("feelings-" + postid).style.display = "block";
+                if(feeling.length == 0) document.getElementById("plbl-" + postid).innerHTML = "Like";
+                let likes = post["likes"]; if(likes.length == 0) likes = "0";
+                let loves = post["loves"]; if(loves.length == 0) loves = "0";
+                let haha = post["haha"]; if(haha.length == 0) haha = "0";
+                let wow = post["wow"]; if(wow.length == 0) wow = "0";
+                let sad = post["sad"]; if(sad.length == 0) sad = "0";
+                let angry = post["angry"]; if(angry.length == 0) angry = "0";
+                if(parseInt(likes) == 0) document.getElementById("like-" + postid).style.display = "none";
+                else document.getElementById("like-" + postid).style.display = "block";
+                if(parseInt(loves) == 0) document.getElementById("love-" + postid).style.display = "none";
+                else document.getElementById("love-" + postid).style.display = "block";
+                if(parseInt(haha) == 0) document.getElementById("haha-" + postid).style.display = "none";
+                else document.getElementById("haha-" + postid).style.display = "block";
+                if(parseInt(wow) == 0) document.getElementById("wow-" + postid).style.display = "none";
+                else document.getElementById("wow-" + postid).style.display = "block";
+                if(parseInt(sad) == 0) document.getElementById("sad-" + postid).style.display = "none";
+                else document.getElementById("sad-" + postid).style.display = "block";
+                if(parseInt(angry) == 0) document.getElementById("angry-" + postid).style.display = "none";
+                else document.getElementById("angry-" + postid).style.display = "block";
+            }
+        }
+    };
+    xhr.open('POST', "/mothers/react_post", true);
+    xhr.send(formData);
+
+}
+
+
+function updateCommentReaction(commentid, feeling) {
+    console.log("comment /// " + commentid + " /// " + feeling)
+    if(feeling == null) feeling = "";
+    var formData = new FormData();
+    formData.append("comment_id", commentid);
+    formData.append("feeling", feeling);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let response = xhr.response;
+            // console.log(response)
+            if(response != "error") {
+                let resp = xhr.responseText;
+                // console.log(resp)
+                let data = JSON.parse(resp);
+                let comment = data["comment"];
+                let allfeelings = comment["reactions"];  if(allfeelings.length == 0) allfeelings = "0";
+                document.getElementById("feelings-" + commentid).innerHTML = allfeelings;
+                if(parseInt(allfeelings) == 0) document.getElementById("feelings-" + commentid).style.display = "none";
+                else document.getElementById("feelings-" + commentid).style.display = "block";
+                if(feeling.length == 0) document.getElementById("clbl-" + commentid).innerHTML = "Like";
+                let likes = comment["likes"]; if(likes.length == 0) likes = "0";
+                let loves = comment["loves"]; if(loves.length == 0) loves = "0";
+                let haha = comment["haha"]; if(haha.length == 0) haha = "0";
+                let wow = comment["wow"]; if(wow.length == 0) wow = "0";
+                let sad = comment["sad"]; if(sad.length == 0) sad = "0";
+                let angry = comment["angry"]; if(angry.length == 0) angry = "0";
+                if(parseInt(likes) == 0) document.getElementById("like-" + commentid).style.display = "none";
+                else document.getElementById("like-" + commentid).style.display = "block";
+                if(parseInt(loves) == 0) document.getElementById("love-" + commentid).style.display = "none";
+                else document.getElementById("love-" + commentid).style.display = "block";
+                if(parseInt(haha) == 0) document.getElementById("haha-" + commentid).style.display = "none";
+                else document.getElementById("haha-" + commentid).style.display = "block";
+                if(parseInt(wow) == 0) document.getElementById("wow-" + commentid).style.display = "none";
+                else document.getElementById("wow-" + commentid).style.display = "block";
+                if(parseInt(sad) == 0) document.getElementById("sad-" + commentid).style.display = "none";
+                else document.getElementById("sad-" + commentid).style.display = "block";
+                if(parseInt(angry) == 0) document.getElementById("angry-" + commentid).style.display = "none";
+                else document.getElementById("angry-" + commentid).style.display = "block";
+            }
+        }
+    };
+    xhr.open('POST', "/mothers/react_comment", true);
+    xhr.send(formData);
+}
+
+
+document.getElementsByClassName("comment-button")[0].addEventListener('click', function(){
+    openCommentInputSection(this);
+});
+
+
+
+var selectedObj = null;
+var selectedCommentId = 0;
+
+function openCommentInputSection(obj) {
+    selectedObj = obj;
+    let commentid = obj.id;
+    selectedCommentId = commentid;
+    document.getElementById("comment_id").value = commentid;
+    if(parseInt(commentid) > 0) {
+        let selector = ".user-form";
+        let parent = findParentBySelector(obj, selector);
+        document.getElementById("selcomuserpic").src = parent.querySelector(".comment-user-picture").src;
+        document.getElementById("selcomusername").innerHTML = parent.querySelector(".comment-user-name").innerHTML;
+        document.getElementById("selcomusercohort").innerHTML = parent.querySelector(".comment-user-cohort").innerHTML;
+        document.getElementById("selcomusertext").innerHTML = parent.querySelector(".note").innerHTML;
+        document.getElementsByClassName("old-comment-section")[0].style.display = "block";
+    }else {
+        // document.getElementsByClassName("old-comment-section")[0].style.display = "none";
+        document.getElementById("selcomuserpic").src = "{{post.member.photo_url}}";
+        document.getElementById("selcomusername").innerHTML = "{{post.member.name}}";
+        document.getElementById("selcomusercohort").innerHTML = "{% if post.member.cohort == 'admin' %}Manager{% else %}{{post.member.cohort}}{% endif %}";
+        document.getElementById("selcomusertext").innerHTML = "{{post.post.title}}";
+        document.getElementsByClassName("old-comment-section")[0].style.display = "block";
+    }
+    document.getElementById("commentAlert").style.display = "block";
+    refreshCommentForComment(selectedObj);
+
+}
+
+
+document.getElementById("send-btn").addEventListener('click', function() {
+    if(document.getElementById('textarea').value.length == 0){
+        showAlertWarning('Please write your comment.');
+        return;
+    }
+    let form = document.getElementById("commentForm");
+    let progressbar = form.querySelector(".progressbar");
+    progressbar.style.display = "block";
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            progressbar.style.display = "none";
+            var result = xhr.response;
+            console.log('Comment Response: ' + result);
+            if(result == 'success') {
+                if(selectedObj != null) refreshCommentForComment(selectedObj);
+            }else {
+                showAlertError('Your comment failed.');
+            }
+            document.getElementById("commentAlert").style.display = "none";
+        }
+    };
+    xhr.open('POST', form.getAttribute('action'), true);
+    xhr.send(formData);
+});
+
+
+function refreshCommentForComment(obj) {
+    if(obj.id.includes("comment-list-btn-")) {
+        selectedCommentId = obj.id.replace("comment-list-btn-", "");
+        selectedObj = obj;
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // console.log('Result: ' + xhr.responseText)
+            let resp = xhr.responseText;
+            let data = JSON.parse(resp);
+            let result = data["result"];
+            if (result == "success") {
+                let html = data["html"];
+                let item_count = data["item_count"];
+                if(selectedCommentId <= 0) {
+                    document.querySelector(".comment-container").innerHTML = html;
+                    document.getElementById("comments").innerHTML = item_count;
+                } else {
+                    let selector = ".user-form";
+                    let parent = findParentBySelector(selectedObj, selector);
+                    parent.querySelector(".sub-comments").innerHTML = html;
+                    parent.querySelector(".item-comments").innerHTML = item_count;
+                    parent.querySelector("span[id*='comment-list-btn-']").title = parseInt(item_count) > 0 ? "View comments" : "No comments";
+                }
+
+                var y = document.getElementsByClassName("note");
+                var i;
+                for (i = 0; i < y.length; i++) {
+                    y[i].innerHTML = urlify(y[i].innerHTML);
+                    y[i].style.color = "white";
+                    y[i].style.textAlign = "left";
+                }
+                $('.user-form .note').each(function(i) {
+                    const response = this.innerHTML
+                    const decoded = response
+                        .replace(/\\u(....)/g, (match, p1) => String.fromCharCode(parseInt(p1, 16)))
+                        .replace(/\\(\d{3})/g, (match, p1) => String.fromCharCode(parseInt(p1,  8)))
+                    this.innerHTML = decoded;
+                });
+                $('.COMMENT_reactions').commentReactions({
+            		type: "comment"
+            	});
+            }
+        }
+    };
+    xhr.open('GET', '/mothers/subcomments?post_id={{post.post.pk}}&comment_id=' + String(selectedCommentId), true);
+    xhr.send('');
+}
+
+function showAlertWarning(msg) {
+    swal({
+        title: "Oops！ We ran into an issue.",
+        text: msg,
+        icon: "warning",
+        button: "OK",
+        dangerMode: true,
+    });
+}
+
+function showAlertError(msg) {
+    swal({
+        title: "Error！",
+        text: msg,
+        icon: "error",
+        button: "OK",
+    });
+}
+
+
+
+function showDeleteCommentAlert(obj) {
+    swal({
+        title: "Warning!",
+        text: "Are you sure delete this comment?",
+        icon: "warning",
+        buttons: ["Cancel","Yes"],
+        dangerMode: true,
+    })
+    .then((ok) => {
+        if (ok) {
+            let comment_id = obj.id.replace("del-","");
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = xhr.response;
+                    if (result == "success") {
+                        var selector = ".sub-comments";
+                        var parent = findParentBySelector(obj, selector);
+                        if(parent == null) {
+                            selector = ".comment-container";
+                            parent = findParentBySelector(obj, selector);
+                            selectedCommentId = 0;
+                            selectedObj = parent;
+                        }else {
+                            selectedCommentId = parseInt(parent.querySelector(".comment-footer").id.replace("item-footer-",""));
+                            selectedObj = parent;
+                        }
+                        refreshCommentForComment(selectedObj);
+                    }
+                }
+            };
+            xhr.open('GET', '/mothers/commentdelete?comment_id=' + comment_id, true);
+            xhr.send('');
+        }
+    });
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

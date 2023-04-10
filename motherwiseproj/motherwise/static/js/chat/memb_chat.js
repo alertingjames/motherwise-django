@@ -347,9 +347,16 @@ starCountRef.on('child_added', function(snapshot) {
            img.style.borderBottomLeftRadius = '10px';
            img.style.borderBottomRightRadius = '0px';
            img.style.display = 'inline-block';
-           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
-           else img.src = image;
-           img.classList.add("cropping");
+
+           if(image.length > 1500 && isValidImage("data:image/jpeg;base64,"+image)) {
+                img.src = "data:image/jpeg;base64,"+image;
+                img.classList.add("cropping");
+            }else {
+                if(isValidImage(image)) {
+                    img.src = image;
+                    img.classList.add("cropping");
+                }
+            }
 
            var li = document.createElement("div");
 
@@ -421,9 +428,16 @@ starCountRef.on('child_added', function(snapshot) {
            img.style.borderBottomLeftRadius = '0px';
            img.style.borderBottomRightRadius = '10px';
            img.style.display = 'inline-block';
-           if(image.length > 1500)img.src = "data:image/jpeg;base64,"+image;
-           else img.src = image;
-           img.classList.add("cropping");
+
+           if(image.length > 1500 && isValidImage("data:image/jpeg;base64,"+image)) {
+                img.src = "data:image/jpeg;base64,"+image;
+                img.classList.add("cropping");
+            }else {
+                if(isValidImage(image)) {
+                    img.src = image;
+                    img.classList.add("cropping");
+                }
+            }
 
            var li = document.createElement("div");
 
@@ -1002,7 +1016,20 @@ function send_msg(sts, lat, lng, video){
 }
 
 
+function isValidImage(imageurl) {
+   try {
+        var img = document.createElement("img");
+        img.src = imageurl;
+    } catch(err) {
+        //
+    }
 
+    if(img.height > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 //  var timeStr = '';
